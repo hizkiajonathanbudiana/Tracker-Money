@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Test</title>
+    <style>
+        /* Force reset and theme styles */
+        html {
+          height: 100%;
+          /* Light mode by default - HIGH PRIORITY */
+          background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%) !important;
+          color: #0f172a !important;
+          transition: all 0.3s ease !important;
+        }
+
+        html.dark {
+          /* Dark mode override - HIGH PRIORITY */
+          background: #000000 !important;
+          color: #ffffff !important;
+        }
+
+        body {
+            background: transparent !important;
+            color: inherit !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: system-ui, sans-serif;
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            background: rgba(255,255,255,0.8);
+            color: #333;
+        }
+
+        .dark button {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border-color: #555;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(203, 213, 225, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .dark .card {
+            background: rgba(10, 10, 10, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Theme Switcher Test</h1>
+        
+        <div>
+            <button onclick="setLight()">Light Mode</button>
+            <button onclick="setDark()">Dark Mode</button>
+            <button onclick="toggle()">Toggle</button>
+        </div>
+        
+        <div class="card">
+            <h2>Glass Card Test</h2>
+            <p>This card should have glass morphism effect in both light and dark modes.</p>
+            <p>Current theme: <span id="current-theme">light</span></p>
+            <p>HTML classes: <span id="html-classes">none</span></p>
+        </div>
+
+        <div class="card">
+            <h3>Background Test</h3>
+            <p>The background should be:</p>
+            <ul>
+                <li><strong>Light mode:</strong> Blue gradient (slate-50 to blue-50)</li>
+                <li><strong>Dark mode:</strong> Pure black (#000000)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function updateDisplay() {
+            document.getElementById('current-theme').textContent = 
+                document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            document.getElementById('html-classes').textContent = 
+                document.documentElement.className || 'none';
+        }
+
+        function setLight() {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            updateDisplay();
+        }
+
+        function setDark() {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            updateDisplay();
+        }
+
+        function toggle() {
+            if (document.documentElement.classList.contains('dark')) {
+                setLight();
+            } else {
+                setDark();
+            }
+        }
+
+        // Initialize
+        updateDisplay();
+        setInterval(updateDisplay, 1000);
+    </script>
+</body>
+</html>

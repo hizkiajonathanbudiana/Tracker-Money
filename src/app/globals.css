@@ -1,26 +1,227 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* THEME BACKGROUND - Applied to html element */
+html {
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  color: #0f172a;
+  min-height: 100vh;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html.dark {
+  background: #000000;
+  color: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Body inherits from html */
+body {
+  background: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Force text color inheritance for all elements */
+*, *::before, *::after {
+  color: inherit;
+}
+
+/* Override specific text classes that might conflict */
+.text-slate-900, h1, h2, h3, h4, h5, h6 {
+  color: #0f172a !important;
+}
+
+.dark .text-slate-900, 
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #ffffff !important;
+}
+
+/* Fix form elements for light mode */
+input, select, textarea, option {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #0f172a !important;
+  border-color: rgba(203, 213, 225, 0.6) !important;
+}
+
+.dark input, .dark select, .dark textarea, .dark option {
+  background-color: rgba(55, 65, 81, 0.9) !important;
+  color: #ffffff !important;
+  border-color: rgba(107, 114, 128, 0.6) !important;
+}
+
+/* Fix placeholder text */
+input::placeholder, textarea::placeholder {
+  color: rgba(107, 114, 128, 0.7) !important;
+}
+
+.dark input::placeholder, .dark textarea::placeholder {
+  color: rgba(156, 163, 175, 0.7) !important;
+}
+
+@layer base {
+  /* Reset styles */
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Ensure no conflicts with inherited body styles */
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(148 163 184 / 0.1);
+  }
+  
+  .dark ::-webkit-scrollbar-track {
+    background: rgba(0 0 0 / 0.5);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148 163 184 / 0.7);
+    border-radius: 9999px;
+  }
+  
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255 255 255 / 0.3);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(100 116 139 / 0.8);
+  }
+  
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255 255 255 / 0.5);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Glass card component utility classes */
+  .glass-card {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(203, 213, 225, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .glass-card {
+    background: rgba(10, 10, 10, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+
+  .glass-card-strong {
+    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(203, 213, 225, 0.5);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .dark .glass-card-strong {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Input glass styling */
+  .glass-input {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(148, 163, 184, 0.5);
+    backdrop-filter: blur(4px);
+    color: rgb(15 23 42);
+  }
+
+  .dark .glass-input {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+
+  .glass-input:focus {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  .dark .glass-input:focus {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  /* Button glass styling */
+  .glass-button {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .dark .glass-button {
+    background: rgba(0, 0, 0, 0.7);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-button:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(148, 163, 184, 0.6);
+  }
+
+  .dark .glass-button:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-button-primary {
+    background: rgba(59, 130, 246, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+  }
+
+  .dark .glass-button-primary {
+    background: rgba(37, 99, 235, 0.8);
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+
+  .glass-button-primary:hover {
+    background: rgba(37, 99, 235, 0.9);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  .dark .glass-button-primary:hover {
+    background: rgba(29, 78, 216, 0.9);
+    border-color: rgba(37, 99, 235, 0.6);
+  }
+
+  /* Additional glass variants */
+  .card-glass {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(203, 213, 225, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .dark .card-glass {
+    background: rgba(10, 10, 10, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+  
+  .card-glass:hover {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(1.02);
+  }
+  
+  .dark .card-glass:hover {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
 }

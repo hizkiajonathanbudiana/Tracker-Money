@@ -1,0 +1,4130 @@
+===== FILE: ./.env.local =====
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyBd8GT4wMIGFAok768liLtmxNQW_Kq1dE4
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=money-tracker-aa8c1.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=money-tracker-aa8c1
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=money-tracker-aa8c1.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=286607704393
+NEXT_PUBLIC_FIREBASE_APP_ID=1:286607704393:web:1ab8f0b2e9779f5c459a98
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-RC1KVYY390
+
+===== FILE: ./postcss.config.mjs =====
+const config = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+
+export default config;
+
+
+===== FILE: ./next.config.mjs =====
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    reactStrictMode: true,
+};
+
+export default nextConfig;
+
+===== FILE: ./GLASS-UI-IMPLEMENTATION.md =====
+# 🌙✨ Dark Mode & Glass UI Implementation Complete
+
+## ✅ Issues Fixed
+
+### 1. **Dark Mode Toggle Now Works** 
+- ✅ Fixed ThemeSwitcher component with proper `resolvedTheme` handling
+- ✅ Added proper theme detection for system preferences
+- ✅ Smooth transitions and hover effects
+
+### 2. **AMOLED Pure Black Theme**
+- ✅ Replaced dark blue with pure black (`#000000`) background
+- ✅ Proper contrast with white text (`#ffffff`)
+- ✅ Subtle card backgrounds (`#0a0a0a`) for depth
+
+### 3. **Glass Card Components**
+- ✅ **Light Mode**: Frosted glass with backdrop blur and transparency
+- ✅ **Dark Mode**: Dark glass with subtle borders and shadows
+- ✅ Hover effects with scale transforms and enhanced shadows
+
+## 🎨 Design System
+
+### Glass Card Classes Created:
+- `.glass-card` - Standard glass card with backdrop blur
+- `.glass-card-strong` - More opaque glass for headers
+- `.card-glass` - Component-specific glass with hover effects
+- `.glass-input` - Glass styling for form inputs
+- `.glass-button` - Glass buttons with hover animations
+- `.glass-button-primary` - Primary action buttons
+
+### Color Palette:
+**Light Mode:**
+- Background: Gradient from slate-50 to blue-50
+- Cards: Semi-transparent white with backdrop blur
+- Text: Slate-900 primary, slate-600 secondary
+
+**Dark Mode (AMOLED):**
+- Background: Pure black (#000000)
+- Cards: Semi-transparent black with backdrop blur
+- Text: Pure white primary, slate-400 secondary
+
+## 🔧 Components Updated
+
+### ✅ Core Components:
+1. **ThemeSwitcher** - Fixed toggle functionality with smooth animations
+2. **ExpenseForm** - Glass card with frosted inputs and animated submit button
+3. **ExpenseList** - Glass cards for each expense item with hover effects
+4. **StatCard** - Glass design with animated icons
+5. **Header** - Frosted glass header with backdrop blur
+
+### ✅ Styling Features:
+- **Backdrop Blur**: All cards have proper backdrop blur effects
+- **Smooth Transitions**: 200ms duration for all hover states
+- **Scale Animations**: Cards and buttons scale on hover (1.02x - 1.10x)
+- **Proper Typography**: Font weights and colors optimized for readability
+- **Glass Borders**: Subtle transparent borders for depth
+
+## 🎯 Visual Improvements
+
+### Light Mode:
+- Beautiful gradient background (slate-50 to blue-50)
+- Frosted glass cards with 70-80% opacity
+- Subtle shadows and borders
+- Clean, modern aesthetic
+
+### Dark Mode (AMOLED):
+- Pure black background for OLED power savings
+- Dark glass cards with white/10% borders
+- High contrast white text
+- Premium dark aesthetic
+
+### Animations:
+- Smooth theme transitions
+- Hover scale effects on cards and buttons
+- Rotating icons on theme toggle
+- Loading spinners with proper colors
+
+## 🚀 How to Test
+
+1. **Theme Toggle**: Click the moon/sun icon in header - should instantly switch themes
+2. **Glass Effects**: All cards should have subtle transparency and blur
+3. **Dark Mode**: Should be pure black background (AMOLED friendly)
+4. **Hover Effects**: Cards and buttons should scale and change on hover
+5. **Responsive**: All effects work on mobile and desktop
+
+## 🎨 Before vs After
+
+### Before:
+- ❌ Dark mode toggle not working
+- ❌ Dark blue background instead of AMOLED black
+- ❌ Plain white/gray cards without glass effects
+- ❌ Basic hover states
+
+### After:
+- ✅ Working dark mode toggle with smooth transitions
+- ✅ Pure AMOLED black background (#000000)
+- ✅ Beautiful frosted glass cards with backdrop blur
+- ✅ Animated hover effects and micro-interactions
+- ✅ Premium design aesthetic for both themes
+
+## 🔥 Technical Details
+
+### Tailwind Config:
+- Added custom glass background colors
+- Extended color palette for AMOLED theme
+- Custom backdrop blur utilities
+
+### CSS Classes:
+- Utility-first approach with reusable glass components
+- Proper dark mode variants for all components
+- Smooth transition animations
+
+### Theme System:
+- Next-themes integration with proper SSR handling
+- System preference detection
+- Persistent theme storage
+
+Your money tracker now has a **premium glass UI design** with **working AMOLED dark mode**! 🎉
+
+The app feels modern, smooth, and premium on both light and dark themes. Test it out by toggling between themes and interacting with the various glass components!
+
+===== FILE: ./next-env.d.ts =====
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+import "./.next/dev/types/routes.d.ts";
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+
+
+===== FILE: ./README.md =====
+# Simple Money Spend Tracker (MVP)
+
+A minimal, secure web app for tracking expenses built with Next.js, Firebase, and Tailwind CSS.
+
+## Features
+
+-   **Secure Authentication:** Email/Password and Google login.
+-   **Protected Dashboard:** All app routes are private.
+-   **Expense Tracking:** Add, view, and delete expenses.
+-   **Data Visualization:** Charts for spending by category and over time.
+-   **Mobile-First Design:** Clean UI built with Tailwind CSS.
+
+## Tech Stack
+
+-   **Next.js (App Router)**
+-   **TypeScript**
+-   **Firebase** (Auth & Firestore)
+-   **Tailwind CSS**
+-   **Chart.js** (`react-chartjs-2`)
+-   **Vercel** (Deployment)
+
+---
+
+## Firebase Setup Guide
+
+Follow these steps to configure your Firebase backend.
+
+### 1. Create Your Firebase Project
+
+1.  Go to the [Firebase Console](https://console.firebase.google.com/).
+2.  Click **Add project** and give it a name (e.g., "money-tracker-app").
+
+### 2. Enable Authentication Methods
+
+1.  In the Firebase Console, go to **Build** > **Authentication**.
+2.  Click **Get started**.
+3.  Go to the **Sign-in method** tab.
+4.  Enable **Email/Password**.
+5.  Enable **Google** (you will be prompted to set a project support email).
+
+### 3. Set Up Firestore Database
+
+1.  Go to **Build** > **Firestore Database**.
+2.  Click **Create database**.
+3.  Start in **Production mode**.
+4.  Choose a Firestore location (e.g., `nam5 (us-central)`). **This cannot be changed later.**
+
+### 4. Apply Security Rules
+
+This is the most important step for security.
+
+1.  Go to the **Firestore Database** > **Rules** tab.
+2.  Replace the default rules with the following:
+    ```
+    rules_version = '2';
+
+    service cloud.firestore {
+      match /databases/{database}/documents {
+        
+        // Users can only read, create, update, and delete their own expenses.
+        // The {uid} wildcard must match the authenticated user's ID.
+        match /users/{uid}/expenses/{expenseId} {
+          allow read, write: if request.auth != null && request.auth.uid == uid;
+        }
+      }
+    }
+    ```
+3.  Click **Publish**.
+
+### 5. Get Environment Variables
+
+1.  Go to your **Project Overview** (click the project name at the top).
+2.  Click the **Web icon** (`</>`) to add a new web app.
+3.  Give it a nickname (e.g., "Web App") and click **Register app**.
+4.  You will be shown a `firebaseConfig` object. You need these values.
+
+---
+
+## Project Setup (Local)
+
+### 1. Create `.env.local` File
+
+In the root of your project, create a file named `.env.local`. Copy the keys from your `firebaseConfig` object and add the `NEXT_PUBLIC_` prefix to each.
+
+**.env.local**
+
+===== FILE: ./tailwind.config.ts =====
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {},
+  },
+  plugins: [require("@tailwindcss/forms")],
+};
+export default config;
+
+===== FILE: ./public/file.svg =====
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+
+===== FILE: ./public/force-theme.js =====
+// Force Theme Debug Script
+// Add this to debug theme switching issues
+
+window.forceTheme = function (mode) {
+    const html = document.documentElement;
+    const body = document.body;
+
+    console.log('Forcing theme to:', mode);
+
+    if (mode === 'dark') {
+        html.classList.add('dark');
+        html.classList.remove('light');
+        html.style.background = '#000000';
+        html.style.color = '#ffffff';
+        body.style.background = 'inherit';
+        body.style.color = 'inherit';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        html.style.background = 'linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%)';
+        html.style.color = '#0f172a';
+        body.style.background = 'inherit';
+        body.style.color = 'inherit';
+        localStorage.setItem('theme', 'light');
+    }
+
+    console.log('HTML classes:', html.className);
+    console.log('HTML style:', html.style.background, html.style.color);
+};
+
+// Test functions
+window.testLight = () => forceTheme('light');
+window.testDark = () => forceTheme('dark');
+
+// Auto-test on load
+setTimeout(() => {
+    console.log('=== THEME DEBUG INFO ===');
+    console.log('Current HTML classes:', document.documentElement.className);
+    console.log('Current HTML background:', document.documentElement.style.background);
+    console.log('Current body background:', document.body.style.background);
+    console.log('localStorage theme:', localStorage.getItem('theme'));
+
+    console.log('\n=== TEST COMMANDS ===');
+    console.log('Run: testLight() to force light mode');
+    console.log('Run: testDark() to force dark mode');
+}, 1000);
+
+===== FILE: ./public/vercel.svg =====
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+
+===== FILE: ./public/next.svg =====
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+
+===== FILE: ./public/globe.svg =====
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+
+===== FILE: ./public/window.svg =====
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+
+===== FILE: ./debug-theme.js =====
+// Debug Theme Switcher
+// Open browser console and run this to debug theme issues
+
+console.log('=== THEME DEBUG ===');
+console.log('1. Current HTML class:', document.documentElement.className);
+console.log('2. Current theme from localStorage:', localStorage.getItem('theme'));
+console.log('3. System dark mode preference:', window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+// Test theme switching
+function testThemeSwitch() {
+    const html = document.documentElement;
+    console.log('Before toggle - HTML classes:', html.className);
+
+    if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        console.log('Switched to LIGHT mode');
+    } else {
+        html.classList.add('dark');
+        console.log('Switched to DARK mode');
+    }
+
+    console.log('After toggle - HTML classes:', html.className);
+}
+
+// Run this in console to manually test theme switching
+console.log('Run testThemeSwitch() to manually test theme switching');
+window.testThemeSwitch = testThemeSwitch;
+
+// Monitor theme changes
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            console.log('HTML class changed:', document.documentElement.className);
+        }
+    });
+});
+
+observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+});
+
+console.log('Theme monitoring active. Check console for theme changes.');
+
+===== FILE: ./.gitignore =====
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+.env.local
+
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+
+===== FILE: ./package.json =====
+{
+  "name": "money-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "chart.js": "^4.5.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "firebase": "^12.4.0",
+    "lucide-react": "^0.546.0",
+    "next": "16.0.0",
+    "next-themes": "^0.4.6",
+    "nookies": "^2.5.2",
+    "react": "19.2.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
+
+
+===== FILE: ./tsconfig.json =====
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "target": "ES2017"
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+
+
+===== FILE: ./.git/config =====
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+
+===== FILE: ./.git/HEAD =====
+ref: refs/heads/main
+
+
+===== FILE: ./.git/info/exclude =====
+# git ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+# For a project mostly in C, the following would be a good set of
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+# *~
+
+
+===== FILE: ./.git/logs/HEAD =====
+0000000000000000000000000000000000000000 e23f3d6fd0ee8496afbc4e90b82e33377c1462b9 Hizkia Jonathan Budiana <hizkiajonathanbudiana@Hizkias-MacBook-Air.local> 1761280114 +0800	commit (initial): Initial commit from Create Next App
+
+
+===== FILE: ./.git/logs/refs/heads/main =====
+0000000000000000000000000000000000000000 e23f3d6fd0ee8496afbc4e90b82e33377c1462b9 Hizkia Jonathan Budiana <hizkiajonathanbudiana@Hizkias-MacBook-Air.local> 1761280114 +0800	commit (initial): Initial commit from Create Next App
+
+
+===== FILE: ./.git/description =====
+Unnamed repository; edit this file 'description' to name the repository.
+
+
+===== FILE: ./.git/hooks/commit-msg.sample =====
+#!/bin/sh
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "commit-msg".
+
+# Uncomment the below to add a Signed-off-by line to the message.
+# Doing this in a hook is a bad idea in general, but the prepare-commit-msg
+# hook is more suited to it.
+#
+# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# grep -qs "^$SOB" "$1" || echo "$SOB" >> "$1"
+
+# This example catches duplicate Signed-off-by lines.
+
+test "" = "$(grep '^Signed-off-by: ' "$1" |
+	 sort | uniq -c | sed -e '/^[ 	]*1[ 	]/d')" || {
+	echo >&2 Duplicate Signed-off-by lines.
+	exit 1
+}
+
+
+===== FILE: ./.git/hooks/pre-rebase.sample =====
+#!/bin/sh
+#
+# Copyright (c) 2006, 2008 Junio C Hamano
+#
+# The "pre-rebase" hook is run just before "git rebase" starts doing
+# its job, and can prevent the command from running by exiting with
+# non-zero status.
+#
+# The hook is called with the following parameters:
+#
+# $1 -- the upstream the series was forked from.
+# $2 -- the branch being rebased (or empty when rebasing the current branch).
+#
+# This sample shows how to prevent topic branches that are already
+# merged to 'next' branch from getting rebased, because allowing it
+# would result in rebasing already published history.
+
+publish=next
+basebranch="$1"
+if test "$#" = 2
+then
+	topic="refs/heads/$2"
+else
+	topic=`git symbolic-ref HEAD` ||
+	exit 0 ;# we do not interrupt rebasing detached HEAD
+fi
+
+case "$topic" in
+refs/heads/??/*)
+	;;
+*)
+	exit 0 ;# we do not interrupt others.
+	;;
+esac
+
+# Now we are dealing with a topic branch being rebased
+# on top of master.  Is it OK to rebase it?
+
+# Does the topic really exist?
+git show-ref -q "$topic" || {
+	echo >&2 "No such branch $topic"
+	exit 1
+}
+
+# Is topic fully merged to master?
+not_in_master=`git rev-list --pretty=oneline ^master "$topic"`
+if test -z "$not_in_master"
+then
+	echo >&2 "$topic is fully merged to master; better remove it."
+	exit 1 ;# we could allow it, but there is no point.
+fi
+
+# Is topic ever merged to next?  If so you should not be rebasing it.
+only_next_1=`git rev-list ^master "^$topic" ${publish} | sort`
+only_next_2=`git rev-list ^master           ${publish} | sort`
+if test "$only_next_1" = "$only_next_2"
+then
+	not_in_topic=`git rev-list "^$topic" master`
+	if test -z "$not_in_topic"
+	then
+		echo >&2 "$topic is already up to date with master"
+		exit 1 ;# we could allow it, but there is no point.
+	else
+		exit 0
+	fi
+else
+	not_in_next=`git rev-list --pretty=oneline ^${publish} "$topic"`
+	/usr/bin/perl -e '
+		my $topic = $ARGV[0];
+		my $msg = "* $topic has commits already merged to public branch:\n";
+		my (%not_in_next) = map {
+			/^([0-9a-f]+) /;
+			($1 => 1);
+		} split(/\n/, $ARGV[1]);
+		for my $elem (map {
+				/^([0-9a-f]+) (.*)$/;
+				[$1 => $2];
+			} split(/\n/, $ARGV[2])) {
+			if (!exists $not_in_next{$elem->[0]}) {
+				if ($msg) {
+					print STDERR $msg;
+					undef $msg;
+				}
+				print STDERR " $elem->[1]\n";
+			}
+		}
+	' "$topic" "$not_in_next" "$not_in_master"
+	exit 1
+fi
+
+<<\DOC_END
+
+This sample hook safeguards topic branches that have been
+published from being rewound.
+
+The workflow assumed here is:
+
+ * Once a topic branch forks from "master", "master" is never
+   merged into it again (either directly or indirectly).
+
+ * Once a topic branch is fully cooked and merged into "master",
+   it is deleted.  If you need to build on top of it to correct
+   earlier mistakes, a new topic branch is created by forking at
+   the tip of the "master".  This is not strictly necessary, but
+   it makes it easier to keep your history simple.
+
+ * Whenever you need to test or publish your changes to topic
+   branches, merge them into "next" branch.
+
+The script, being an example, hardcodes the publish branch name
+to be "next", but it is trivial to make it configurable via
+$GIT_DIR/config mechanism.
+
+With this workflow, you would want to know:
+
+(1) ... if a topic branch has ever been merged to "next".  Young
+    topic branches can have stupid mistakes you would rather
+    clean up before publishing, and things that have not been
+    merged into other branches can be easily rebased without
+    affecting other people.  But once it is published, you would
+    not want to rewind it.
+
+(2) ... if a topic branch has been fully merged to "master".
+    Then you can delete it.  More importantly, you should not
+    build on top of it -- other people may already want to
+    change things related to the topic as patches against your
+    "master", so if you need further changes, it is better to
+    fork the topic (perhaps with the same name) afresh from the
+    tip of "master".
+
+Let's look at this example:
+
+		   o---o---o---o---o---o---o---o---o---o "next"
+		  /       /           /           /
+		 /   a---a---b A     /           /
+		/   /               /           /
+	       /   /   c---c---c---c B         /
+	      /   /   /             \         /
+	     /   /   /   b---b C     \       /
+	    /   /   /   /             \     /
+    ---o---o---o---o---o---o---o---o---o---o---o "master"
+
+
+A, B and C are topic branches.
+
+ * A has one fix since it was merged up to "next".
+
+ * B has finished.  It has been fully merged up to "master" and "next",
+   and is ready to be deleted.
+
+ * C has not merged to "next" at all.
+
+We would want to allow C to be rebased, refuse A, and encourage
+B to be deleted.
+
+To compute (1):
+
+	git rev-list ^master ^topic next
+	git rev-list ^master        next
+
+	if these match, topic has not merged in next at all.
+
+To compute (2):
+
+	git rev-list master..topic
+
+	if this is empty, it is fully merged to "master".
+
+DOC_END
+
+
+===== FILE: ./.git/hooks/sendemail-validate.sample =====
+#!/bin/sh
+
+# An example hook script to validate a patch (and/or patch series) before
+# sending it via email.
+#
+# The hook should exit with non-zero status after issuing an appropriate
+# message if it wants to prevent the email(s) from being sent.
+#
+# To enable this hook, rename this file to "sendemail-validate".
+#
+# By default, it will only check that the patch(es) can be applied on top of
+# the default upstream branch without conflicts in a secondary worktree. After
+# validation (successful or not) of the last patch of a series, the worktree
+# will be deleted.
+#
+# The following config variables can be set to change the default remote and
+# remote ref that are used to apply the patches against:
+#
+#   sendemail.validateRemote (default: origin)
+#   sendemail.validateRemoteRef (default: HEAD)
+#
+# Replace the TODO placeholders with appropriate checks according to your
+# needs.
+
+validate_cover_letter () {
+	file="$1"
+	# TODO: Replace with appropriate checks (e.g. spell checking).
+	true
+}
+
+validate_patch () {
+	file="$1"
+	# Ensure that the patch applies without conflicts.
+	git am -3 "$file" || return
+	# TODO: Replace with appropriate checks for this patch
+	# (e.g. checkpatch.pl).
+	true
+}
+
+validate_series () {
+	# TODO: Replace with appropriate checks for the whole series
+	# (e.g. quick build, coding style checks, etc.).
+	true
+}
+
+# main -------------------------------------------------------------------------
+
+if test "$GIT_SENDEMAIL_FILE_COUNTER" = 1
+then
+	remote=$(git config --default origin --get sendemail.validateRemote) &&
+	ref=$(git config --default HEAD --get sendemail.validateRemoteRef) &&
+	worktree=$(mktemp --tmpdir -d sendemail-validate.XXXXXXX) &&
+	git worktree add -fd --checkout "$worktree" "refs/remotes/$remote/$ref" &&
+	git config --replace-all sendemail.validateWorktree "$worktree"
+else
+	worktree=$(git config --get sendemail.validateWorktree)
+fi || {
+	echo "sendemail-validate: error: failed to prepare worktree" >&2
+	exit 1
+}
+
+unset GIT_DIR GIT_WORK_TREE
+cd "$worktree" &&
+
+if grep -q "^diff --git " "$1"
+then
+	validate_patch "$1"
+else
+	validate_cover_letter "$1"
+fi &&
+
+if test "$GIT_SENDEMAIL_FILE_COUNTER" = "$GIT_SENDEMAIL_FILE_TOTAL"
+then
+	git config --unset-all sendemail.validateWorktree &&
+	trap 'git worktree remove -ff "$worktree"' EXIT &&
+	validate_series
+fi
+
+
+===== FILE: ./.git/hooks/pre-commit.sample =====
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-commit".
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=$(git hash-object -t tree /dev/null)
+fi
+
+# If you want to allow non-ASCII filenames set this variable to true.
+allownonascii=$(git config --type=bool hooks.allownonascii)
+
+# Redirect output to stderr.
+exec 1>&2
+
+# Cross platform projects tend to avoid non-ASCII filenames; prevent
+# them from being added to the repository. We exploit the fact that the
+# printable range starts at the space character and ends with tilde.
+if [ "$allownonascii" != "true" ] &&
+	# Note that the use of brackets around a tr range is ok here, (it's
+	# even required, for portability to Solaris 10's /usr/bin/tr), since
+	# the square bracket bytes happen to fall in the designated range.
+	test $(git diff-index --cached --name-only --diff-filter=A -z $against |
+	  LC_ALL=C tr -d '[ -~]\0' | wc -c) != 0
+then
+	cat <<\EOF
+Error: Attempt to add a non-ASCII file name.
+
+This can cause problems if you want to work with people on other platforms.
+
+To be portable it is advisable to rename the file.
+
+If you know what you are doing you can disable this check using:
+
+  git config hooks.allownonascii true
+EOF
+	exit 1
+fi
+
+# If there are whitespace errors, print the offending file names and fail.
+exec git diff-index --check --cached $against --
+
+
+===== FILE: ./.git/hooks/applypatch-msg.sample =====
+#!/bin/sh
+#
+# An example hook script to check the commit log message taken by
+# applypatch from an e-mail message.
+#
+# The hook should exit with non-zero status after issuing an
+# appropriate message if it wants to stop the commit.  The hook is
+# allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "applypatch-msg".
+
+. git-sh-setup
+commitmsg="$(git rev-parse --git-path hooks/commit-msg)"
+test -x "$commitmsg" && exec "$commitmsg" ${1+"$@"}
+:
+
+
+===== FILE: ./.git/hooks/fsmonitor-watchman.sample =====
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use IPC::Open2;
+
+# An example hook script to integrate Watchman
+# (https://facebook.github.io/watchman/) with git to speed up detecting
+# new and modified files.
+#
+# The hook is passed a version (currently 2) and last update token
+# formatted as a string and outputs to stdout a new update token and
+# all files that have been modified since the update token. Paths must
+# be relative to the root of the working tree and separated by a single NUL.
+#
+# To enable this hook, rename this file to "query-watchman" and set
+# 'git config core.fsmonitor .git/hooks/query-watchman'
+#
+my ($version, $last_update_token) = @ARGV;
+
+# Uncomment for debugging
+# print STDERR "$0 $version $last_update_token\n";
+
+# Check the hook interface version
+if ($version ne 2) {
+	die "Unsupported query-fsmonitor hook version '$version'.\n" .
+	    "Falling back to scanning...\n";
+}
+
+my $git_work_tree = get_working_dir();
+
+my $retry = 1;
+
+my $json_pkg;
+eval {
+	require JSON::XS;
+	$json_pkg = "JSON::XS";
+	1;
+} or do {
+	require JSON::PP;
+	$json_pkg = "JSON::PP";
+};
+
+launch_watchman();
+
+sub launch_watchman {
+	my $o = watchman_query();
+	if (is_work_tree_watched($o)) {
+		output_result($o->{clock}, @{$o->{files}});
+	}
+}
+
+sub output_result {
+	my ($clockid, @files) = @_;
+
+	# Uncomment for debugging watchman output
+	# open (my $fh, ">", ".git/watchman-output.out");
+	# binmode $fh, ":utf8";
+	# print $fh "$clockid\n@files\n";
+	# close $fh;
+
+	binmode STDOUT, ":utf8";
+	print $clockid;
+	print "\0";
+	local $, = "\0";
+	print @files;
+}
+
+sub watchman_clock {
+	my $response = qx/watchman clock "$git_work_tree"/;
+	die "Failed to get clock id on '$git_work_tree'.\n" .
+		"Falling back to scanning...\n" if $? != 0;
+
+	return $json_pkg->new->utf8->decode($response);
+}
+
+sub watchman_query {
+	my $pid = open2(\*CHLD_OUT, \*CHLD_IN, 'watchman -j --no-pretty')
+	or die "open2() failed: $!\n" .
+	"Falling back to scanning...\n";
+
+	# In the query expression below we're asking for names of files that
+	# changed since $last_update_token but not from the .git folder.
+	#
+	# To accomplish this, we're using the "since" generator to use the
+	# recency index to select candidate nodes and "fields" to limit the
+	# output to file names only. Then we're using the "expression" term to
+	# further constrain the results.
+	my $last_update_line = "";
+	if (substr($last_update_token, 0, 1) eq "c") {
+		$last_update_token = "\"$last_update_token\"";
+		$last_update_line = qq[\n"since": $last_update_token,];
+	}
+	my $query = <<"	END";
+		["query", "$git_work_tree", {$last_update_line
+			"fields": ["name"],
+			"expression": ["not", ["dirname", ".git"]]
+		}]
+	END
+
+	# Uncomment for debugging the watchman query
+	# open (my $fh, ">", ".git/watchman-query.json");
+	# print $fh $query;
+	# close $fh;
+
+	print CHLD_IN $query;
+	close CHLD_IN;
+	my $response = do {local $/; <CHLD_OUT>};
+
+	# Uncomment for debugging the watch response
+	# open ($fh, ">", ".git/watchman-response.json");
+	# print $fh $response;
+	# close $fh;
+
+	die "Watchman: command returned no output.\n" .
+	"Falling back to scanning...\n" if $response eq "";
+	die "Watchman: command returned invalid output: $response\n" .
+	"Falling back to scanning...\n" unless $response =~ /^\{/;
+
+	return $json_pkg->new->utf8->decode($response);
+}
+
+sub is_work_tree_watched {
+	my ($output) = @_;
+	my $error = $output->{error};
+	if ($retry > 0 and $error and $error =~ m/unable to resolve root .* directory (.*) is not watched/) {
+		$retry--;
+		my $response = qx/watchman watch "$git_work_tree"/;
+		die "Failed to make watchman watch '$git_work_tree'.\n" .
+		    "Falling back to scanning...\n" if $? != 0;
+		$output = $json_pkg->new->utf8->decode($response);
+		$error = $output->{error};
+		die "Watchman: $error.\n" .
+		"Falling back to scanning...\n" if $error;
+
+		# Uncomment for debugging watchman output
+		# open (my $fh, ">", ".git/watchman-output.out");
+		# close $fh;
+
+		# Watchman will always return all files on the first query so
+		# return the fast "everything is dirty" flag to git and do the
+		# Watchman query just to get it over with now so we won't pay
+		# the cost in git to look up each individual file.
+		my $o = watchman_clock();
+		$error = $output->{error};
+
+		die "Watchman: $error.\n" .
+		"Falling back to scanning...\n" if $error;
+
+		output_result($o->{clock}, ("/"));
+		$last_update_token = $o->{clock};
+
+		eval { launch_watchman() };
+		return 0;
+	}
+
+	die "Watchman: $error.\n" .
+	"Falling back to scanning...\n" if $error;
+
+	return 1;
+}
+
+sub get_working_dir {
+	my $working_dir;
+	if ($^O =~ 'msys' || $^O =~ 'cygwin') {
+		$working_dir = Win32::GetCwd();
+		$working_dir =~ tr/\\/\//;
+	} else {
+		require Cwd;
+		$working_dir = Cwd::cwd();
+	}
+
+	return $working_dir;
+}
+
+
+===== FILE: ./.git/hooks/pre-receive.sample =====
+#!/bin/sh
+#
+# An example hook script to make use of push options.
+# The example simply echoes all push options that start with 'echoback='
+# and rejects all pushes when the "reject" push option is used.
+#
+# To enable this hook, rename this file to "pre-receive".
+
+if test -n "$GIT_PUSH_OPTION_COUNT"
+then
+	i=0
+	while test "$i" -lt "$GIT_PUSH_OPTION_COUNT"
+	do
+		eval "value=\$GIT_PUSH_OPTION_$i"
+		case "$value" in
+		echoback=*)
+			echo "echo from the pre-receive-hook: ${value#*=}" >&2
+			;;
+		reject)
+			exit 1
+		esac
+		i=$((i + 1))
+	done
+fi
+
+
+===== FILE: ./.git/hooks/prepare-commit-msg.sample =====
+#!/bin/sh
+#
+# An example hook script to prepare the commit log message.
+# Called by "git commit" with the name of the file that has the
+# commit message, followed by the description of the commit
+# message's source.  The hook's purpose is to edit the commit
+# message file.  If the hook fails with a non-zero status,
+# the commit is aborted.
+#
+# To enable this hook, rename this file to "prepare-commit-msg".
+
+# This hook includes three examples. The first one removes the
+# "# Please enter the commit message..." help message.
+#
+# The second includes the output of "git diff --name-status -r"
+# into the message, just before the "git status" output.  It is
+# commented because it doesn't cope with --amend or with squashed
+# commits.
+#
+# The third example adds a Signed-off-by line to the message, that can
+# still be edited.  This is rarely a good idea.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+/usr/bin/perl -i.bak -ne 'print unless(m/^. Please enter the commit message/..m/^#$/)' "$COMMIT_MSG_FILE"
+
+# case "$COMMIT_SOURCE,$SHA1" in
+#  ,|template,)
+#    /usr/bin/perl -i.bak -pe '
+#       print "\n" . `git diff --cached --name-status -r`
+# 	 if /^#/ && $first++ == 0' "$COMMIT_MSG_FILE" ;;
+#  *) ;;
+# esac
+
+# SOB=$(git var GIT_COMMITTER_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# git interpret-trailers --in-place --trailer "$SOB" "$COMMIT_MSG_FILE"
+# if test -z "$COMMIT_SOURCE"
+# then
+#   /usr/bin/perl -i.bak -pe 'print "\n" if !$first_line++' "$COMMIT_MSG_FILE"
+# fi
+
+
+===== FILE: ./.git/hooks/post-update.sample =====
+#!/bin/sh
+#
+# An example hook script to prepare a packed repository for use over
+# dumb transports.
+#
+# To enable this hook, rename this file to "post-update".
+
+exec git update-server-info
+
+
+===== FILE: ./.git/hooks/pre-merge-commit.sample =====
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git merge" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message to
+# stderr if it wants to stop the merge commit.
+#
+# To enable this hook, rename this file to "pre-merge-commit".
+
+. git-sh-setup
+test -x "$GIT_DIR/hooks/pre-commit" &&
+        exec "$GIT_DIR/hooks/pre-commit"
+:
+
+
+===== FILE: ./.git/hooks/pre-applypatch.sample =====
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed
+# by applypatch from an e-mail message.
+#
+# The hook should exit with non-zero status after issuing an
+# appropriate message if it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-applypatch".
+
+. git-sh-setup
+precommit="$(git rev-parse --git-path hooks/pre-commit)"
+test -x "$precommit" && exec "$precommit" ${1+"$@"}
+:
+
+
+===== FILE: ./.git/hooks/pre-push.sample =====
+#!/bin/sh
+
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
+#
+# This hook is called with the following parameters:
+#
+# $1 -- Name of the remote to which the push is being done
+# $2 -- URL to which the push is being done
+#
+# If pushing without using a named remote those arguments will be equal.
+#
+# Information about the commits which are being pushed is supplied as lines to
+# the standard input in the form:
+#
+#   <local ref> <local oid> <remote ref> <remote oid>
+#
+# This sample shows how to prevent push of commits where the log message starts
+# with "WIP" (work in progress).
+
+remote="$1"
+url="$2"
+
+zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
+
+while read local_ref local_oid remote_ref remote_oid
+do
+	if test "$local_oid" = "$zero"
+	then
+		# Handle delete
+		:
+	else
+		if test "$remote_oid" = "$zero"
+		then
+			# New branch, examine all commits
+			range="$local_oid"
+		else
+			# Update to existing branch, examine new commits
+			range="$remote_oid..$local_oid"
+		fi
+
+		# Check for WIP commit
+		commit=$(git rev-list -n 1 --grep '^WIP' "$range")
+		if test -n "$commit"
+		then
+			echo >&2 "Found WIP commit in $local_ref, not pushing"
+			exit 1
+		fi
+	fi
+done
+
+exit 0
+
+
+===== FILE: ./.git/hooks/update.sample =====
+#!/bin/sh
+#
+# An example hook script to block unannotated tags from entering.
+# Called by "git receive-pack" with arguments: refname sha1-old sha1-new
+#
+# To enable this hook, rename this file to "update".
+#
+# Config
+# ------
+# hooks.allowunannotated
+#   This boolean sets whether unannotated tags will be allowed into the
+#   repository.  By default they won't be.
+# hooks.allowdeletetag
+#   This boolean sets whether deleting tags will be allowed in the
+#   repository.  By default they won't be.
+# hooks.allowmodifytag
+#   This boolean sets whether a tag may be modified after creation. By default
+#   it won't be.
+# hooks.allowdeletebranch
+#   This boolean sets whether deleting branches will be allowed in the
+#   repository.  By default they won't be.
+# hooks.denycreatebranch
+#   This boolean sets whether remotely creating branches will be denied
+#   in the repository.  By default this is allowed.
+#
+
+# --- Command line
+refname="$1"
+oldrev="$2"
+newrev="$3"
+
+# --- Safety check
+if [ -z "$GIT_DIR" ]; then
+	echo "Don't run this script from the command line." >&2
+	echo " (if you want, you could supply GIT_DIR then run" >&2
+	echo "  $0 <ref> <oldrev> <newrev>)" >&2
+	exit 1
+fi
+
+if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
+	echo "usage: $0 <ref> <oldrev> <newrev>" >&2
+	exit 1
+fi
+
+# --- Config
+allowunannotated=$(git config --type=bool hooks.allowunannotated)
+allowdeletebranch=$(git config --type=bool hooks.allowdeletebranch)
+denycreatebranch=$(git config --type=bool hooks.denycreatebranch)
+allowdeletetag=$(git config --type=bool hooks.allowdeletetag)
+allowmodifytag=$(git config --type=bool hooks.allowmodifytag)
+
+# check for no description
+projectdesc=$(sed -e '1q' "$GIT_DIR/description")
+case "$projectdesc" in
+"Unnamed repository"* | "")
+	echo "*** Project description file hasn't been set" >&2
+	exit 1
+	;;
+esac
+
+# --- Check types
+# if $newrev is 0000...0000, it's a commit to delete a ref.
+zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
+if [ "$newrev" = "$zero" ]; then
+	newrev_type=delete
+else
+	newrev_type=$(git cat-file -t $newrev)
+fi
+
+case "$refname","$newrev_type" in
+	refs/tags/*,commit)
+		# un-annotated tag
+		short_refname=${refname##refs/tags/}
+		if [ "$allowunannotated" != "true" ]; then
+			echo "*** The un-annotated tag, $short_refname, is not allowed in this repository" >&2
+			echo "*** Use 'git tag [ -a | -s ]' for tags you want to propagate." >&2
+			exit 1
+		fi
+		;;
+	refs/tags/*,delete)
+		# delete tag
+		if [ "$allowdeletetag" != "true" ]; then
+			echo "*** Deleting a tag is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/tags/*,tag)
+		# annotated tag
+		if [ "$allowmodifytag" != "true" ] && git rev-parse $refname > /dev/null 2>&1
+		then
+			echo "*** Tag '$refname' already exists." >&2
+			echo "*** Modifying a tag is not allowed in this repository." >&2
+			exit 1
+		fi
+		;;
+	refs/heads/*,commit)
+		# branch
+		if [ "$oldrev" = "$zero" -a "$denycreatebranch" = "true" ]; then
+			echo "*** Creating a branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/heads/*,delete)
+		# delete branch
+		if [ "$allowdeletebranch" != "true" ]; then
+			echo "*** Deleting a branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/remotes/*,commit)
+		# tracking branch
+		;;
+	refs/remotes/*,delete)
+		# delete tracking branch
+		if [ "$allowdeletebranch" != "true" ]; then
+			echo "*** Deleting a tracking branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	*)
+		# Anything else (is there anything else?)
+		echo "*** Update hook: unknown type of update to ref $refname of type $newrev_type" >&2
+		exit 1
+		;;
+esac
+
+# --- Finished
+exit 0
+
+
+===== FILE: ./.git/hooks/push-to-checkout.sample =====
+#!/bin/sh
+
+# An example hook script to update a checked-out tree on a git push.
+#
+# This hook is invoked by git-receive-pack(1) when it reacts to git
+# push and updates reference(s) in its repository, and when the push
+# tries to update the branch that is currently checked out and the
+# receive.denyCurrentBranch configuration variable is set to
+# updateInstead.
+#
+# By default, such a push is refused if the working tree and the index
+# of the remote repository has any difference from the currently
+# checked out commit; when both the working tree and the index match
+# the current commit, they are updated to match the newly pushed tip
+# of the branch. This hook is to be used to override the default
+# behaviour; however the code below reimplements the default behaviour
+# as a starting point for convenient modification.
+#
+# The hook receives the commit with which the tip of the current
+# branch is going to be updated:
+commit=$1
+
+# It can exit with a non-zero status to refuse the push (when it does
+# so, it must not modify the index or the working tree).
+die () {
+	echo >&2 "$*"
+	exit 1
+}
+
+# Or it can make any necessary changes to the working tree and to the
+# index to bring them to the desired state when the tip of the current
+# branch is updated to the new commit, and exit with a zero status.
+#
+# For example, the hook can simply run git read-tree -u -m HEAD "$1"
+# in order to emulate git fetch that is run in the reverse direction
+# with git push, as the two-tree form of git read-tree -u -m is
+# essentially the same as git switch or git checkout that switches
+# branches while keeping the local changes in the working tree that do
+# not interfere with the difference between the branches.
+
+# The below is a more-or-less exact translation to shell of the C code
+# for the default behaviour for git's push-to-checkout hook defined in
+# the push_to_deploy() function in builtin/receive-pack.c.
+#
+# Note that the hook will be executed from the repository directory,
+# not from the working tree, so if you want to perform operations on
+# the working tree, you will have to adapt your code accordingly, e.g.
+# by adding "cd .." or using relative paths.
+
+if ! git update-index -q --ignore-submodules --refresh
+then
+	die "Up-to-date check failed"
+fi
+
+if ! git diff-files --quiet --ignore-submodules --
+then
+	die "Working directory has unstaged changes"
+fi
+
+# This is a rough translation of:
+#
+#   head_has_history() ? "HEAD" : EMPTY_TREE_SHA1_HEX
+if git cat-file -e HEAD 2>/dev/null
+then
+	head=HEAD
+else
+	head=$(git hash-object -t tree --stdin </dev/null)
+fi
+
+if ! git diff-index --quiet --cached --ignore-submodules $head --
+then
+	die "Working directory has staged changes"
+fi
+
+if ! git read-tree -u -m "$commit"
+then
+	die "Could not update working tree to new HEAD"
+fi
+
+
+===== FILE: ./.git/refs/heads/main =====
+e23f3d6fd0ee8496afbc4e90b82e33377c1462b9
+
+
+===== FILE: ./.git/index =====
+DIRC      h����ɤh����ɤ   I��  ��  �     �^�� x�֭݃=����� 
+.gitignore        h����4h����4   I�}  ��  �     ���L���8�X�W�!5HK< 	README.md h����`,h����`,   I�~  ��  �     ��&Ѵ ��qm+�yge��� eslint.config.mjs h����)�h����)�   I�  ��  �      ����:�y��_��圲S�9� next.config.ts    h� p�k"h� p�k"   I�  ��  �    v{!���b��95D��m� package-lock.json h���Pkh���Pk   I��  ��  �     +��PK`ҖL�����ʄu�	} package.json      h����Zh����Z   I��  ��  �      ^a�hI�|��q���JIS��C� postcss.config.mjs        h����H�h����H�   I�|  ��  �     � AE��?��W��Yf���Bb public/file.svg   h���ڢ<h���ڢ<   I��  ��  �     V����f,�5}�H0���� public/globe.svg  h������h������   I��  ��  �     _Qt��V\(^>1.���O�ʃ� public/next.svg   h����2�h����2�   I��  ��  �      �w9`3N.4�XM��\;L̩ public/vercel.svg h�����h�����   I��  ��  �     ����On�p�P<��;��Q public/window.svg h����Qh����Q   I�{  ��  �     eKq�o�H5�-$j��ݷ��v$ src/app/favicon.ico       h���� h����    I��  ��  �     ��A��^�5 �ˢ���7t src/app/globals.css       h����wh����w   I��  ��  �     �����R`�e���Q�T src/app/layout.tsx        h��� <�h��� <�   I��  ��  �     E)_����l̪�!3qWR� src/app/page.tsx  h�����h�����   I��  ��  �     �Ϝe��gji7M�z��Iw�� 
+tsconfig.json     TREE   q 17 2
+r E2ޫ�
+�Ħ���!L�Osrc 4 1
+?�
+id@�K��m"
+X\�G?app 4 0
+��o�n�"b�C4 �T��	�Ipublic 5 0
+ȏ8���A��vY�B�x�O��r�U��<�X]N��;�#H&
+
+===== FILE: ./.git/COMMIT_EDITMSG =====
+Initial commit from Create Next App
+
+
+===== FILE: ./eslint.config.mjs =====
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
+]);
+
+export default eslintConfig;
+
+
+===== FILE: ./test-theme.html =====
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Test</title>
+    <style>
+        /* Force reset and theme styles */
+        html {
+          height: 100%;
+          /* Light mode by default - HIGH PRIORITY */
+          background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%) !important;
+          color: #0f172a !important;
+          transition: all 0.3s ease !important;
+        }
+
+        html.dark {
+          /* Dark mode override - HIGH PRIORITY */
+          background: #000000 !important;
+          color: #ffffff !important;
+        }
+
+        body {
+            background: transparent !important;
+            color: inherit !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: system-ui, sans-serif;
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            background: rgba(255,255,255,0.8);
+            color: #333;
+        }
+
+        .dark button {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border-color: #555;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(203, 213, 225, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .dark .card {
+            background: rgba(10, 10, 10, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Theme Switcher Test</h1>
+        
+        <div>
+            <button onclick="setLight()">Light Mode</button>
+            <button onclick="setDark()">Dark Mode</button>
+            <button onclick="toggle()">Toggle</button>
+        </div>
+        
+        <div class="card">
+            <h2>Glass Card Test</h2>
+            <p>This card should have glass morphism effect in both light and dark modes.</p>
+            <p>Current theme: <span id="current-theme">light</span></p>
+            <p>HTML classes: <span id="html-classes">none</span></p>
+        </div>
+
+        <div class="card">
+            <h3>Background Test</h3>
+            <p>The background should be:</p>
+            <ul>
+                <li><strong>Light mode:</strong> Blue gradient (slate-50 to blue-50)</li>
+                <li><strong>Dark mode:</strong> Pure black (#000000)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function updateDisplay() {
+            document.getElementById('current-theme').textContent = 
+                document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            document.getElementById('html-classes').textContent = 
+                document.documentElement.className || 'none';
+        }
+
+        function setLight() {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            updateDisplay();
+        }
+
+        function setDark() {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            updateDisplay();
+        }
+
+        function toggle() {
+            if (document.documentElement.classList.contains('dark')) {
+                setLight();
+            } else {
+                setDark();
+            }
+        }
+
+        // Initialize
+        updateDisplay();
+        setInterval(updateDisplay, 1000);
+    </script>
+</body>
+</html>
+
+===== FILE: ./next.config.ts =====
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+};
+
+export default nextConfig;
+
+
+===== FILE: ./src/middleware.ts =====
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+const PROTECTED_ROUTES = ["/app"];
+const AUTH_ROUTES = ["/login", "/signup", "/forgot"];
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get("firebaseAuthToken");
+
+  if (!token && PROTECTED_ROUTES.includes(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  if (token && (AUTH_ROUTES.includes(pathname) || pathname === "/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/app";
+    return NextResponse.redirect(url);
+  }
+
+  if (!token && pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+};
+
+===== FILE: ./src/types/expense.ts =====
+import { Timestamp } from "firebase/firestore";
+
+export const EXPENSE_CATEGORIES = [
+  "Food & Beverage",
+  "Shopping",
+  "Transport",
+  "Bills",
+  "Other",
+] as const;
+
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+
+export interface Expense {
+  id: string;
+  notes: string; // Diubah dari title
+  amount: number;
+  category: ExpenseCategory;
+  date: Timestamp;
+  createdAt: Timestamp;
+  uid: string;
+}
+
+
+===== FILE: ./src/app/favicon.ico =====
+         (  F          (  n  00     (-  �         �  �F  (                                                           $   ]   �   �   ]   $                                       �   �   �   �   �   �   �   �                           8   �   �   �   �   �   �   �   �   �   �   8                  �   �   �   �   �   �   �   �   �   �   �   �              �   �   �   �   �   �   �   �   �   �   �   �   �   �       #   �   �   �OOO�������������������������ggg�   �   �   �   #   Y   �   �   ��������������������������555�   �   �   �   Y   �   �   �   �   �kkk���������������������   �   �   �   �   �   �   �   �   �   �			������������������   �   �   �   �   �   Y   �   �   �   �   �JJJ���������kkk�   �   �   �   �   �   Y   #   �   �   �   �   ����������			�   �   �   �   �   �   #       �   �   �   �   �   �111�DDD�   �   �   �   �   �   �              �   �   �   �   �   �   �   �   �   �   �   �                  8   �   �   �   �   �   �   �   �   �   �   8                           �   �   �   �   �   �   �   �                                       $   ]   �   �   ]   $                                                                                                                                                                                                                                                                                    (       @                                                                               ,   U   �   �   �   �   U   ,                                                                                      *   �   �   �   �   �   �   �   �   �   �   �   �   *                                                                      �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                          Q   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   Q                                               r   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   r                                       r   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   r                               O   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   O                          �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                      �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �               (   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   '           �   �   �   �   �   �   �888���������������������������������������������������������___�   �   �   �   �   �   �   �          �   �   �   �   �   �   ����������������������������������������������������������SSS�   �   �   �   �   �   �   �      +   �   �   �   �   �   �   �   �hhh�����������������������������������������������������   �   �   �   �   �   �   �   �   +   T   �   �   �   �   �   �   �   ��������������������������������������������������,,,�   �   �   �   �   �   �   �   �   T   �   �   �   �   �   �   �   �   �   �GGG���������������������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ������������������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �+++���������������������������������jjj�   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ����������������������������������   �   �   �   �   �   �   �   �   �   �   �   T   �   �   �   �   �   �   �   �   �   �   ��������������������������III�   �   �   �   �   �   �   �   �   �   �   �   T   +   �   �   �   �   �   �   �   �   �   �   �   �hhh����������������������   �   �   �   �   �   �   �   �   �   �   �   +      �   �   �   �   �   �   �   �   �   �   �   ������������������,,,�   �   �   �   �   �   �   �   �   �   �   �   �          �   �   �   �   �   �   �   �   �   �   �   �   �GGG�������������   �   �   �   �   �   �   �   �   �   �   �   �   �           '   �   �   �   �   �   �   �   �   �   �   �   �   ����������   �   �   �   �   �   �   �   �   �   �   �   �   (               �   �   �   �   �   �   �   �   �   �   �   �   �333�___�   �   �   �   �   �   �   �   �   �   �   �   �   �                      �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                          O   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   O                               r   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   r                                       r   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   r                                               Q   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   Q                                                          �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                                      *   �   �   �   �   �   �   �   �   �   �   �   �   *                                                                                      ,   U   �   �   �   �   U   ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               (   0   `           -                                                                                             	   (   L   j   �   �   �   �   j   K   (   	                                                                                                                                          V   �   �   �   �   �   �   �   �   �   �   �   �   �   �   U                                                                                                                      %   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   &                                                                                                      �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                                                          Q   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   R                                                                              �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                                     �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                             �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                     �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                              �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                       P   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   O                                  �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                              �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                       #   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   #                   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                  �   �   �   �   �   �   �   �   �   �$$$�hhh�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�eee�PPP��   �   �   �   �   �   �   �   �   �              U   �   �   �   �   �   �   �   �   �   ������������������������������������������������������������������������������������������sss�   �   �   �   �   �   �   �   �   �   �   U           �   �   �   �   �   �   �   �   �   �   �   �eee��������������������������������������������������������������������������������������   �   �   �   �   �   �   �   �   �   �   �       	   �   �   �   �   �   �   �   �   �   �   �   ����������������������������������������������������������������������������������HHH�   �   �   �   �   �   �   �   �   �   �   �   �   	   (   �   �   �   �   �   �   �   �   �   �   �   �   �EEE�����������������������������������������������������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   (   K   �   �   �   �   �   �   �   �   �   �   �   �   �   �������������������������������������������������������������������������,,,�   �   �   �   �   �   �   �   �   �   �   �   �   �   L   j   �   �   �   �   �   �   �   �   �   �   �   �   �   �)))���������������������������������������������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   j   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ������������������������������������������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ����������������������������������������������������������iii�   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �eee������������������������������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ��������������������������������������������������HHH�   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   j   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �EEE���������������������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   j   L   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �����������������������������������������,,,�   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   K   (   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �)))�������������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   (   	   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ����������������������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   	       �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ��������������������������iii�   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �           U   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �eee����������������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   U              �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ������������������HHH�   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                  �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �EEE�������������   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                   #   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   ���������,,,�   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   #                       �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �222�}}}�   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                              �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                  O   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   P                                       �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                              �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                     �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                             �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                                     �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                                              R   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   Q                                                                                          �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �                                                                                                      &   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   �   %                                                                                                                      U   �   �   �   �   �   �   �   �   �   �   �   �   �   �   V                                                                                                                                          	   (   K   j   �   �   �   �   j   L   (   	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        �PNG
+
+   
+IHDR         \r�f   sRGB ���   8eXIfMM *    �i            �       �           D"8s  IDATx�]	�ՙn�]<QVA���h$	�N��13*�q��d�č�I���D�L2��(�(Ԙ2�ę�G	��q_@屈���xț�Џ��{o�������U�{}�O��;������9�d���(Dg��8	��N �]��@�hx�?v 
+�N�3�=`;�6�.�&��u��  ��6�P��н��@�àR� P�iZq�^DN���wp�
+���X�hИHg@��
+:��|�5` p"@�'�ɲ�s{
+�p�*�2����� d ү���|(0�
+0 ��>K�
+�xX�6 IJ� �C|?$KEN�}ϓ|������h $	2 ��|/� . Nz �#���W�e�
+�5��
+����ܶ���;�y �� �g�s�h^  I�� DL(�;�8��Hjg�cH|x�1��R"�a���Ӂ� G��@��9`/`%0�
+H�@j�~,���K
+�,t).��I���D�T�O�)~��V�u$b 誛
+�U%�7������ _�$b 8A������J�3` 510wQ�?��vr���:�2�K�@ ��v*{%#��A�Z�咁^(��=�g \��W�����!:��,`�6��643�:@�c.Fٟ����u?�<��'������_܏vp: �8Q��
+I�Ł�
+p{3���kHȢ�G�����c�Ѽ
+<�62&�
+��2uC�����敭��T�3�
+��
+���;���d�/~m��.��X�@{�w.��d]G�� {lK��Eb���(P�RuM�T�C����
+�d��])��_Lm�=��=@b���K��GUk�^�U�������)1����g�T���m`9�\����Q��@����Ⱆ6�:ڞ�^�w�����E�D�� �	�5����F�,��
+�X"�d�m�<�nB~��@����t�t�x��
+�;�f�>����I8����8��C1۪$B���e���+��jl��EZ��& ��S:�:�6�m����\G1��`���!�nl�l�Ɗ�^�Q`��@Oc�S��@e�ͷ���qb�p���S��@up���F�D@�Г������2@#����L3 �A��$H2� _h��FH#rq(��O�D�򤬈���runGOWa�b� &�SgD�3�ED�to�*Ǥ����9k��~)���,$� x�R�1�v�K ��9�D䍁U(�w�&LE��ꩻ�S)��3�Y8x8 $.i�(��K�ŀY����a�]����4��ǀ	c����@3�f����4� Ƣ��
+�/*b��� ���$!I�~��7�B*-1`	o � �	�$��ǡD�����L������ �J"���OQ��)��2@#�x4�"$e ���I�8��Oi��8�"� �G��8[x�t<�.��7&�m&؎R�^��tq� ؕ�.���Y�-2� �d� ��*_��&d|j\�W�b ��G����*g�� ��釁�F4�"I�؃�/ b1q�N����Y�D��p���9���p�}w\� �Ԥ���1 j`��O���xK=��H�� �A��1
+�#�
+D:U8j���t���$b b�A||�U�Q��26%��)1 ��_
+�ꢳ!~D��� ��+b >A��:]�E$��50��GDhR�t����ݻwR�)��P� ��n$� 3���@bS�Nu�,Y�j�ʲ��:����;�����@�`�|�-[)�'OV��Ն�sFxڮ��ۥ�n}͛7�����~��ƺ�:���Q��J_��UKj8�q0x���;v4 ̞=[�hW=�	��	�&�!e5�8hѢE��w�]�����6���_�iW}�SZ�?	�/`�;vl�}��2 <�h�" ����A�܁�X,�m۶�+V�(��<�w���#F�^���;���aH�c ���)S�*�{a���p��c89(�^����4�&E��oÆ
+��W�/��u�=�^���*?{k^�_E�����z���g�� UI-���{WU*
+�:p�9.tڷo(/ݺus>��3�'�^�Rg���ڞG��I_D�������~~� ��{
+���?N0�7�S��.ƍ׸�~?}/y]nA;�أ���2 ]�FOB2C?�_I����[�:�:�=#�OzK�-� ��ϣ�%����?j��I���P�ۯ��{N�-hU��t�:������� ,���G�K�-hU���c�hP7 ����@�n?�\�-�k�.���2�:�� �`��F��=�-�V�_�G��܂V� ��}�0 WI����F��ʭ���sM�rZ�8pJ�Q�*@OK8���
+rZ��ݖa, ��w� �S�W^y����.��5�at7��ݏ���Tv#�~7n��A"�����+��W��pM��/�hK8����g��F/^������M{e ��R�|�)q��7�t��?8'���K��P~���瞰�\��r��>�ǷUk �eP��|�^x����
+�/V/��v���������*�p�v�� ����ʟ]J��}��k8(������ĉ�ѣGǗ�O�mڴq,X�o���e.�^ �Qx���p�t����4^_�N�{�����y�2 �s����� �-عsg�s���i�v��Z
+8
+!~PJ?�c�������|�] �ܽ{��z�긓R��1pn���z�����tlp�9�f�r�v�jT殿�z�4*O�L�~����ԕ3��4�~~�r�;�m�xY�+���������3 r�;�m�x�4���:7]ՁqL�4)U��!r�1��u�6���$�
+�7����8�w��̙3Ǹ|5�>?�\z��O���͆� ��,�E����3�����2���[����2Wu:E�����^p.H1cJ�t�]}��B�u��SOu�����Ic�O�����%� 
+ �AZ������k����D?�5 �@Q��
+���3�w�+��"��T��S��Uޥ�13��?��5 M'݋��>p��Z�j�~fj�
+׈�סԐ�n�����>� ��i5D�[bf ��~a�'�`Xc��� -�1�k����āI�������k��Q�ů|�k�M��(92�@�t�����݂X-�Lדa��N4��qܞ'$f0@�
+@V�nA�ܘY�L9:�|/^s� ��	��)0`�j��T\w�uZ-����¨\�	@�:��c�t���{�-��Rb��1%� �I,Y%T���~��r�1����C��,�$��*ˀ���f<��0z����h�F���� ����|���8Z-�CR����Tg� �HRf��glY����s��-��p��'+����m�_ؒg������C�{ �	����Ȫ�ϏΙ3g�-�GR|׹7`G��񥡘�0�U��_ٵZЏ�د�D�)���\>����ʗ������z N���@��~~��-��P��{rs���@�<����|.]�Ը|��m|g����_��y�W�KD1�b�M���%�s\����r�1��n�\�ƒ�"-� �`.4��~%3��I}[0A��$��= -�>BH"G�ۏ�^r��<�EBG�i �%���9�@^�~~
+@�����1����@� t�-[����{%@C�$�mAg���Κ5kʆх����/双O��l��ӿ��B�@.X���u�p�O��6��x�9MPn�`߷o_���^n�`t�
+��(�����\r��s�A�y���ۂ�T��@h
+�E0l�0��;�tڵӘkƸN����Y�jU��
+S#�|^㽺- |��p�
+N�.���ޥ`�^{�zL�6��4 �ě�b��e�]&"�d�sΜ9Uޥ�U0�!
+��*nP�*`���o֨v����i8G�����hh��m������ɓ�s�=�{J�U0�Ղ���wZ������������8bEz���,Y�D��![C�>}��7:k׮
+�no��f� >jvR?#b��X�(��F�AT�F��i��[�{��zv��>��C���a+�[0B2�D��=��G~�(
+�ĺ������LO�\s�܂>"8|�`[)
+&Lp8�'��������4 oGe�#�ۏ�lْ_\�D̀܂�2Z�l��i�9��
+t�ȑ9f ޢ�-����=���Y�y��n?uQ�}Xͬ�sA�i >=��1�=R��+� +
+�܂��.2 ��K������CƢۃ20h� �˫%53�5@�MA�%���̣������j[��9�;�� _(�����0��~r���\�{�m�P����x#TT9��n?����N#��ץ&�}� ��)
+�T�VL�!���j���`�p
+ �8@Rr�UAV�A����=��-����pLH�`@n�*Ȋ1�܂U���?}w
+ ]�H2@�ߴi��V���[�˯%�������5 �8�)Э
+T`��|rZbZ-�.�!da+@� ���ߞ�Z�gf�[0p���� �� I��gr�$��o%P�_rCy
+�V�|߽����"m�Y���-�[ l��k xA� ��ۯ9]�[pҤI�Ȩ�pP���k ��Feِ���gHE�d�nAm"Z�$��5}���z�8����2r�X�|� ��Sܻw��r�J�s�J�~�T�f�z{ �ͫ ��x�j?j��Q�E�n� �js���|G�xз�<dXt(��Q�E�.�p�47 ��)���;��ys�_�V�D���-XTi����?� �~�薜����� �`Q�=V�?���^�
+������.]�|X�
+�m�B~��?���J� �D�������~�h r�����ER���A݀�B���~w�q�Ӿ}���<�ŕ[й5�d��-�`�5 ?�Kq�~l4��0@��)����/I��(����؋���n��9���Y�4�!�Cو2ח*w9���GKݐ�s�&�r�e��s��?�6�8J� |(�uwO䴁d�&K)�nA��?R���n@7,��8�=���r�e����n�M�69k��M7�����J��R�]�e�n��9���Z���� /?នo>��󕾤�rzr�� ��`���V{���u��4448�V��ra��p� ��QRZ�<{�dK.F9��#~T���s.����N%*� 
+���Ýu�8G&����/W:*x%�{�}@�
+ ��l���Nc#�AI�������i����*?�د�0}�g���C"Āpۯ������4薒ҏ(b�8�_Q�Y� ���r7'���`��� �j �6�� *��3�W�g��"��l�
+�1�:�Sg}%� �	��P?����1`�����Y� ��"��D�0b@�� �����9������[t��F1���p`k�\U�`��R��A#W81 e`)R�ZM��� ��[u��F0�	rq.����� #^�=C"Ā9P'�R~f�� �
+pn�zdC"�e���?�\K����@&$b }jz�3۵� x/{��1 Ra�#�|��ƟUK�= &�^��TM�n�2�9�5)?s���{O'�D��D���o [kM�oK0�x�� �Td�_@]b r� �G�����; ����D��D���1�gaR�`��'`0�  �>\��/���f��������ŀ����!fn�Z�|b����U�.t���ट���r�9�+��������	�b rnE�Dk�= ��8�����!b R�Cl�P�E�`�܌�K�'~�@���}*�!`�@��6 L�
+�;��	$b@D��?#��g�F�
+��V��1�v��;�Es��Q����=ɮ�4���b@T��n��!��3q�0^�V�� c ��1�ܶ��[����M�=8I����1@�څ@Cu��`N�o�� WJĀ� W����e��I�� n��N�mீ��ܴ�_d��(�4`E܅I� ���"̵�1 *3�+\�E� �\M���)g	r���
+���8�>��p�?vI� �0�ǀ~�!b������$'�%"I����R��i�1 �0��? S~&�� �r�����{ n�_�����L�?��T�e��Ǝ�7�C"r��OQ~"qI� ��O 8�?$b �܋r�#@�_�v�J̙��/��3�'d�/����W[����o'N�
+�l��-2� ���@j�O~��0���2` H�@�؄��+����pOB� �uO��(l�S�ԕ���9����~�c�:x/�Xd�.���Ɣ�d ��V�y@F $H2� ����+M*�i��l8O@F $H2� ���2�4& r�
+PO��֢����7N�YS
+ ����Y�1`��;�JS3n� g[�'��@W@"la`32�n?'�HB2p
+�hām�mu �����j@F@��V����Z!��xI���H�y�ѱ)��>��Z!6 ���a�`�����dDV$9f���	pM�6�I�!LG:\LdrwPy�~�P�%��L3��7�TK��Am�mo|�6��	3��-�h J3��?�67 �yr���"����g��4. $�1���_�[*��&���S/�dq�������C��h �3��>�6Ŷ%������\�#�RZq�
+�=lK|ŔX��X�WS�e j5 /����$���:��v@������8��
+�d��1(�z2~F�)���3��͋���l��C�������#����=�.\Lt? %� N$9b�%�:���2��u	 �1|-�	ld�����t $b��@?���@� �F�c��ρ^�D�d�[9�ࠐz�����:
+H�@ ��P2v )~���@����z5��|����R�ֵ���|`#�W39؂��<�"-�0��\<�d��u�oGLz 1��Gp����e�倯d� .�j
+H�@j�F�3��@ c{s<��J&	�@�����b���w��  �� ��n���v��< �����,M;��*p>p!0hH��{=�����x�]I�� DLh����<'��h8�@V �#��J���f� I�� �Hn����W�}�N�t[u�$�������� �
+@� 2 	�]&)�� #�3���,	=%�T���k�&�  I�����I��ӳ� �[8	�	�L�]�]t�T�g���6�-@b2 U�OV��:
+ 
+A?��
+} .i�|	�xC���rv�w; ��#�>�i 8_b82 �WP����� �� {'n���8�z;�Ƥy��s� ��@���P��o|�S�ih $3��@߹j��    IEND�B`�
+
+===== FILE: ./src/app/app/layout.tsx =====
+import Header from "@/components/Header";
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+    return (
+        // Background inherited from html - FIXED!
+        <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="mx-auto w-full max-w-4xl flex-1 p-4 sm:p-6">
+                {children}
+            </main>
+            <footer className="py-4 text-center text-sm text-slate-500 dark:text-slate-400">
+                Money Tracker MVP
+            </footer>
+        </div>
+    );
+}
+
+===== FILE: ./src/app/app/all-expenses/page.tsx =====
+"use client";
+
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useAuth } from "@/lib/AuthContext";
+import { useExpenses } from "@/hooks/useExpenses";
+import ExpenseList from "@/components/ExpenseList";
+import MonthSelector from "@/components/MonthSelector";
+import { Loader2, ArrowLeft, FileDown } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { EXPENSE_CATEGORIES, ExpenseCategory } from "@/types/expense";
+import { exportToCSV } from "@/lib/csvExporter";
+
+const getYearMonth = (date: Date) => {
+    return date.toISOString().slice(0, 7);
+};
+
+const getISODate = (date: Date) => {
+    return date.toISOString().split("T")[0];
+};
+
+function AllExpensesContent() {
+    const { user } = useAuth();
+    const searchParams = useSearchParams();
+    const initialMonth =
+        searchParams.get("month") || getYearMonth(new Date());
+
+    const {
+        expenses,
+        loading: expensesLoading,
+        error: expensesError,
+    } = useExpenses(user ? user.uid : "");
+
+    const [selectedMonth, setSelectedMonth] = useState(initialMonth);
+    const [selectedCategory, setSelectedCategory] =
+        useState<ExpenseCategory | "All">("All");
+
+    const [startDate, setStartDate] = useState(getISODate(new Date()));
+    const [endDate, setEndDate] = useState(getISODate(new Date()));
+
+    useEffect(() => {
+        const monthFromURL = searchParams.get("month");
+        if (monthFromURL) {
+            setSelectedMonth(monthFromURL);
+        }
+    }, [searchParams]);
+
+    const filteredExpenses = useMemo(() => {
+        return expenses.filter((expense) => {
+            const expenseMonth = getYearMonth(expense.date.toDate());
+            const monthMatch = expenseMonth === selectedMonth;
+            const categoryMatch =
+                selectedCategory === "All" || expense.category === selectedCategory;
+            return monthMatch && categoryMatch;
+        });
+    }, [expenses, selectedMonth, selectedCategory]);
+
+    const handleMonthlyExport = () => {
+        const fileName = `expenses_${selectedMonth}.csv`;
+        exportToCSV(filteredExpenses, fileName);
+    };
+
+    const handleCustomExport = () => {
+        if (!startDate || !endDate) {
+            alert("Please select both a start and end date.");
+            return;
+        }
+
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+
+        if (start > end) {
+            alert("Start date cannot be after end date.");
+            return;
+        }
+
+        const customFilteredExpenses = expenses.filter((expense) => {
+            const expenseDate = expense.date.toDate();
+            return expenseDate >= start && expenseDate <= end;
+        });
+
+        const fileName = `expenses_custom_${startDate}_to_${endDate}.csv`;
+        exportToCSV(customFilteredExpenses, fileName);
+    };
+
+    if (!user) {
+        return (
+            <div className="flex h-[80vh] w-full items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col gap-6">
+            <Link
+                href="/app"
+                className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
+            >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Dashboard
+            </Link>
+
+            <div className="card-glass">
+                <h2 className="mb-4 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    Monthly View & Export
+                </h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <MonthSelector
+                        expenses={expenses}
+                        selectedMonth={selectedMonth}
+                        setSelectedMonth={setSelectedMonth}
+                    />
+                    <div>
+                        <label
+                            htmlFor="categoryFilter"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        >
+                            Filter by Category
+                        </label>
+                        <select
+                            id="categoryFilter"
+                            value={selectedCategory}
+                            onChange={(e) =>
+                                setSelectedCategory(e.target.value as ExpenseCategory | "All")
+                            }
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        >
+                            <option value="All">All Categories</option>
+                            {EXPENSE_CATEGORIES.map((cat) => (
+                                <option key={cat} value={cat}>
+                                    {cat}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <button
+                    onClick={handleMonthlyExport}
+                    disabled={expensesLoading || filteredExpenses.length === 0}
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    <FileDown className="h-5 w-5" />
+                    Export {filteredExpenses.length} items (Monthly)
+                </button>
+            </div>
+
+            <div className="card-glass">
+                <h2 className="mb-4 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    Custom Date Range Export
+                </h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                        <label
+                            htmlFor="startDate"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        >
+                            Start Date
+                        </label>
+                        <input
+                            type="date"
+                            id="startDate"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        />
+                    </div>
+                    <div>
+                        <label
+                            htmlFor="endDate"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        >
+                            End Date
+                        </label>
+                        <input
+                            type="date"
+                            id="endDate"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        />
+                    </div>
+                </div>
+                <button
+                    onClick={handleCustomExport}
+                    disabled={expensesLoading}
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    <FileDown className="h-5 w-5" />
+                    Export Custom Range
+                </button>
+            </div>
+
+            {expensesError && (
+                <p className="text-center text-red-500">{expensesError}</p>
+            )}
+
+            <ExpenseList
+                userId={user.uid}
+                expenses={filteredExpenses}
+                loading={expensesLoading}
+            />
+        </div>
+    );
+}
+
+===== FILE: ./src/app/app/page.tsx =====
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/AuthContext";
+import ExpenseForm from "@/components/ExpenseForm";
+import ExpenseList from "@/components/ExpenseList";
+import ChartPanel from "@/components/ChartPanel";
+import MonthSelector from "@/components/MonthSelector";
+import StatCard from "@/components/StatCard";
+import { useExpenses } from "@/hooks/useExpenses";
+import {
+    Loader2,
+    BarChart2,
+    EyeOff,
+    ArrowRight,
+    DollarSign,
+    TrendingUp,
+    ArrowUpCircle,
+    Tag,
+} from "lucide-react";
+import { Expense, ExpenseCategory } from "@/types/expense";
+
+const getYearMonth = (date: Date) => {
+    return date.toISOString().slice(0, 7);
+};
+
+const formatCurrency = (amount: number) => {
+    return amount.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+    });
+};
+
+const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month, 0).getDate();
+};
+
+export default function AppPage() {
+    const { user } = useAuth();
+    const router = useRouter();
+
+    const [selectedMonth, setSelectedMonth] = useState(getYearMonth(new Date()));
+    const [chartsVisible, setChartsVisible] = useState(false);
+
+    const {
+        expenses,
+        loading: expensesLoading,
+        error: expensesError,
+    } = useExpenses(user ? user.uid : "");
+
+    const monthlyExpenses = useMemo(() => {
+        return expenses.filter(
+            (expense) => getYearMonth(expense.date.toDate()) === selectedMonth
+        );
+    }, [expenses, selectedMonth]);
+
+    const stats = useMemo(() => {
+        const totalSpend = monthlyExpenses.reduce(
+            (acc, exp) => acc + exp.amount,
+            0
+        );
+
+        const [year, month] = selectedMonth.split("-").map(Number);
+        const daysInMonth = getDaysInMonth(year, month);
+        const avgSpendPerDay = totalSpend === 0 ? 0 : totalSpend / daysInMonth;
+
+        const biggestExpense = monthlyExpenses.reduce(
+            (max, exp) => (exp.amount > max.amount ? exp : max),
+            { amount: 0, notes: "N/A" } as Expense
+        );
+
+        const categoryTotals: Record<ExpenseCategory, number> = {} as any;
+        monthlyExpenses.forEach((exp) => {
+            categoryTotals[exp.category] =
+                (categoryTotals[exp.category] || 0) + exp.amount;
+        });
+
+        const topCategory = Object.entries(categoryTotals).reduce(
+            (max, [cat, amount]) => (amount > max.amount ? { cat, amount } : max),
+            { cat: "N/A", amount: 0 }
+        );
+
+        return {
+            totalSpend,
+            avgSpendPerDay,
+            biggestExpense,
+            topCategory,
+        };
+    }, [monthlyExpenses, selectedMonth]);
+
+    useEffect(() => {
+        if (user && !user.emailVerified) {
+            router.push("/verify-email");
+        }
+    }, [user, router]);
+
+    if (!user || !user.emailVerified) {
+        return (
+            <div className="flex h-[80vh] w-full items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+            </div>
+        );
+    }
+
+    const recentExpenses = useMemo(() => {
+        return monthlyExpenses.slice(0, 5);
+    }, [monthlyExpenses]);
+
+    return (
+        <div className="flex flex-col gap-6">
+            <div className="card-glass">
+                <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
+                    Monthly Summary
+                </h2>
+                <MonthSelector
+                    expenses={expenses}
+                    selectedMonth={selectedMonth}
+                    setSelectedMonth={setSelectedMonth}
+                />
+                <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+                    <StatCard
+                        title="Total Spending"
+                        value={formatCurrency(stats.totalSpend)}
+                        icon={<DollarSign size={20} />}
+                    />
+                    <StatCard
+                        title="Avg. Spend / Day"
+                        value={formatCurrency(stats.avgSpendPerDay)}
+                        icon={<TrendingUp size={20} />}
+                    />
+                    <StatCard
+                        title="Biggest Expense"
+                        value={formatCurrency(stats.biggestExpense.amount)}
+                        icon={<ArrowUpCircle size={20} />}
+                        description={stats.biggestExpense.notes || "N/A"}
+                    />
+                    <StatCard
+                        title="Top Category"
+                        value={stats.topCategory.cat}
+                        icon={<Tag size={20} />}
+                        description={formatCurrency(stats.topCategory.amount)}
+                    />
+                </div>
+            </div>
+
+            <ExpenseForm userId={user.uid} />
+
+            <div className="card-glass">
+                <button
+                    onClick={() => setChartsVisible(!chartsVisible)}
+                    className="glass-button flex w-full items-center justify-between rounded-xl p-4 text-lg font-semibold text-slate-800 transition-all duration-200 hover:scale-[1.01] dark:text-slate-100"
+                >
+                    <div className="flex items-center gap-3">
+                        <BarChart2 className="h-5 w-5" />
+                        <span>Spending Charts</span>
+                    </div>
+                    {chartsVisible ? (
+                        <EyeOff className="h-5 w-5 text-slate-500" />
+                    ) : (
+                        <BarChart2 className="h-5 w-5 text-slate-500" />
+                    )}
+                </button>
+
+                {chartsVisible && (
+                    <div className="mt-4 space-y-4">
+                        {expensesLoading && (
+                            <div className="flex justify-center p-8">
+                                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                                <span className="ml-2 text-gray-500 dark:text-gray-400">
+                                    Loading charts...
+                                </span>
+                            </div>
+                        )}
+                        {!expensesLoading && !expensesError && (
+                            <ChartPanel expenses={monthlyExpenses} />
+                        )}
+                        {expensesError && (
+                            <p className="text-center text-red-500">{expensesError}</p>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            <div className="flex flex-col gap-4">
+                <ExpenseList
+                    userId={user.uid}
+                    expenses={recentExpenses}
+                    loading={expensesLoading}
+                />
+                {monthlyExpenses.length > 5 && (
+                    <button
+                        onClick={() => router.push(`/app/all-expenses?month=${selectedMonth}`)}
+                        className="glass-button group flex items-center justify-center gap-3 rounded-xl p-4 text-center font-medium text-blue-600 transition-all duration-200 hover:scale-[1.02] hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    >
+                        View All Transactions for this Month
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+}
+
+===== FILE: ./src/app/layout.tsx =====
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { AuthContextProvider } from "@/lib/AuthContext";
+import { ThemeProvider } from "@/components/ThemeProvider";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Money Tracker",
+  description: "Simple expense tracking",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script src="/force-theme.js" defer></script>
+      </head>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={true}
+          storageKey="money-tracker-theme"
+        >
+          <AuthContextProvider>{children}</AuthContextProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+
+===== FILE: ./src/app/(auth)/signup/page.tsx =====
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+    createUserWithEmailAndPassword,
+    sendEmailVerification,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { Mail, Lock, UserPlus } from "lucide-react";
+
+export default function SignUpPage() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirm, setPasswordConfirm] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleSignUp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (password !== passwordConfirm) {
+            setError("Passwords do not match");
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+            await sendEmailVerification(userCredential.user);
+
+            router.push("/verify-email");
+        } catch (err: any) {
+            setError(err.message);
+            setLoading(false);
+        }
+    };
+
+    return (
+        <>
+            <h2 className="mb-6 text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
+                Create Account
+            </h2>
+            {error && (
+                <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-sm text-red-700">
+                    {error}
+                </p>
+            )}
+            <form onSubmit={handleSignUp} className="space-y-6">
+                <div>
+                    <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                        Email address
+                    </label>
+                    <div className="relative mt-1">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <Mail className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                        </div>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autoComplete="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="glass-input block w-full rounded-xl pl-10 py-3 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
+                            placeholder="you@example.com"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                        Password
+                    </label>
+                    <div className="relative mt-1">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <Lock className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                        </div>
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autoComplete="new-password"
+                            required
+                            minLength={6}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="glass-input block w-full rounded-xl pl-10 py-3 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
+                            placeholder="Minimum 6 characters"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="passwordConfirm"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                        Confirm Password
+                    </label>
+                    <div className="relative mt-1">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <Lock className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                        </div>
+                        <input
+                            id="passwordConfirm"
+                            name="passwordConfirm"
+                            type="password"
+                            autoComplete="new-password"
+                            required
+                            value={passwordConfirm}
+                            onChange={(e) => setPasswordConfirm(e.target.value)}
+                            className="glass-input block w-full rounded-xl pl-10 py-3 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
+                            placeholder="Confirm your password"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="glass-button-primary group relative flex w-full justify-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:hover:scale-100"
+                    >
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <UserPlus className="h-5 w-5 text-blue-200 group-hover:text-white transition-colors" />
+                        </span>
+                        {loading ? "Creating account..." : "Sign Up"}
+                    </button>
+                </div>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                Already have an account?{" "}
+                <Link
+                    href="/login"
+                    className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                >
+                    Log in
+                </Link>
+            </p>
+        </>
+    );
+}
+
+===== FILE: ./src/app/(auth)/verify-email/page.tsx =====
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { sendEmailVerification, signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAuth } from "@/lib/AuthContext";
+import { Mail, Send, ArrowLeft, Loader2 } from "lucide-react";
+
+const FullPageLoader = () => (
+    <div className="flex h-screen w-full items-center justify-center bg-gray-100 dark:bg-gray-950">
+        <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+    </div>
+);
+
+export default function VerifyEmailPage() {
+    const { user } = useAuth();
+    const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (user && user.emailVerified) {
+            router.push("/app");
+        }
+    }, [user, router]);
+
+    const handleResendVerification = async () => {
+        setLoading(true);
+        setError(null);
+        setMessage(null);
+
+        if (!user) {
+            setError("You are not logged in.");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            await sendEmailVerification(user);
+            setMessage("New verification email sent. Check your inbox.");
+        } catch (err: any) {
+            setError(err.message);
+        }
+        setLoading(false);
+    };
+
+    const handleSignOutAndLogin = async () => {
+        try {
+            await signOut(auth);
+            router.push("/login");
+        } catch (err: any) {
+            setError(err.message);
+        }
+    };
+
+    if (!user || user.emailVerified) {
+        return <FullPageLoader />;
+    }
+
+    return (
+        <>
+            <div className="text-center">
+                <Mail className="mx-auto h-12 w-12 text-blue-600" />
+                <h2 className="mt-4 text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
+                    Verify Your Email
+                </h2>
+                <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
+                    We have sent a verification link to{" "}
+                    <strong className="text-gray-900 dark:text-gray-100">
+                        {user.email}
+                    </strong>
+                    . Please check your inbox (and spam folder) to continue.
+                </p>
+            </div>
+
+            {error && (
+                <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-sm text-red-700">
+                    {error}
+                </p>
+            )}
+            {message && (
+                <p className="mb-4 rounded-md bg-green-100 p-3 text-center text-sm text-green-700 dark:bg-green-800 dark:text-green-100">
+                    {message}
+                </p>
+            )}
+
+            <div className="mt-6 space-y-4">
+                <button
+                    onClick={handleResendVerification}
+                    disabled={loading}
+                    className="glass-button-primary group relative flex w-full justify-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:hover:scale-100"
+                >
+                    {loading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                        <Send className="mr-2 h-5 w-5" />
+                    )}
+                    {loading ? "Sending..." : "Resend Verification Email"}
+                </button>
+
+                <p className="text-center text-sm text-gray-600">
+                    <button
+                        onClick={handleSignOutAndLogin}
+                        className="flex w-full items-center justify-center rounded-md py-2 font-medium text-blue-600 hover:bg-gray-100 dark:text-blue-400 dark:hover:bg-gray-700"
+                    >
+                        <ArrowLeft className="mr-1 h-4 w-4" />
+                        Back to log in
+                    </button>
+                </p>
+            </div>
+        </>
+    );
+}
+
+===== FILE: ./src/app/(auth)/layout.tsx =====
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+
+export default function AuthLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="flex min-h-screen flex-col items-center justify-center px-4">
+            {/* Theme Switcher di pojok kanan atas */}
+            <div className="fixed top-4 right-4 z-50">
+                <ThemeSwitcher />
+            </div>
+
+            {/* Card login/signup dengan glass morphism */}
+            <div className="card-glass w-full max-w-md">
+                {children}
+            </div>
+        </div>
+    );
+}
+
+===== FILE: ./src/app/(auth)/forgot/page.tsx =====
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { Mail, Send, ArrowLeft } from "lucide-react";
+
+export default function ForgotPasswordPage() {
+    const [email, setEmail] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setMessage(null);
+        try {
+            await sendPasswordResetEmail(auth, email);
+            setMessage("Password reset email sent. Check your inbox.");
+        } catch (err: any) {
+            setError(err.message);
+        }
+        setLoading(false);
+    };
+
+    return (
+        <>
+            <h2 className="mb-6 text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
+                Reset Password
+            </h2>
+            {error && (
+                <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-sm text-red-700">
+                    {error}
+                </p>
+            )}
+            {message && (
+                <p className="mb-4 rounded-md bg-green-100 p-3 text-center text-sm text-green-700 dark:bg-green-800 dark:text-green-100">
+                    {message}
+                </p>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                    <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                        Email address
+                    </label>
+                    <div className="relative mt-1">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <Mail className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                        </div>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autoComplete="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="glass-input block w-full rounded-xl pl-10 py-3 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
+                            placeholder="you@example.com"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="glass-button-primary group relative flex w-full justify-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:hover:scale-100"
+                    >
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <Send className="h-5 w-5 text-blue-200 group-hover:text-white transition-colors" />
+                        </span>
+                        {loading ? "Sending..." : "Send Reset Email"}
+                    </button>
+                </div>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                <Link
+                    href="/login"
+                    className="flex items-center justify-center font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Back to log in
+                </Link>
+            </p>
+        </>
+    );
+}
+
+===== FILE: ./src/app/(auth)/login/page.tsx =====
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { Mail, Lock, LogIn, ArrowRight } from "lucide-react";
+
+const GoogleIcon = () => (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.3v2.84C4.13 20.73 7.7 23 12 23z" />
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.3C1.48 8.68 1 10.29 1 12s.48 3.32 1.3 4.93l3.54-2.84z" />
+        <path d="M12 5.38c1.63 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 4.13 3.27 2.3 6.86l3.54 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
+    </svg>
+);
+
+export default function LoginPage() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        try {
+            const userCredential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            if (userCredential.user.emailVerified) {
+                router.push("/app");
+            } else {
+                setError("Please verify your email before logging in.");
+                router.push("/verify-email");
+            }
+        } catch (err: any) {
+            if (err.code === "auth/invalid-credential") {
+                setError("Invalid email or password. Please try again.");
+            } else {
+                setError(err.message);
+            }
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+
+            if (result.user.emailVerified) {
+                router.push("/app");
+            } else {
+                setError("Please verify your email.");
+                router.push("/verify-email");
+            }
+        } catch (err: any) {
+            setError(err.message);
+            setLoading(false);
+        }
+    };
+
+    return (
+        <>
+            <h2 className="mb-6 text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
+                Log In
+            </h2>
+            {error && (
+                <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-sm text-red-700">
+                    {error}
+                </p>
+            )}
+            <form onSubmit={handleLogin} className="space-y-6">
+                <div>
+                    <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                        Email address
+                    </label>
+                    <div className="relative mt-1">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <Mail className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                        </div>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autoComplete="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="glass-input block w-full rounded-xl pl-10 py-3 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
+                            placeholder="you@example.com"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                        Password
+                    </label>
+                    <div className="relative mt-1">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <Lock className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                        </div>
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autoComplete="current-password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="glass-input block w-full rounded-xl pl-10 py-3 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/50 focus:outline-none"
+                            placeholder="••••••••"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-end">
+                    <div className="text-sm">
+                        <Link
+                            href="/forgot"
+                            className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                        >
+                            Forgot your password?
+                        </Link>
+                    </div>
+                </div>
+
+                <div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="glass-button-primary group relative flex w-full justify-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:hover:scale-100"
+                    >
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <LogIn className="h-5 w-5 text-blue-200 group-hover:text-white transition-colors" />
+                        </span>
+                        {loading ? "Logging in..." : "Log In"}
+                    </button>
+                </div>
+            </form>
+
+            <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                    <span className="bg-white/80 px-2 text-slate-700 dark:bg-black/80 dark:text-slate-300">
+                        Or continue with
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <button
+                    onClick={handleGoogleSignIn}
+                    disabled={loading}
+                    className="glass-button group relative flex w-full justify-center rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 dark:text-slate-200"
+                >
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <GoogleIcon />
+                    </span>
+                    Sign in with Google
+                </button>
+            </div>
+
+            <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                Not a member?{" "}
+                <Link
+                    href="/signup"
+                    className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                >
+                    Sign up now
+                    <ArrowRight className="ml-1 inline h-4 w-4" />
+                </Link>
+            </p>
+        </>
+    );
+}
+
+===== FILE: ./src/app/page.tsx =====
+export default function RootPage() {
+  return null;
+}
+
+===== FILE: ./src/app/globals.css =====
+@import "tailwindcss";
+
+/* THEME BACKGROUND - Applied to html element */
+html {
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  color: #0f172a;
+  min-height: 100vh;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+html.dark {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Body inherits from html */
+body {
+  background: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Force text color inheritance for all elements */
+*, *::before, *::after {
+  color: inherit;
+}
+
+/* Override specific text classes that might conflict */
+.text-slate-900, h1, h2, h3, h4, h5, h6 {
+  color: #0f172a !important;
+}
+
+.dark .text-slate-900, 
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #ffffff !important;
+}
+
+/* Fix form elements for light mode */
+input, select, textarea, option {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #0f172a !important;
+  border-color: rgba(203, 213, 225, 0.6) !important;
+}
+
+.dark input, .dark select, .dark textarea, .dark option {
+  background-color: rgba(55, 65, 81, 0.9) !important;
+  color: #ffffff !important;
+  border-color: rgba(107, 114, 128, 0.6) !important;
+}
+
+/* Fix placeholder text */
+input::placeholder, textarea::placeholder {
+  color: rgba(107, 114, 128, 0.7) !important;
+}
+
+.dark input::placeholder, .dark textarea::placeholder {
+  color: rgba(156, 163, 175, 0.7) !important;
+}
+
+@layer base {
+  /* Reset styles */
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Ensure no conflicts with inherited body styles */
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(148 163 184 / 0.1);
+  }
+  
+  .dark ::-webkit-scrollbar-track {
+    background: rgba(0 0 0 / 0.5);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148 163 184 / 0.7);
+    border-radius: 9999px;
+  }
+  
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255 255 255 / 0.3);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(100 116 139 / 0.8);
+  }
+  
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255 255 255 / 0.5);
+  }
+}
+
+@layer components {
+  /* Glass card component utility classes */
+  .glass-card {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(203, 213, 225, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .glass-card {
+    background: rgba(10, 10, 10, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+
+  .glass-card-strong {
+    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(203, 213, 225, 0.5);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .dark .glass-card-strong {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Input glass styling */
+  .glass-input {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(148, 163, 184, 0.5);
+    backdrop-filter: blur(4px);
+    color: rgb(15 23 42);
+  }
+
+  .dark .glass-input {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+
+  .glass-input:focus {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  .dark .glass-input:focus {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  /* Button glass styling */
+  .glass-button {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .dark .glass-button {
+    background: rgba(0, 0, 0, 0.7);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-button:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(148, 163, 184, 0.6);
+  }
+
+  .dark .glass-button:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-button-primary {
+    background: rgba(59, 130, 246, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+  }
+
+  .dark .glass-button-primary {
+    background: rgba(37, 99, 235, 0.8);
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+
+  .glass-button-primary:hover {
+    background: rgba(37, 99, 235, 0.9);
+    border-color: rgba(59, 130, 246, 0.6);
+  }
+
+  .dark .glass-button-primary:hover {
+    background: rgba(29, 78, 216, 0.9);
+    border-color: rgba(37, 99, 235, 0.6);
+  }
+
+  /* Additional glass variants */
+  .card-glass {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(203, 213, 225, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .dark .card-glass {
+    background: rgba(10, 10, 10, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+  
+  .card-glass:hover {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(1.02);
+  }
+  
+  .dark .card-glass:hover {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+}
+
+===== FILE: ./src/components/ThemeSwitcher.tsx =====
+"use client";
+
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
+
+export const ThemeSwitcher = () => {
+    const [mounted, setMounted] = useState(false);
+    const { theme, setTheme, resolvedTheme } = useTheme();
+
+    useEffect(() => {
+        setMounted(true);
+        console.log('ThemeSwitcher mounted, theme:', theme, 'resolvedTheme:', resolvedTheme);
+    }, [theme, resolvedTheme]);
+
+    if (!mounted) {
+        return (
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-200 dark:bg-gray-800"></div>
+        );
+    }
+
+    const isDark = theme === 'dark' || (theme === 'system' && resolvedTheme === 'dark');
+
+    const handleToggle = () => {
+        const newTheme = isDark ? "light" : "dark";
+        console.log('Toggling theme from', theme, 'to', newTheme);
+        setTheme(newTheme);
+    };
+
+    return (
+        <button
+            onClick={handleToggle}
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/70 border border-gray-300 text-gray-700 transition-all duration-200 hover:bg-white/90 hover:scale-105 dark:bg-black/70 dark:border-white/20 dark:text-gray-300 dark:hover:bg-black/90"
+            aria-label="Toggle theme"
+        >
+            {isDark ? (
+                <Sun size={18} className="transition-transform hover:rotate-12" />
+            ) : (
+                <Moon size={18} className="transition-transform hover:rotate-12" />
+            )}
+        </button>
+    );
+};
+
+===== FILE: ./src/components/ThemeDebugger.tsx =====
+"use client";
+
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+
+export const ThemeDebugger = () => {
+    const [mounted, setMounted] = useState(false);
+    const { theme, resolvedTheme, setTheme, systemTheme } = useTheme();
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        return <div className="text-sm text-gray-500">Loading theme info...</div>;
+    }
+
+    return (
+        <div className="fixed bottom-4 left-4 p-3 bg-white/90 dark:bg-black/90 border border-gray-300 dark:border-white/20 rounded-lg text-xs font-mono">
+            <div>Theme: {theme}</div>
+            <div>Resolved: {resolvedTheme}</div>
+            <div>System: {systemTheme}</div>
+            <div>HTML Class: {typeof window !== 'undefined' ? document.documentElement.className : 'N/A'}</div>
+            <div className="mt-2 space-x-2">
+                <button
+                    onClick={() => setTheme('light')}
+                    className="px-2 py-1 bg-yellow-200 rounded"
+                >
+                    Light
+                </button>
+                <button
+                    onClick={() => setTheme('dark')}
+                    className="px-2 py-1 bg-gray-800 text-white rounded"
+                >
+                    Dark
+                </button>
+            </div>
+        </div>
+    );
+};
+
+===== FILE: ./src/components/ExpenseList.tsx =====
+"use client";
+
+import { db } from "@/lib/firebase";
+import { doc, deleteDoc, Timestamp } from "firebase/firestore";
+import { Expense } from "@/types/expense";
+import { Trash2, Loader2, Calendar, FileText } from "lucide-react";
+
+interface ExpenseListProps {
+    userId: string;
+    expenses: Expense[];
+    loading: boolean;
+}
+
+const formatCurrency = (amount: number) => {
+    return amount.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+    });
+};
+
+const formatDate = (timestamp: Timestamp) => {
+    return timestamp.toDate().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+};
+
+export default function ExpenseList({
+    userId,
+    expenses,
+    loading,
+}: ExpenseListProps) {
+    const handleDelete = async (id: string) => {
+        if (!userId) return;
+        try {
+            const docRef = doc(db, "users", userId, "expenses", id);
+            await deleteDoc(docRef);
+        } catch (error) {
+            console.error("Error deleting document: ", error);
+        }
+    };
+
+    return (
+        <div className="card-glass">
+            <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
+                Recent Expenses
+            </h2>
+            <div className="space-y-4">
+                {loading && (
+                    <div className="flex justify-center p-8">
+                        <Loader2 className="h-8 w-8 animate-spin text-blue-500 dark:text-blue-400" />
+                    </div>
+                )}
+                {!loading && expenses.length === 0 && (
+                    <p className="text-center text-slate-600 dark:text-slate-400 py-8">
+                        No expenses found. Add your first expense above!
+                    </p>
+                )}
+                {!loading &&
+                    expenses.map((expense) => (
+                        <div
+                            key={expense.id}
+                            className="glass-card group flex items-center justify-between gap-4 p-5 hover:shadow-lg transition-all duration-200"
+                        >
+                            <div className="flex-1 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                                        {expense.category}
+                                    </h3>
+                                    <span className="text-xl font-bold text-slate-900 dark:text-white">
+                                        {formatCurrency(expense.amount)}
+                                    </span>
+                                </div>
+                                <div className="flex flex-col text-sm text-slate-600 dark:text-slate-400 sm:flex-row sm:gap-6">
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="h-4 w-4" />
+                                        {formatDate(expense.date)}
+                                    </div>
+                                    {expense.notes && (
+                                        <div className="flex items-center gap-2">
+                                            <FileText className="h-4 w-4" />
+                                            <span className="truncate">{expense.notes}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => handleDelete(expense.id)}
+                                className="glass-button flex-shrink-0 p-3 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-all duration-200 hover:scale-110"
+                                aria-label="Delete expense"
+                            >
+                                <Trash2 className="h-5 w-5" />
+                            </button>
+                        </div>
+                    ))}
+            </div>
+        </div>
+    );
+}
+
+===== FILE: ./src/components/StatCard.tsx =====
+import { ReactNode } from "react";
+
+interface StatCardProps {
+    title: string;
+    value: string;
+    icon: ReactNode;
+    description?: string;
+}
+
+export default function StatCard({
+    title,
+    value,
+    icon,
+    description,
+}: StatCardProps) {
+    return (
+        <div className="card-glass group overflow-hidden">
+            <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">
+                    {title}
+                </p>
+                <div className="text-slate-500 dark:text-slate-400 transition-transform group-hover:scale-110">{icon}</div>
+            </div>
+            <div className="mt-3">
+                <p className="truncate text-3xl font-bold text-slate-900 dark:text-white">
+                    {value}
+                </p>
+                {description && (
+                    <p className="truncate text-sm text-slate-600 dark:text-slate-400 mt-1">
+                        {description}
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+}
+
+===== FILE: ./src/components/charts/PieChart.tsx =====
+"use client";
+
+import { useMemo } from "react";
+import { Pie } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    ArcElement,
+    Tooltip,
+    Legend,
+    ChartData,
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { Expense, EXPENSE_CATEGORIES } from "@/types/expense";
+import { useTheme } from "next-themes"; // Impor useTheme
+
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
+
+interface PieChartProps {
+    expenses: Expense[];
+}
+
+const CATEGORY_COLORS = {
+    "Food & Beverage": "#3B82F6",
+    Shopping: "#EC4899",
+    Transport: "#F59E0B",
+    Bills: "#EF4444",
+    Other: "#8B5CF6",
+};
+
+const processPieChartData = (
+    expenses: Expense[]
+): ChartData<"pie", number[], string> => {
+    const categoryTotals: { [key: string]: number } = {};
+
+    EXPENSE_CATEGORIES.forEach((cat) => {
+        categoryTotals[cat] = 0;
+    });
+
+    expenses.forEach((expense) => {
+        if (categoryTotals.hasOwnProperty(expense.category)) {
+            categoryTotals[expense.category] += expense.amount;
+        }
+    });
+
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
+    const backgroundColors = labels.map(
+        (label) =>
+            CATEGORY_COLORS[label as keyof typeof CATEGORY_COLORS] || "#6B7280"
+    );
+
+    return {
+        labels,
+        datasets: [
+            {
+                label: "Spending by Category",
+                data,
+                backgroundColor: backgroundColors,
+                borderColor: "#ffffff",
+                borderWidth: 1,
+            },
+        ],
+    };
+};
+
+export default function PieChart({ expenses }: PieChartProps) {
+    const { theme } = useTheme(); // Dapatkan tema saat ini
+    const chartData = useMemo(() => processPieChartData(expenses), [expenses]);
+    const totalSpend = useMemo(
+        () => expenses.reduce((acc, exp) => acc + exp.amount, 0),
+        [expenses]
+    );
+
+    // Atur warna teks legenda berdasarkan tema
+    const legendColor = theme === "dark" ? "#9ca3af" : "#4b5563"; // gray-400 / gray-600
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: "top" as const,
+                labels: {
+                    color: legendColor, // Gunakan warna dinamis
+                },
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context: any) {
+                        let label = context.label || "";
+                        if (label) {
+                            label += ": ";
+                        }
+                        if (context.parsed !== null) {
+                            label += new Intl.NumberFormat("en-US", {
+                                style: "currency",
+                                currency: "USD",
+                            }).format(context.parsed);
+                        }
+                        return label;
+                    },
+                },
+            },
+            datalabels: {
+                formatter: (value: number, ctx: any) => {
+                    if (totalSpend === 0) return "0%";
+                    const percentage = ((value / totalSpend) * 100).toFixed(1) + "%";
+                    return (value / totalSpend) * 100 > 5 ? percentage : "";
+                },
+                color: "#fff",
+                font: {
+                    weight: "bold" as "bold",
+                },
+            },
+        },
+    };
+
+    return <Pie data={chartData} options={options} />;
+}
+
+===== FILE: ./src/components/charts/LineChart.tsx =====
+"use client";
+
+import { useMemo } from "react";
+import { Line } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler,
+    ChartData,
+} from "chart.js";
+import { Expense } from "@/types/expense";
+import { useTheme } from "next-themes";
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+);
+
+interface LineChartProps {
+    expenses: Expense[];
+}
+
+const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month, 0).getDate();
+};
+
+const processLineChartData = (
+    expenses: Expense[]
+): ChartData<"line", number[], string> => {
+    const labels: string[] = [];
+    const dataPoints: number[] = [];
+    const dailyTotals: { [key: number]: number } = {};
+
+    let year = new Date().getFullYear();
+    let month = new Date().getMonth() + 1;
+
+    if (expenses.length > 0) {
+        const firstExpenseDate = expenses[0].date.toDate();
+        year = firstExpenseDate.getFullYear();
+        month = firstExpenseDate.getMonth() + 1;
+    }
+
+    const daysInMonth = getDaysInMonth(year, month);
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        labels.push(i.toString());
+        dailyTotals[i] = 0;
+    }
+
+    expenses.forEach((expense) => {
+        const expenseDate = expense.date.toDate();
+        const dayOfMonth = expenseDate.getDate();
+        dailyTotals[dayOfMonth] += expense.amount;
+    });
+
+    labels.forEach((day) => {
+        dataPoints.push(dailyTotals[parseInt(day)]);
+    });
+
+    return {
+        labels,
+        datasets: [
+            {
+                label: "Spending",
+                data: dataPoints,
+                fill: true,
+                backgroundColor: "rgba(59, 130, 246, 0.2)",
+                borderColor: "rgba(59, 130, 246, 1)",
+                tension: 0.1,
+                pointBackgroundColor: "rgba(59, 130, 246, 1)",
+            },
+        ],
+    };
+};
+
+export default function LineChart({ expenses }: LineChartProps) {
+    const { theme } = useTheme();
+    const chartData = useMemo(
+        () => processLineChartData(expenses),
+        [expenses]
+    );
+
+    const gridColor =
+        theme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+    const textColor = theme === "dark" ? "#e5e7eb" : "#374151";
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context: any) {
+                        let label = "Day " + context.label || "";
+                        if (label) {
+                            label += ": ";
+                        }
+                        if (context.parsed.y !== null) {
+                            label += new Intl.NumberFormat("en-US", {
+                                style: "currency",
+                                currency: "USD",
+                            }).format(context.parsed.y);
+                        }
+                        return label;
+                    },
+                },
+            },
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: textColor,
+                },
+                grid: {
+                    color: gridColor,
+                },
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: "Day of the Month",
+                    color: textColor,
+                },
+                ticks: {
+                    color: textColor,
+                },
+                grid: {
+                    color: gridColor,
+                },
+            },
+        },
+    };
+
+    return <Line data={chartData} options={options} />;
+}
+
+===== FILE: ./src/components/ExpenseForm.tsx =====
+"use client";
+
+import { useState } from "react";
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { EXPENSE_CATEGORIES, ExpenseCategory } from "@/types/expense";
+import { Plus, Loader2 } from "lucide-react";
+
+interface ExpenseFormProps {
+    userId: string;
+}
+
+export default function ExpenseForm({ userId }: ExpenseFormProps) {
+    const [notes, setNotes] = useState("");
+    const [amount, setAmount] = useState("");
+    const [category, setCategory] = useState<ExpenseCategory>("Food & Beverage");
+    const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        if (!amount || !category || !date) {
+            setError("Please fill in Amount, Category, and Date.");
+            return;
+        }
+        const numAmount = parseFloat(amount);
+        if (isNaN(numAmount) || numAmount <= 0) {
+            setError("Please enter a valid positive amount.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const expenseData = {
+                uid: userId,
+                notes: notes,
+                amount: numAmount,
+                category,
+                date: new Date(date),
+                createdAt: serverTimestamp(),
+            };
+            await addDoc(collection(db, "users", userId, "expenses"), expenseData);
+
+            setNotes("");
+            setAmount("");
+            setCategory("Food & Beverage");
+            setDate(new Date().toISOString().split("T")[0]);
+        } catch (err: any) {
+            console.error("Error adding document: ", err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="card-glass">
+            <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
+                Add Expense
+            </h2>
+            {error && (
+                <div className="mb-6 rounded-xl bg-red-100/80 backdrop-blur-sm border border-red-200/50 p-4 text-sm text-red-700 dark:bg-red-900/20 dark:border-red-800/30 dark:text-red-300">
+                    {error}
+                </div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                    <label
+                        htmlFor="amount"
+                        className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                    >
+                        Amount ($)
+                    </label>
+                    <input
+                        type="number"
+                        id="amount"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        required
+                        min="0.01"
+                        step="0.01"
+                        className="glass-input block w-full rounded-xl py-3 px-4 text-lg font-medium placeholder-slate-400 transition-all duration-200 focus:ring-2 focus:ring-blue-400/50 focus:outline-none"
+                        placeholder="0.00"
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="category"
+                        className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                    >
+                        Category
+                    </label>
+                    <select
+                        id="category"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
+                        required
+                        className="glass-input block w-full rounded-xl py-3 px-4 text-lg font-medium transition-all duration-200 focus:ring-2 focus:ring-blue-400/50 focus:outline-none"
+                    >
+                        {EXPENSE_CATEGORIES.map((cat) => (
+                            <option key={cat} value={cat} className="bg-white dark:bg-black">
+                                {cat}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="date"
+                        className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                    >
+                        Date
+                    </label>
+                    <input
+                        type="date"
+                        id="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        required
+                        className="glass-input block w-full rounded-xl py-3 px-4 text-lg font-medium transition-all duration-200 focus:ring-2 focus:ring-blue-400/50 focus:outline-none"
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="notes"
+                        className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                    >
+                        Notes (Optional)
+                    </label>
+                    <input
+                        type="text"
+                        id="notes"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        className="glass-input block w-full rounded-xl py-3 px-4 text-lg font-medium placeholder-slate-400 transition-all duration-200 focus:ring-2 focus:ring-blue-400/50 focus:outline-none"
+                        placeholder="e.g., Coffee with client"
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="glass-button-primary group w-full py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-200 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center"
+                >
+                    {loading ? (
+                        <Loader2 className="h-6 w-6 animate-spin" />
+                    ) : (
+                        <Plus className="mr-3 h-6 w-6 transition-transform group-hover:scale-110" />
+                    )}
+                    {loading ? "Adding..." : "Add Expense"}
+                </button>
+            </form>
+        </div>
+    );
+}
+
+===== FILE: ./src/components/ThemeProvider.tsx =====
+"use client";
+
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import type { ThemeProviderProps } from "next-themes/dist/types";
+
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+    return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+}
+
+===== FILE: ./src/components/Header.tsx =====
+"use client";
+
+import { useAuth } from "@/lib/AuthContext";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { LogOut, User, Landmark } from "lucide-react";
+import { ThemeSwitcher } from "./ThemeSwitcher";
+
+export default function Header() {
+    const { user } = useAuth();
+    const router = useRouter();
+
+    const handleSignOut = async () => {
+        try {
+            await signOut(auth);
+            router.push("/login");
+        } catch (error) {
+            console.error("Error signing out: ", error);
+        }
+    };
+
+    return (
+        <header className="sticky top-0 z-50 w-full glass-card-strong border-b border-slate-200/50 dark:border-white/10 backdrop-blur-xl">
+            <div className="mx-auto flex max-w-6xl items-center justify-between p-4">
+                <div className="flex items-center gap-3">
+                    <Landmark className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Money Tracker
+                    </h1>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                        <span className="hidden text-sm font-medium text-slate-600 dark:text-slate-300 sm:block">
+                            {user ? user.email : ""}
+                        </span>
+                    </div>
+                    <button
+                        onClick={handleSignOut}
+                        className="glass-button group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all duration-200 hover:scale-105"
+                    >
+                        <LogOut className="h-4 w-4 transition-transform group-hover:scale-110" />
+                        <span className="hidden sm:block">Sign Out</span>
+                    </button>
+                    <ThemeSwitcher />
+                </div>
+            </div>
+        </header>
+    );
+}
+
+===== FILE: ./src/components/MonthSelector.tsx =====
+import { useMemo } from "react";
+import { Expense } from "@/types/expense";
+
+interface MonthSelectorProps {
+    expenses: Expense[];
+    selectedMonth: string;
+    setSelectedMonth: (month: string) => void;
+}
+
+const getYearMonth = (date: Date) => {
+    return date.toISOString().slice(0, 7);
+};
+
+const formatMonthDisplay = (yearMonth: string) => {
+    const [year, month] = yearMonth.split("-");
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    return date.toLocaleString("en-US", { month: "long", year: "numeric" });
+};
+
+export default function MonthSelector({
+    expenses,
+    selectedMonth,
+    setSelectedMonth,
+}: MonthSelectorProps) {
+    const uniqueMonths = useMemo(() => {
+        const months = new Set<string>();
+        months.add(getYearMonth(new Date()));
+        expenses.forEach((expense) => {
+            months.add(getYearMonth(expense.date.toDate()));
+        });
+        return Array.from(months).sort((a, b) => b.localeCompare(a));
+    }, [expenses]);
+
+    return (
+        <div>
+            <label
+                htmlFor="monthFilter"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+                Filter by Month
+            </label>
+            <select
+                id="monthFilter"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+            >
+                {uniqueMonths.map((month) => (
+                    <option key={month} value={month}>
+                        {formatMonthDisplay(month)}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+}
+
+===== FILE: ./src/components/ChartPanel.tsx =====
+import { Expense } from "@/types/expense";
+import LineChart from "./charts/LineChart";
+import PieChart from "./charts/PieChart";
+
+interface ChartPanelProps {
+  expenses: Expense[];
+}
+
+export default function ChartPanel({ expenses }: ChartPanelProps) {
+  return (
+    <div>
+      <h2 className="mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+        Dashboard
+      </h2>
+      {expenses.length === 0 ? (
+        <p className="text-center text-gray-500 dark:text-gray-400">
+          No expenses found for this month.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+            <h3 className="mb-2 text-center text-lg font-medium text-gray-800 dark:text-gray-200">
+              Daily Spending
+            </h3>
+            <div className="relative h-64">
+              <LineChart expenses={expenses} />
+            </div>
+          </div>
+          <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+            <h3 className="mb-2 text-center text-lg font-medium text-gray-800 dark:text-gray-200">
+              Spending by Category
+            </h3>
+            <div className="relative mx-auto h-64 max-w-xs">
+              <PieChart expenses={expenses} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+===== FILE: ./src/hooks/useExpenses.ts =====
+import { useState, useEffect } from "react";
+import { db } from "@/lib/firebase";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { Expense } from "@/types/expense";
+
+export const useExpenses = (userId: string) => {
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    const expensesCol = collection(db, "users", userId, "expenses");
+    // const q = query(expensesCol, orderBy("date", "desc"));
+    const q = query(expensesCol, orderBy("createdAt", "desc"));
+
+
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const expensesData: Expense[] = [];
+        querySnapshot.forEach((doc) => {
+          expensesData.push({ id: doc.id, ...doc.data() } as Expense);
+        });
+        setExpenses(expensesData);
+        setLoading(false);
+      },
+      (err: any) => {
+        console.error("Error fetching expenses: ", err);
+        setError(err.message);
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [userId]);
+
+  return { expenses, loading, error };
+};
+
+===== FILE: ./src/lib/firebase.ts =====
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+};
+
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+export { app, auth, db };
+
+===== FILE: ./src/lib/csvExporter.ts =====
+import { Expense } from "@/types/expense";
+
+function formatDateForCSV(date: Date): string {
+  // Format YYYY-MM-DD
+  return date.toISOString().split("T")[0];
+}
+
+function escapeCSV(str: string | null | undefined): string {
+  if (str === null || str === undefined) {
+    return "";
+  }
+  if (str.includes(",") || str.includes("\n") || str.includes('"')) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+export function exportToCSV(expenses: Expense[], fileName: string) {
+  // Hapus "ID" dari header
+  const headers = ["Date", "Category", "Amount", "Notes"];
+  const csvRows = [headers.join(",")];
+
+  let totalAmount = 0;
+
+  // Buat baris data
+  for (const expense of expenses) {
+    totalAmount += expense.amount; // Hitung total
+    const row = [
+      formatDateForCSV(expense.date.toDate()),
+      escapeCSV(expense.category),
+      expense.amount.toString(),
+      escapeCSV(expense.notes),
+      // Hapus expense.id
+    ];
+    csvRows.push(row.join(","));
+  }
+
+  // TAMBAHKAN BARIS TOTAL
+  csvRows.push(""); // Baris kosong
+  // "Date", "Category", "Amount", "Notes"
+  // Tambah total di kolom ke-3 (Amount)
+  csvRows.push(`,Total,${totalAmount.toString()}`);
+
+  const csvString = csvRows.join("\n");
+  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+
+  const link = document.createElement("a");
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", fileName);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
+
+===== FILE: ./src/lib/AuthContext.tsx =====
+"use client";
+
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef, // Impor useRef
+} from "react";
+import { User, onIdTokenChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase"; // Impor 'auth'
+import { setCookie, destroyCookie } from "nookies";
+import { useRouter } from "next/navigation";
+
+type AuthContextType = {
+  user: User | null;
+  loading: boolean;
+};
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+});
+
+export const AuthContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  // Ref untuk menyimpan interval timer
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
+      // Hentikan timer lama setiap kali auth berubah
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      if (user) {
+        setUser(user);
+        const token = await user.getIdToken();
+        setCookie(null, "firebaseAuthToken", token, {
+          path: "/",
+          maxAge: 60 * 60,
+        });
+
+        // LOGIKA BARU: JIKA PENGGUNA LOGIN TAPI BELUM VERIFIKASI
+        if (!user.emailVerified) {
+          // Mulai timer untuk mengecek ulang status user setiap 3 detik
+          intervalRef.current = setInterval(async () => {
+            try {
+              // Cek pengguna saat ini dan paksa reload datanya dari server
+              if (auth.currentUser) {
+                await auth.currentUser.reload();
+                // Jika setelah reload, statusnya terverifikasi
+                if (auth.currentUser.emailVerified) {
+                  // Hentikan timer
+                  if (intervalRef.current) {
+                    clearInterval(intervalRef.current);
+                    intervalRef.current = null;
+                  }
+                  // Update user state hanya jika komponen masih mounted
+                  setUser(auth.currentUser);
+                  // Redirect ke app dengan delay kecil untuk memastikan state terupdate
+                  setTimeout(() => {
+                    router.push("/app");
+                  }, 100);
+                }
+              }
+            } catch (error) {
+              console.error("Error reloading user:", error);
+              if (intervalRef.current) clearInterval(intervalRef.current);
+            }
+          }, 3000); // Cek setiap 3 detik
+        }
+      } else {
+        setUser(null);
+        destroyCookie(null, "firebaseAuthToken", { path: "/" });
+      }
+      setLoading(false);
+    });
+
+    // Cleanup function: hentikan langganan DAN timer saat komponen di-unmount
+    return () => {
+      unsubscribe();
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [router]);
+
+  return (
+    <AuthContext.Provider value={{ user, loading }}>
+      {loading ? (
+        <div className="flex h-screen w-full items-center justify-center">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-500 border-t-transparent"></div>
+        </div>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);
+
