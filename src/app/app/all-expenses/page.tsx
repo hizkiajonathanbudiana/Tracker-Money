@@ -206,3 +206,5 @@ function AllExpensesContent() {
         </div>
     );
 }
+
+export default AllExpensesContent;
