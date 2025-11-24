@@ -45,7 +45,7 @@ export const AuthContextProvider = ({
         const token = await user.getIdToken();
         setCookie(null, "firebaseAuthToken", token, {
           path: "/",
-          maxAge: 60 * 60,
+          maxAge: 60 * 60 * 24 * 30, // 30 days
         });
 
         // LOGIKA BARU: JIKA PENGGUNA LOGIN TAPI BELUM VERIFIKASI
