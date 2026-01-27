@@ -1,4 +1,7 @@
 import Header from "@/components/Header";
+import InstallPWA from "@/components/InstallPWA";
+import OnlineStatus from "@/components/OnlineStatus";
+import PWAUpdater from "@/components/PWAUpdater";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -11,6 +14,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <footer className="py-4 text-center text-sm text-slate-500 dark:text-slate-400">
                 Money Tracker MVP
             </footer>
+            <OnlineStatus />
+            <PWAUpdater />
+            <InstallPWA />
         </div>
     );
 }
