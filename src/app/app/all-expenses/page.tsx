@@ -3,12 +3,13 @@
 import { useState, useMemo, useEffect, Suspense } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { useExpenses } from "@/hooks/useExpenses";
+import { useCategories } from "@/hooks/useCategories";
 import ExpenseList from "@/components/ExpenseList";
 import MonthSelector from "@/components/MonthSelector";
 import { Loader2, ArrowLeft, FileDown } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { EXPENSE_CATEGORIES, ExpenseCategory } from "@/types/expense";
+import { ExpenseCategory } from "@/types/expense";
 import { exportToCSV } from "@/lib/csvExporter";
 
 const getYearMonth = (date: Date) => {
@@ -31,6 +32,8 @@ function AllExpensesContent() {
         error: expensesError,
     } = useExpenses(user ? user.uid : "");
 
+    const { categories } = useCategories(user ? user.uid : "");
+
     const [selectedMonth, setSelectedMonth] = useState(initialMonth);
     const [selectedCategory, setSelectedCategory] =
         useState<ExpenseCategory | "All">("All");
@@ -44,6 +47,12 @@ function AllExpensesContent() {
             setSelectedMonth(monthFromURL);
         }
     }, [searchParams]);
+
+    useEffect(() => {
+        if (selectedCategory !== "All" && !categories.includes(selectedCategory)) {
+            setSelectedCategory("All");
+        }
+    }, [categories, selectedCategory]);
 
     const filteredExpenses = useMemo(() => {
         return expenses.filter((expense) => {
@@ -130,7 +139,7 @@ function AllExpensesContent() {
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                         >
                             <option value="All">All Categories</option>
-                            {EXPENSE_CATEGORIES.map((cat) => (
+                            {categories.map((cat) => (
                                 <option key={cat} value={cat}>
                                     {cat}
                                 </option>
@@ -202,6 +211,7 @@ function AllExpensesContent() {
                 userId={user.uid}
                 expenses={filteredExpenses}
                 loading={expensesLoading}
+                categories={categories}
             />
         </div>
     );

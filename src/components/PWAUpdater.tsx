@@ -47,13 +47,13 @@ export default function PWAUpdater() {
 
   const handleUpdate = async () => {
     setIsUpdating(true);
-    
+
     try {
       const registration = await navigator.serviceWorker.getRegistration();
       if (registration?.waiting) {
         // Tell the waiting service worker to activate
         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        
+
         // Reload the page after a short delay
         setTimeout(() => {
           window.location.reload();

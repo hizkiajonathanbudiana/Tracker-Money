@@ -14,6 +14,7 @@ import {
     Filler,
     ChartData,
 } from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
 import { Expense } from "@/types/expense";
 import { useTheme } from "next-themes";
 
@@ -25,48 +26,53 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
+    zoomPlugin
 );
 
 interface LineChartProps {
     expenses: Expense[];
+    daysBack: number;
 }
 
-const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month, 0).getDate();
-};
-
 const processLineChartData = (
-    expenses: Expense[]
+    expenses: Expense[],
+    daysBack: number
 ): ChartData<"line", number[], string> => {
     const labels: string[] = [];
     const dataPoints: number[] = [];
-    const dailyTotals: { [key: number]: number } = {};
+    const dailyTotals: Record<string, number> = {};
 
-    let year = new Date().getFullYear();
-    let month = new Date().getMonth() + 1;
-
-    if (expenses.length > 0) {
-        const firstExpenseDate = expenses[0].date.toDate();
-        year = firstExpenseDate.getFullYear();
-        month = firstExpenseDate.getMonth() + 1;
+    const today = new Date();
+    const dates: Date[] = [];
+    for (let i = daysBack - 1; i >= 0; i -= 1) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        date.setHours(0, 0, 0, 0);
+        dates.push(date);
     }
 
-    const daysInMonth = getDaysInMonth(year, month);
-
-    for (let i = 1; i <= daysInMonth; i++) {
-        labels.push(i.toString());
-        dailyTotals[i] = 0;
-    }
+    dates.forEach((date) => {
+        const key = date.toISOString().split("T")[0];
+        dailyTotals[key] = 0;
+        labels.push(
+            date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+            })
+        );
+    });
 
     expenses.forEach((expense) => {
         const expenseDate = expense.date.toDate();
-        const dayOfMonth = expenseDate.getDate();
-        dailyTotals[dayOfMonth] += expense.amount;
+        const key = expenseDate.toISOString().split("T")[0];
+        if (dailyTotals[key] !== undefined) {
+            dailyTotals[key] += expense.amount;
+        }
     });
 
-    labels.forEach((day) => {
-        dataPoints.push(dailyTotals[parseInt(day)]);
+    Object.keys(dailyTotals).forEach((key) => {
+        dataPoints.push(dailyTotals[key]);
     });
 
     return {
@@ -78,18 +84,19 @@ const processLineChartData = (
                 fill: true,
                 backgroundColor: "rgba(59, 130, 246, 0.2)",
                 borderColor: "rgba(59, 130, 246, 1)",
-                tension: 0.1,
+                tension: 0.2,
                 pointBackgroundColor: "rgba(59, 130, 246, 1)",
+                pointRadius: 3,
             },
         ],
     };
 };
 
-export default function LineChart({ expenses }: LineChartProps) {
+export default function LineChart({ expenses, daysBack }: LineChartProps) {
     const { theme } = useTheme();
     const chartData = useMemo(
-        () => processLineChartData(expenses),
-        [expenses]
+        () => processLineChartData(expenses, daysBack),
+        [expenses, daysBack]
     );
 
     const gridColor =
@@ -118,6 +125,21 @@ export default function LineChart({ expenses }: LineChartProps) {
                         }
                         return label;
                     },
+                },
+            },
+            zoom: {
+                pan: {
+                    enabled: true,
+                    mode: "x" as const,
+                },
+                zoom: {
+                    wheel: {
+                        enabled: true,
+                    },
+                    pinch: {
+                        enabled: true,
+                    },
+                    mode: "x" as const,
                 },
             },
         },

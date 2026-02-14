@@ -8,10 +8,16 @@ import ExpenseList from "@/components/ExpenseList";
 import ChartPanel from "@/components/ChartPanel";
 import MonthSelector from "@/components/MonthSelector";
 import StatCard from "@/components/StatCard";
+import WalletPanel from "@/components/WalletPanel";
+import CategoryManager from "@/components/CategoryManager";
+import ChangePasswordPanel from "@/components/ChangePasswordPanel";
 import { useExpenses } from "@/hooks/useExpenses";
+import { useCategories } from "@/hooks/useCategories";
+import { useWallet } from "@/hooks/useWallet";
 import {
     Loader2,
     BarChart2,
+    Eye,
     EyeOff,
     ArrowRight,
     DollarSign,
@@ -19,7 +25,7 @@ import {
     ArrowUpCircle,
     Tag,
 } from "lucide-react";
-import { Expense, ExpenseCategory } from "@/types/expense";
+import { Expense } from "@/types/expense";
 
 const getYearMonth = (date: Date) => {
     return date.toISOString().slice(0, 7);
@@ -59,12 +65,31 @@ export default function AppPage() {
 
     const [selectedMonth, setSelectedMonth] = useState(getYearMonth(new Date()));
     const [chartsVisible, setChartsVisible] = useState(false);
+    const [showMonthlySummary, setShowMonthlySummary] = useState(true);
+    const [showWalletSummary, setShowWalletSummary] = useState(true);
+    const [showCategories, setShowCategories] = useState(true);
+    const [showChangePassword, setShowChangePassword] = useState(false);
 
     const {
         expenses,
         loading: expensesLoading,
         error: expensesError,
     } = useExpenses(user.uid);
+
+    const {
+        categories,
+        addCategory,
+        updateCategory,
+        removeCategory,
+    } = useCategories(user.uid);
+
+    const {
+        wallet,
+        updateBalance,
+        adjustBalance,
+        updateDenominations,
+        addIncome,
+    } = useWallet(user.uid);
 
     const monthlyExpenses = useMemo(() => {
         return expenses.filter(
@@ -87,7 +112,7 @@ export default function AppPage() {
             { amount: 0, notes: "N/A" } as Expense
         );
 
-        const categoryTotals: Record<ExpenseCategory, number> = {} as any;
+        const categoryTotals: Record<string, number> = {};
         monthlyExpenses.forEach((exp) => {
             categoryTotals[exp.category] =
                 (categoryTotals[exp.category] || 0) + exp.amount;
@@ -114,6 +139,17 @@ export default function AppPage() {
         }
     }, [user, router]);
 
+    useEffect(() => {
+        const storedMonthly = localStorage.getItem("showMonthlySummary");
+        const storedWallet = localStorage.getItem("showWalletSummary");
+        const storedCategories = localStorage.getItem("showCategories");
+        const storedPassword = localStorage.getItem("showChangePassword");
+        if (storedMonthly !== null) setShowMonthlySummary(storedMonthly === "true");
+        if (storedWallet !== null) setShowWalletSummary(storedWallet === "true");
+        if (storedCategories !== null) setShowCategories(storedCategories === "true");
+        if (storedPassword !== null) setShowChangePassword(storedPassword === "true");
+    }, []);
+
     const recentExpenses = useMemo(() => {
         return monthlyExpenses.slice(0, 5);
     }, [monthlyExpenses]);
@@ -121,41 +157,124 @@ export default function AppPage() {
     return (
         <div className="flex flex-col gap-6">
             <div className="card-glass">
-                <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
-                    Monthly Summary
-                </h2>
-                <MonthSelector
-                    expenses={expenses}
-                    selectedMonth={selectedMonth}
-                    setSelectedMonth={setSelectedMonth}
-                />
-                <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-                    <StatCard
-                        title="Total Spending"
-                        value={formatCurrency(stats.totalSpend)}
-                        icon={<DollarSign size={20} />}
-                    />
-                    <StatCard
-                        title="Avg. Spend / Day"
-                        value={formatCurrency(stats.avgSpendPerDay)}
-                        icon={<TrendingUp size={20} />}
-                    />
-                    <StatCard
-                        title="Biggest Expense"
-                        value={formatCurrency(stats.biggestExpense.amount)}
-                        icon={<ArrowUpCircle size={20} />}
-                        description={stats.biggestExpense.notes || "N/A"}
-                    />
-                    <StatCard
-                        title="Top Category"
-                        value={stats.topCategory.cat}
-                        icon={<Tag size={20} />}
-                        description={formatCurrency(stats.topCategory.amount)}
-                    />
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Monthly Summary
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !showMonthlySummary;
+                            setShowMonthlySummary(next);
+                            localStorage.setItem("showMonthlySummary", next.toString());
+                        }}
+                        className="glass-button flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
+                    >
+                        {showMonthlySummary ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showMonthlySummary ? "Hide" : "Show"}
+                    </button>
                 </div>
+                {showMonthlySummary && (
+                    <>
+                        <MonthSelector
+                            expenses={expenses}
+                            selectedMonth={selectedMonth}
+                            setSelectedMonth={setSelectedMonth}
+                        />
+                        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                            <StatCard
+                                title="Total Spending"
+                                value={formatCurrency(stats.totalSpend)}
+                                icon={<DollarSign size={20} />}
+                            />
+                            <StatCard
+                                title="Avg. Spend / Day"
+                                value={formatCurrency(stats.avgSpendPerDay)}
+                                icon={<TrendingUp size={20} />}
+                            />
+                            <StatCard
+                                title="Biggest Expense"
+                                value={formatCurrency(stats.biggestExpense.amount)}
+                                icon={<ArrowUpCircle size={20} />}
+                                description={stats.biggestExpense.notes || "N/A"}
+                            />
+                            <StatCard
+                                title="Top Category"
+                                value={stats.topCategory.cat}
+                                icon={<Tag size={20} />}
+                                description={formatCurrency(stats.topCategory.amount)}
+                            />
+                        </div>
+                    </>
+                )}
             </div>
 
-            <ExpenseForm userId={user.uid} />
+            <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Wallet Summary
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !showWalletSummary;
+                            setShowWalletSummary(next);
+                            localStorage.setItem("showWalletSummary", next.toString());
+                        }}
+                        className="glass-button flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
+                    >
+                        {showWalletSummary ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showWalletSummary ? "Hide" : "Show"}
+                    </button>
+                </div>
+                {showWalletSummary && (
+                    <WalletPanel
+                        balance={wallet.balance}
+                        denominations={wallet.denominations}
+                        onUpdateBalance={updateBalance}
+                        onUpdateDenominations={updateDenominations}
+                        onAddIncome={addIncome}
+                        showHeader={false}
+                    />
+                )}
+            </div>
+
+            <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Categories
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !showCategories;
+                            setShowCategories(next);
+                            localStorage.setItem("showCategories", next.toString());
+                        }}
+                        className="glass-button flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
+                    >
+                        {showCategories ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showCategories ? "Hide" : "Show"}
+                    </button>
+                </div>
+                {showCategories && (
+                    <CategoryManager
+                        categories={categories}
+                        onAdd={addCategory}
+                        onUpdate={updateCategory}
+                        onRemove={removeCategory}
+                        showHeader={false}
+                    />
+                )}
+            </div>
+
+            <ExpenseForm
+                userId={user.uid}
+                categories={categories}
+                denominations={wallet.denominations}
+                onAdjustBalance={adjustBalance}
+                onUpdateDenominations={updateDenominations}
+            />
 
             <div className="card-glass">
                 <button
@@ -184,7 +303,7 @@ export default function AppPage() {
                             </div>
                         )}
                         {!expensesLoading && !expensesError && (
-                            <ChartPanel expenses={monthlyExpenses} />
+                            <ChartPanel expenses={expenses} />
                         )}
                         {expensesError && (
                             <p className="text-center text-red-500">{expensesError}</p>
@@ -198,6 +317,7 @@ export default function AppPage() {
                     userId={user.uid}
                     expenses={recentExpenses}
                     loading={expensesLoading}
+                    categories={categories}
                 />
                 {monthlyExpenses.length > 5 && (
                     <button
@@ -207,6 +327,30 @@ export default function AppPage() {
                         View All Transactions for this Month
                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </button>
+                )}
+            </div>
+            <div className="card-glass">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Security
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !showChangePassword;
+                            setShowChangePassword(next);
+                            localStorage.setItem("showChangePassword", next.toString());
+                        }}
+                        className="glass-button flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
+                    >
+                        {showChangePassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showChangePassword ? "Hide" : "Show"}
+                    </button>
+                </div>
+                {showChangePassword && (
+                    <div className="mt-4">
+                        <ChangePasswordPanel />
+                    </div>
                 )}
             </div>
         </div>

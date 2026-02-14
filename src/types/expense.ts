@@ -8,7 +8,7 @@ export const EXPENSE_CATEGORIES = [
   "Other",
 ] as const;
 
-export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+export type ExpenseCategory = string;
 
 export interface Expense {
   id: string;
@@ -18,4 +18,5 @@ export interface Expense {
   date: Timestamp;
   createdAt: Timestamp;
   uid: string;
+  cashUsage?: Record<string, number>;
 }

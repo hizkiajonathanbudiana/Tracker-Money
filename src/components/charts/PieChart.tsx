@@ -10,7 +10,7 @@ import {
     ChartData,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { Expense, EXPENSE_CATEGORIES } from "@/types/expense";
+import { Expense } from "@/types/expense";
 import { useTheme } from "next-themes"; // Impor useTheme
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
@@ -19,12 +19,28 @@ interface PieChartProps {
     expenses: Expense[];
 }
 
-const CATEGORY_COLORS = {
-    "Food & Beverage": "#3B82F6",
-    Shopping: "#EC4899",
-    Transport: "#F59E0B",
-    Bills: "#EF4444",
-    Other: "#8B5CF6",
+const BASE_COLORS = [
+    "#3B82F6",
+    "#EC4899",
+    "#F59E0B",
+    "#10B981",
+    "#8B5CF6",
+    "#EF4444",
+    "#14B8A6",
+    "#F97316",
+];
+
+const hashString = (value: string) => {
+    let hash = 0;
+    for (let i = 0; i < value.length; i += 1) {
+        hash = value.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash);
+};
+
+const getCategoryColor = (category: string) => {
+    const idx = hashString(category) % BASE_COLORS.length;
+    return BASE_COLORS[idx];
 };
 
 const processPieChartData = (
@@ -32,22 +48,14 @@ const processPieChartData = (
 ): ChartData<"pie", number[], string> => {
     const categoryTotals: { [key: string]: number } = {};
 
-    EXPENSE_CATEGORIES.forEach((cat) => {
-        categoryTotals[cat] = 0;
-    });
-
     expenses.forEach((expense) => {
-        if (categoryTotals.hasOwnProperty(expense.category)) {
-            categoryTotals[expense.category] += expense.amount;
-        }
+        categoryTotals[expense.category] =
+            (categoryTotals[expense.category] || 0) + expense.amount;
     });
 
     const labels = Object.keys(categoryTotals);
     const data = Object.values(categoryTotals);
-    const backgroundColors = labels.map(
-        (label) =>
-            CATEGORY_COLORS[label as keyof typeof CATEGORY_COLORS] || "#6B7280"
-    );
+    const backgroundColors = labels.map((label) => getCategoryColor(label));
 
     return {
         labels,

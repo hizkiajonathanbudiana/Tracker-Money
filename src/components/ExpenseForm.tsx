@@ -1,22 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { EXPENSE_CATEGORIES, ExpenseCategory } from "@/types/expense";
+import { ExpenseCategory } from "@/types/expense";
+import { CashDenomination } from "@/hooks/useWallet";
 import { Plus, Loader2 } from "lucide-react";
 
 interface ExpenseFormProps {
     userId: string;
+    categories: string[];
+    denominations: CashDenomination[];
+    onAdjustBalance?: (delta: number) => Promise<void> | void;
+    onUpdateDenominations?: (denominations: CashDenomination[]) => Promise<void> | void;
 }
 
-export default function ExpenseForm({ userId }: ExpenseFormProps) {
+export default function ExpenseForm({
+    userId,
+    categories,
+    denominations,
+    onAdjustBalance,
+    onUpdateDenominations,
+}: ExpenseFormProps) {
+    const safeCategories = categories.length ? categories : ["Other"];
     const [notes, setNotes] = useState("");
     const [amount, setAmount] = useState("");
-    const [category, setCategory] = useState<ExpenseCategory>("Food & Beverage");
+    const [category, setCategory] = useState<ExpenseCategory>(safeCategories[0]);
     const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [useCashBreakdown, setUseCashBreakdown] = useState(false);
+    const [deductFromWallet, setDeductFromWallet] = useState(true);
+
+    const [cashUsage, setCashUsage] = useState<Record<string, number>>({});
+
+    useEffect(() => {
+        if (safeCategories.length > 0 && !safeCategories.includes(category)) {
+            setCategory(safeCategories[0]);
+        }
+    }, [safeCategories, category]);
+
+    const cashTotal = useMemo(() => {
+        return denominations.reduce((acc, denom) => {
+            const count = cashUsage[denom.id] || 0;
+            return acc + denom.value * count;
+        }, 0);
+    }, [cashUsage, denominations]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,13 +71,31 @@ export default function ExpenseForm({ userId }: ExpenseFormProps) {
                 category,
                 date: new Date(date),
                 createdAt: serverTimestamp(),
+                cashUsage: useCashBreakdown ? cashUsage : {},
             };
             await addDoc(collection(db, "users", userId, "expenses"), expenseData);
 
+            if (deductFromWallet && onAdjustBalance) {
+                await onAdjustBalance(-numAmount);
+            }
+
+            if (useCashBreakdown && onUpdateDenominations) {
+                const updatedDenoms = denominations.map((denom) => {
+                    const usedCount = cashUsage[denom.id] || 0;
+                    return {
+                        ...denom,
+                        count: Math.max(0, denom.count - usedCount),
+                    };
+                });
+                await onUpdateDenominations(updatedDenoms);
+            }
+
             setNotes("");
             setAmount("");
-            setCategory("Food & Beverage");
+            setCategory(safeCategories[0]);
             setDate(new Date().toISOString().split("T")[0]);
+            setCashUsage({});
+            setUseCashBreakdown(false);
         } catch (err: any) {
             console.error("Error adding document: ", err);
             setError(err.message);
@@ -102,7 +149,7 @@ export default function ExpenseForm({ userId }: ExpenseFormProps) {
                         required
                         className="glass-input block w-full rounded-xl py-3 px-4 text-lg font-medium transition-all duration-200 focus:ring-2 focus:ring-blue-400/50 focus:outline-none"
                     >
-                        {EXPENSE_CATEGORIES.map((cat) => (
+                        {safeCategories.map((cat) => (
                             <option key={cat} value={cat} className="bg-white dark:bg-black">
                                 {cat}
                             </option>
@@ -142,6 +189,62 @@ export default function ExpenseForm({ userId }: ExpenseFormProps) {
                         className="glass-input block w-full rounded-xl py-3 px-4 text-lg font-medium placeholder-slate-400 transition-all duration-200 focus:ring-2 focus:ring-blue-400/50 focus:outline-none"
                         placeholder="e.g., Coffee with client"
                     />
+                </div>
+
+                <div className="space-y-3 rounded-xl border border-slate-200/60 p-4 dark:border-slate-700/60">
+                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        <input
+                            type="checkbox"
+                            checked={useCashBreakdown}
+                            onChange={(e) => setUseCashBreakdown(e.target.checked)}
+                            className="h-4 w-4"
+                        />
+                        Cash breakdown (optional)
+                    </label>
+                    {useCashBreakdown && (
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            {denominations.map((denom) => (
+                                <div key={denom.id} className="glass-card p-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                            {denom.label} ({denom.type})
+                                        </span>
+                                        <span className="text-xs text-slate-500">{denom.value}</span>
+                                    </div>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={cashUsage[denom.id] || 0}
+                                        onChange={(e) =>
+                                            setCashUsage((prev) => ({
+                                                ...prev,
+                                                [denom.id]: Number(e.target.value) || 0,
+                                            }))
+                                        }
+                                        className="glass-input mt-2 w-full rounded-lg px-3 py-2 text-sm"
+                                        placeholder="Count"
+                                    />
+                                </div>
+                            ))}
+                            <div className="glass-card p-3">
+                                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                    Cash total
+                                </p>
+                                <p className="mt-2 text-lg font-bold text-slate-900 dark:text-white">
+                                    {cashTotal.toLocaleString("en-US")}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                    <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <input
+                            type="checkbox"
+                            checked={deductFromWallet}
+                            onChange={(e) => setDeductFromWallet(e.target.checked)}
+                            className="h-4 w-4"
+                        />
+                        Deduct from wallet balance
+                    </label>
                 </div>
 
                 <button
