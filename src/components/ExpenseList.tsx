@@ -90,136 +90,119 @@ export default function ExpenseList({
     };
 
     return (
-        <div className="card-glass">
-            <h2 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
-                Recent Expenses
+        <section className="relative overflow-hidden card-glass mb-20 sm:mb-0">
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
+            <h2 className="text-xl font-bold mb-6 pl-2 text-slate-900 dark:text-white">
+                Recent Transactions
             </h2>
-            <div className="space-y-4">
+
+            <div className="space-y-3">
                 {loading && (
                     <div className="flex justify-center p-8">
-                        <Loader2 className="h-8 w-8 animate-spin text-blue-500 dark:text-blue-400" />
+                        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
                     </div>
                 )}
                 {!loading && expenses.length === 0 && (
-                    <p className="text-center text-slate-600 dark:text-slate-400 py-8">
-                        No expenses found. Add your first expense above!
-                    </p>
+                    <div className="text-center py-12 rounded-xl border-2 border-dashed border-gray-200 dark:border-neutral-800">
+                        <p className="text-gray-500 dark:text-gray-400 font-medium">
+                            No expenses found
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                            Add your first expense above!
+                        </p>
+                    </div>
                 )}
                 {!loading &&
                     expenses.map((expense) => (
-                        <div key={expense.id} className="space-y-3">
-                            <div className="glass-card group flex items-center justify-between gap-4 p-5 hover:shadow-lg transition-all duration-200">
-                                <div className="flex-1 space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                                            {expense.category}
-                                        </h3>
-                                        <span className="text-xl font-bold text-slate-900 dark:text-white">
-                                            {formatCurrency(expense.amount)}
-                                        </span>
-                                    </div>
-                                    <div className="flex flex-col text-sm text-slate-600 dark:text-slate-400 sm:flex-row sm:gap-6">
-                                        <div className="flex items-center gap-2">
-                                            <Calendar className="h-4 w-4" />
-                                            {formatDate(expense.date)}
-                                        </div>
-                                        {expense.notes && (
-                                            <div className="flex items-center gap-2">
-                                                <FileText className="h-4 w-4" />
-                                                <span className="truncate">{expense.notes}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    {expense.cashUsage && Object.keys(expense.cashUsage).length > 0 && (
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                                            Cash used: {Object.entries(expense.cashUsage)
-                                                .filter(([, count]) => count > 0)
-                                                .map(([id, count]) => `${id} x${count}`)
-                                                .join(", ")}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => startEdit(expense)}
-                                        className="glass-button flex-shrink-0 p-3 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-all duration-200 hover:scale-110"
-                                        aria-label="Edit expense"
-                                    >
-                                        <Edit3 className="h-5 w-5" />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(expense.id)}
-                                        className="glass-button flex-shrink-0 p-3 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-all duration-200 hover:scale-110"
-                                        aria-label="Delete expense"
-                                    >
-                                        <Trash2 className="h-5 w-5" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {editingId === expense.id && (
-                                <div className="glass-card p-4">
-                                    <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+                        <div
+                            key={expense.id}
+                            className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-slate-200/70 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/70 hover:bg-white dark:hover:bg-slate-800 transition-all duration-200"
+                        >
+                            {editingId === expense.id ? (
+                                <div className="w-full space-y-3">
+                                    <div className="grid grid-cols-2 gap-3">
                                         <input
                                             type="number"
                                             value={editAmount}
                                             onChange={(e) => setEditAmount(e.target.value)}
-                                            className="glass-input rounded-lg px-3 py-2 text-sm"
+                                            className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-200 dark:border-neutral-700 text-sm font-bold"
                                             placeholder="Amount"
-                                            aria-label="Edit amount"
                                         />
-                                        <select
-                                            value={editCategory}
-                                            onChange={(e) => setEditCategory(e.target.value)}
-                                            className="glass-input rounded-lg px-3 py-2 text-sm"
-                                            aria-label="Edit category"
-                                        >
-                                            {safeCategories.map((cat) => (
-                                                <option key={cat} value={cat}>
-                                                    {cat}
-                                                </option>
-                                            ))}
-                                        </select>
                                         <input
                                             type="date"
                                             value={editDate}
                                             onChange={(e) => setEditDate(e.target.value)}
-                                            className="glass-input rounded-lg px-3 py-2 text-sm"
-                                            aria-label="Edit date"
-                                        />
-                                        <input
-                                            type="text"
-                                            value={editNotes}
-                                            onChange={(e) => setEditNotes(e.target.value)}
-                                            className="glass-input rounded-lg px-3 py-2 text-sm"
-                                            placeholder="Notes"
-                                            aria-label="Edit notes"
+                                            className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-200 dark:border-neutral-700 text-sm"
                                         />
                                     </div>
-                                    <div className="mt-3 flex items-center gap-2">
+                                    <input
+                                        type="text"
+                                        value={editNotes}
+                                        onChange={(e) => setEditNotes(e.target.value)}
+                                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-200 dark:border-neutral-700 text-sm"
+                                        placeholder="Notes"
+                                    />
+                                    <div className="flex justify-end gap-2">
                                         <button
-                                            type="button"
-                                            onClick={saveEdit}
-                                            className="glass-button-primary flex items-center gap-2 rounded-lg px-4 py-2 text-sm"
+                                            onClick={cancelEdit}
+                                            className="p-2 rounded-lg text-gray-500 hover:bg-gray-200 dark:hover:bg-neutral-800"
                                         >
-                                            <Check className="h-4 w-4" />
-                                            Save
+                                            <X size={16} />
                                         </button>
                                         <button
-                                            type="button"
-                                            onClick={cancelEdit}
-                                            className="glass-button flex items-center gap-2 rounded-lg px-4 py-2 text-sm"
+                                            onClick={saveEdit}
+                                            className="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500"
                                         >
-                                            <X className="h-4 w-4" />
-                                            Cancel
+                                            <Check size={16} />
                                         </button>
                                     </div>
                                 </div>
+                            ) : (
+                                <>
+                                    <div className="flex items-start gap-4 mb-3 sm:mb-0">
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                                            <FileText size={18} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-slate-900 dark:text-white text-base">
+                                                {expense.category}
+                                            </h3>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                                                <Calendar size={10} />
+                                                {formatDate(expense.date)}
+                                            </p>
+                                            {expense.notes && (
+                                                <p className="text-xs text-slate-500 italic mt-1 line-clamp-1">
+                                                    {expense.notes}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
+                                        <span className="font-black text-lg text-slate-900 dark:text-white">
+                                            {formatCurrency(expense.amount)}
+                                        </span>
+                                        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                onClick={() => startEdit(expense)}
+                                                className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+                                            >
+                                                <Edit3 size={16} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(expense.id)}
+                                                className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </>
                             )}
                         </div>
                     ))}
             </div>
-        </div>
+        </section>
     );
 }

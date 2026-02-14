@@ -32,10 +32,10 @@ export default function MonthSelector({
     }, [expenses]);
 
     return (
-        <div>
+        <div className="mt-3">
             <label
                 htmlFor="monthFilter"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
             >
                 Filter by Month
             </label>
@@ -43,7 +43,7 @@ export default function MonthSelector({
                 id="monthFilter"
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-2 block w-full rounded-lg glass-input px-3 py-2 text-sm font-semibold focus:ring-0"
             >
                 {uniqueMonths.map((month) => (
                     <option key={month} value={month}>

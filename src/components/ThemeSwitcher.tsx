@@ -30,7 +30,7 @@ export const ThemeSwitcher = () => {
     return (
         <button
             onClick={handleToggle}
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/70 border border-gray-300 text-gray-700 transition-all duration-200 hover:bg-white/90 hover:scale-105 dark:bg-black/70 dark:border-white/20 dark:text-gray-300 dark:hover:bg-black/90"
+            className="glass-button flex h-10 w-10 items-center justify-center rounded-xl text-gray-700 transition-all duration-200 hover:scale-105 dark:text-gray-300"
             aria-label="Toggle theme"
         >
             {isDark ? (

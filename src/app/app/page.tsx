@@ -45,6 +45,36 @@ const getDaysInMonth = (year: number, month: number) => {
 export default function AppPage() {
     const { user } = useAuth();
     const router = useRouter();
+    const userId = user?.uid ?? "";
+    const isEmailVerified = user?.emailVerified ?? false;
+
+    const [selectedMonth, setSelectedMonth] = useState(getYearMonth(new Date()));
+    const [chartsVisible, setChartsVisible] = useState(true);
+    const [showMonthlySummary, setShowMonthlySummary] = useState(true);
+    const [showWalletSummary, setShowWalletSummary] = useState(true);
+    const [showCategories, setShowCategories] = useState(true);
+    const [showChangePassword, setShowChangePassword] = useState(false);
+
+    const {
+        expenses,
+        loading: expensesLoading,
+        error: expensesError,
+    } = useExpenses(userId);
+
+    const {
+        categories,
+        addCategory,
+        updateCategory,
+        removeCategory,
+    } = useCategories(userId);
+
+    const {
+        wallet,
+        updateBalance,
+        adjustBalance,
+        updateDenominations,
+        addIncome,
+    } = useWallet(userId);
 
     // Early return BEFORE any other hooks to prevent hooks order mismatch
     if (!user) {
@@ -55,41 +85,13 @@ export default function AppPage() {
         );
     }
 
-    if (!user.emailVerified) {
+    if (!isEmailVerified) {
         return (
             <div className="flex h-[80vh] w-full items-center justify-center">
                 <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
             </div>
         );
     }
-
-    const [selectedMonth, setSelectedMonth] = useState(getYearMonth(new Date()));
-    const [chartsVisible, setChartsVisible] = useState(false);
-    const [showMonthlySummary, setShowMonthlySummary] = useState(true);
-    const [showWalletSummary, setShowWalletSummary] = useState(true);
-    const [showCategories, setShowCategories] = useState(true);
-    const [showChangePassword, setShowChangePassword] = useState(false);
-
-    const {
-        expenses,
-        loading: expensesLoading,
-        error: expensesError,
-    } = useExpenses(user.uid);
-
-    const {
-        categories,
-        addCategory,
-        updateCategory,
-        removeCategory,
-    } = useCategories(user.uid);
-
-    const {
-        wallet,
-        updateBalance,
-        adjustBalance,
-        updateDenominations,
-        addIncome,
-    } = useWallet(user.uid);
 
     const monthlyExpenses = useMemo(() => {
         return expenses.filter(
@@ -134,10 +136,10 @@ export default function AppPage() {
     useEffect(() => {
         // This useEffect should not be needed since we already check emailVerified above
         // but keeping it as backup in case user state changes after component mounts
-        if (user && !user.emailVerified) {
+        if (user && !isEmailVerified) {
             router.push("/verify-email");
         }
-    }, [user, router]);
+    }, [user, isEmailVerified, router]);
 
     useEffect(() => {
         const storedMonthly = localStorage.getItem("showMonthlySummary");
@@ -155,7 +157,7 @@ export default function AppPage() {
     }, [monthlyExpenses]);
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 sm:gap-6">
             <div className="card-glass">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
@@ -181,7 +183,7 @@ export default function AppPage() {
                             selectedMonth={selectedMonth}
                             setSelectedMonth={setSelectedMonth}
                         />
-                        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             <StatCard
                                 title="Total Spending"
                                 value={formatCurrency(stats.totalSpend)}
@@ -206,6 +208,42 @@ export default function AppPage() {
                             />
                         </div>
                     </>
+                )}
+            </div>
+
+            <div className="card-glass">
+                <button
+                    onClick={() => setChartsVisible(!chartsVisible)}
+                    className="glass-button flex w-full items-center justify-between rounded-xl px-4 py-3 text-lg font-semibold text-slate-800 transition-all duration-200 hover:scale-[1.01] dark:text-slate-100"
+                >
+                    <div className="flex items-center gap-3">
+                        <BarChart2 className="h-5 w-5" />
+                        <span>Spending Charts</span>
+                    </div>
+                    {chartsVisible ? (
+                        <EyeOff className="h-5 w-5 text-slate-500" />
+                    ) : (
+                        <BarChart2 className="h-5 w-5 text-slate-500" />
+                    )}
+                </button>
+
+                {chartsVisible && (
+                    <div className="mt-4 space-y-4">
+                        {expensesLoading && (
+                            <div className="flex justify-center p-8">
+                                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                                <span className="ml-2 text-gray-500 dark:text-gray-400">
+                                    Loading charts...
+                                </span>
+                            </div>
+                        )}
+                        {!expensesLoading && !expensesError && (
+                            <ChartPanel expenses={expenses} />
+                        )}
+                        {expensesError && (
+                            <p className="text-center text-red-500">{expensesError}</p>
+                        )}
+                    </div>
                 )}
             </div>
 
@@ -275,42 +313,6 @@ export default function AppPage() {
                 onAdjustBalance={adjustBalance}
                 onUpdateDenominations={updateDenominations}
             />
-
-            <div className="card-glass">
-                <button
-                    onClick={() => setChartsVisible(!chartsVisible)}
-                    className="glass-button flex w-full items-center justify-between rounded-xl p-4 text-lg font-semibold text-slate-800 transition-all duration-200 hover:scale-[1.01] dark:text-slate-100"
-                >
-                    <div className="flex items-center gap-3">
-                        <BarChart2 className="h-5 w-5" />
-                        <span>Spending Charts</span>
-                    </div>
-                    {chartsVisible ? (
-                        <EyeOff className="h-5 w-5 text-slate-500" />
-                    ) : (
-                        <BarChart2 className="h-5 w-5 text-slate-500" />
-                    )}
-                </button>
-
-                {chartsVisible && (
-                    <div className="mt-4 space-y-4">
-                        {expensesLoading && (
-                            <div className="flex justify-center p-8">
-                                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                                <span className="ml-2 text-gray-500 dark:text-gray-400">
-                                    Loading charts...
-                                </span>
-                            </div>
-                        )}
-                        {!expensesLoading && !expensesError && (
-                            <ChartPanel expenses={expenses} />
-                        )}
-                        {expensesError && (
-                            <p className="text-center text-red-500">{expensesError}</p>
-                        )}
-                    </div>
-                )}
-            </div>
 
             <div className="flex flex-col gap-4">
                 <ExpenseList

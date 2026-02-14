@@ -18,5 +18,5 @@ export interface Expense {
   date: Timestamp;
   createdAt: Timestamp;
   uid: string;
-  cashUsage?: Record<string, number>;
+  cashBreakdown?: Record<string, number>;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { useExpenses } from "@/hooks/useExpenses";
 import { useCategories } from "@/hooks/useCategories";

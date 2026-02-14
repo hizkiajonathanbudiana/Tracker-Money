@@ -17,6 +17,10 @@ export default function ChartPanel({ expenses }: ChartPanelProps) {
   const [activeRange, setActiveRange] = useState(7);
   const [editingPresets, setEditingPresets] = useState(false);
   const [customRange, setCustomRange] = useState("");
+  const [editPresets, setEditPresets] = useState<string[]>(
+    DEFAULT_PRESETS.map((preset) => preset.toString())
+  );
+  const [rangeMode, setRangeMode] = useState<"days" | "month">("days");
 
   useEffect(() => {
     const stored = localStorage.getItem(PRESET_STORAGE_KEY);
@@ -26,6 +30,7 @@ export default function ChartPanel({ expenses }: ChartPanelProps) {
         if (parsed.length === 3) {
           setPresets(parsed);
           setActiveRange(parsed[0]);
+          setEditPresets(parsed.map((preset) => preset.toString()));
         }
       } catch (error) {
         console.error(error);
@@ -33,155 +38,177 @@ export default function ChartPanel({ expenses }: ChartPanelProps) {
     }
   }, []);
 
+
+  const { rangeStart, rangeEnd } = useMemo(() => {
+    const now = new Date();
+    if (rangeMode === "month") {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      return { rangeStart: start, rangeEnd: end };
+    }
+
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+    const start = new Date();
+    start.setDate(end.getDate() - (activeRange - 1));
+    start.setHours(0, 0, 0, 0);
+    return { rangeStart: start, rangeEnd: end };
+  }, [activeRange, rangeMode]);
+
   const filteredExpenses = useMemo(() => {
     if (expenses.length === 0) return [];
-    const now = new Date();
-    now.setHours(23, 59, 59, 999);
-    const start = new Date();
-    start.setDate(now.getDate() - (activeRange - 1));
-    start.setHours(0, 0, 0, 0);
     return expenses.filter((expense) => {
       const expenseDate = expense.date.toDate();
-      return expenseDate >= start && expenseDate <= now;
+      return expenseDate >= rangeStart && expenseDate <= rangeEnd;
     });
-  }, [expenses, activeRange]);
-
-  const handlePresetChange = (index: number, value: string) => {
-    const parsed = parseInt(value, 10);
-    setPresets((prev) => {
-      const next = [...prev];
-      next[index] = Number.isNaN(parsed) ? prev[index] : parsed;
-      return next;
-    });
-  };
-
-  const savePresets = () => {
-    const cleaned = presets.map((preset) => Math.max(1, preset));
-    setPresets(cleaned);
-    localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(cleaned));
-    setActiveRange(cleaned[0]);
-    setEditingPresets(false);
-  };
-
-  const applyCustomRange = () => {
-    const parsed = parseInt(customRange, 10);
-    if (Number.isNaN(parsed) || parsed <= 0) return;
-    setActiveRange(parsed);
-    setCustomRange("");
-  };
+  }, [expenses, rangeEnd, rangeStart]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-            Spending Dashboard
+    <section className="relative overflow-hidden card-glass">
+      <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
+      <div className="p-4 sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-xl font-bold pl-2 text-slate-900 dark:text-white">
+            Analytics
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Showing the last {activeRange} day{activeRange > 1 ? "s" : ""}.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {presets.map((preset, index) => (
-            <button
-              key={`${preset}-${index}`}
-              type="button"
-              onClick={() => setActiveRange(preset)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${activeRange === preset
-                ? "bg-emerald-500 text-white shadow"
-                : "bg-white/70 text-slate-700 shadow-sm hover:bg-white dark:bg-slate-900/40 dark:text-slate-200"
-                }`}
-            >
-              {preset} days
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => setEditingPresets((prev) => !prev)}
-            className="rounded-full border border-slate-200/70 px-3 py-2 text-xs font-semibold text-slate-600 transition-all hover:border-slate-300 dark:border-slate-700 dark:text-slate-300"
-          >
-            {editingPresets ? "Done" : "Edit buttons"}
-          </button>
-        </div>
-      </div>
 
-      {editingPresets && (
-        <div className="glass-card space-y-3 p-4">
-          <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Customize quick range buttons
-          </p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {presets.map((preset, index) => (
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center rounded-lg border border-slate-200/70 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/70 p-1">
+              {presets.map((days, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setRangeMode("days");
+                    setActiveRange(days);
+                  }}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${activeRange === days
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    }`}
+                >
+                  {days} Days
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
               <input
-                key={`preset-input-${index}`}
-                type="number"
-                min="1"
-                value={preset}
-                onChange={(e) => handlePresetChange(index, e.target.value)}
-                className="glass-input rounded-lg px-3 py-2 text-sm"
-                placeholder="Days"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={customRange}
+                onChange={(event) => setCustomRange(event.target.value.replace(/[^0-9]/g, ""))}
+                placeholder="Custom days"
+                className="w-28 rounded-lg glass-input px-3 py-2 text-xs font-semibold"
               />
+              <button
+                onClick={() => {
+                  const parsed = parseInt(customRange, 10);
+                  if (!Number.isNaN(parsed) && parsed > 0) {
+                    setRangeMode("days");
+                    setActiveRange(parsed);
+                  }
+                }}
+                className="glass-button px-3 py-2 text-xs font-semibold"
+              >
+                Apply
+              </button>
+            </div>
+
+            <button
+              onClick={() => {
+                const now = new Date();
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                setRangeMode("month");
+                setActiveRange(daysInMonth);
+              }}
+              className="glass-button px-3 py-2 text-xs font-semibold"
+            >
+              This Month
+            </button>
+
+            <button
+              onClick={() => {
+                if (editingPresets) {
+                  const updated = editPresets.map((value, idx) => {
+                    const parsed = parseInt(value, 10);
+                    if (!Number.isNaN(parsed) && parsed > 0) {
+                      return parsed;
+                    }
+                    return presets[idx];
+                  });
+                  setPresets(updated);
+                  setActiveRange(updated[0]);
+                  localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(updated));
+                  setEditingPresets(false);
+                } else {
+                  setEditPresets(presets.map((preset) => preset.toString()));
+                  setEditingPresets(true);
+                }
+              }}
+              className="glass-button px-3 py-2 text-xs font-semibold"
+            >
+              {editingPresets ? "Done" : "Edit"}
+            </button>
+          </div>
+        </div>
+
+        {editingPresets && (
+          <div className="mt-4 grid grid-cols-3 gap-3">
+            {editPresets.map((value, idx) => (
+              <label key={idx} className="flex flex-col gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                Preset {idx + 1}
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={value}
+                  onChange={(event) => {
+                    const next = [...editPresets];
+                    next[idx] = event.target.value.replace(/[^0-9]/g, "");
+                    setEditPresets(next);
+                  }}
+                  className="rounded-lg glass-input px-3 py-2 text-sm font-semibold"
+                />
+              </label>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={savePresets}
-            className="glass-button-primary rounded-xl px-4 py-2 text-sm font-semibold"
-          >
-            Save preset buttons
-          </button>
-        </div>
-      )}
+        )}
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <label htmlFor="chart-custom-range" className="sr-only">
-          Custom range in days
-        </label>
-        <input
-          type="number"
-          min="1"
-          id="chart-custom-range"
-          value={customRange}
-          onChange={(e) => setCustomRange(e.target.value)}
-          className="glass-input rounded-xl px-4 py-2 text-sm"
-          placeholder="Custom days"
-        />
-        <button
-          type="button"
-          onClick={applyCustomRange}
-          className="glass-button rounded-xl px-4 py-2 text-sm font-semibold"
-        >
-          Apply custom range
-        </button>
-      </div>
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="space-y-6">
+            <div className="bg-white/80 dark:bg-slate-900/70 rounded-xl p-4 border border-slate-200/60 dark:border-slate-700/60">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                Total Spending ({rangeMode === "month" ? "This Month" : `${activeRange} days`})
+              </p>
+              <p className="text-2xl font-black text-slate-900 dark:text-white">
+                $
+                {filteredExpenses
+                  .reduce((acc, curr) => acc + curr.amount, 0)
+                  .toLocaleString()}
+              </p>
+            </div>
 
-      {filteredExpenses.length === 0 ? (
-        <p className="text-center text-gray-500 dark:text-gray-400">
-          No expenses found for this range.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-gray-200/70 bg-white/70 p-4 shadow-sm dark:border-gray-700/70 dark:bg-slate-900/40">
-            <h3 className="mb-1 text-center text-lg font-semibold text-gray-800 dark:text-gray-200">
-              Daily Spending
-            </h3>
-            <p className="mb-3 text-center text-xs text-gray-500 dark:text-gray-400">
-              Tip: Use scroll or pinch to zoom, drag to pan.
-            </p>
-            <div className="relative h-64">
-              <LineChart expenses={filteredExpenses} daysBack={activeRange} />
+            <div className="h-[260px] w-full">
+              <LineChart
+                expenses={expenses}
+                daysBack={rangeMode === "days" ? activeRange : undefined}
+                rangeStart={rangeMode === "month" ? rangeStart : undefined}
+                rangeEnd={rangeMode === "month" ? rangeEnd : undefined}
+              />
             </div>
           </div>
-          <div className="rounded-2xl border border-gray-200/70 bg-white/70 p-4 shadow-sm dark:border-gray-700/70 dark:bg-slate-900/40">
-            <h3 className="mb-3 text-center text-lg font-semibold text-gray-800 dark:text-gray-200">
-              Spending by Category
+
+          <div className="rounded-xl border border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4">
+            <h3 className="text-sm font-bold mb-4 text-slate-900 dark:text-white">
+              Category Breakdown
             </h3>
-            <div className="relative mx-auto h-64 max-w-xs">
+            <div className="h-[280px] w-full flex items-center justify-center">
               <PieChart expenses={filteredExpenses} />
             </div>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </section>
   );
 }

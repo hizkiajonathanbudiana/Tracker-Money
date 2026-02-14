@@ -32,24 +32,41 @@ ChartJS.register(
 
 interface LineChartProps {
     expenses: Expense[];
-    daysBack: number;
+    daysBack?: number;
+    rangeStart?: Date;
+    rangeEnd?: Date;
 }
 
 const processLineChartData = (
     expenses: Expense[],
-    daysBack: number
+    daysBack: number,
+    rangeStart?: Date,
+    rangeEnd?: Date
 ): ChartData<"line", number[], string> => {
     const labels: string[] = [];
     const dataPoints: number[] = [];
     const dailyTotals: Record<string, number> = {};
 
-    const today = new Date();
     const dates: Date[] = [];
-    for (let i = daysBack - 1; i >= 0; i -= 1) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        date.setHours(0, 0, 0, 0);
-        dates.push(date);
+
+    if (rangeStart && rangeEnd) {
+        const cursor = new Date(rangeStart);
+        cursor.setHours(0, 0, 0, 0);
+        const end = new Date(rangeEnd);
+        end.setHours(0, 0, 0, 0);
+
+        while (cursor <= end) {
+            dates.push(new Date(cursor));
+            cursor.setDate(cursor.getDate() + 1);
+        }
+    } else {
+        const today = new Date();
+        for (let i = daysBack - 1; i >= 0; i -= 1) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            date.setHours(0, 0, 0, 0);
+            dates.push(date);
+        }
     }
 
     dates.forEach((date) => {
@@ -82,26 +99,33 @@ const processLineChartData = (
                 label: "Spending",
                 data: dataPoints,
                 fill: true,
-                backgroundColor: "rgba(59, 130, 246, 0.2)",
-                borderColor: "rgba(59, 130, 246, 1)",
-                tension: 0.2,
-                pointBackgroundColor: "rgba(59, 130, 246, 1)",
-                pointRadius: 3,
+                backgroundColor: (context: any) => {
+                    const ctx = context.chart.ctx;
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                    gradient.addColorStop(0, "rgba(59, 130, 246, 0.5)"); // Blue 500
+                    gradient.addColorStop(1, "rgba(59, 130, 246, 0.0)");
+                    return gradient;
+                },
+                borderColor: "#3b82f6", // Blue 500
+                borderWidth: 2,
+                tension: 0.4, // Smooth curve
+                pointBackgroundColor: "#3b82f6",
+                pointRadius: 0, // No points by default
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "#3b82f6",
+                pointHoverBorderWidth: 3,
             },
         ],
     };
 };
 
-export default function LineChart({ expenses, daysBack }: LineChartProps) {
+export default function LineChart({ expenses, daysBack = 7, rangeStart, rangeEnd }: LineChartProps) {
     const { theme } = useTheme();
     const chartData = useMemo(
-        () => processLineChartData(expenses, daysBack),
-        [expenses, daysBack]
+        () => processLineChartData(expenses, daysBack, rangeStart, rangeEnd),
+        [expenses, daysBack, rangeEnd, rangeStart]
     );
-
-    const gridColor =
-        theme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
-    const textColor = theme === "dark" ? "#e5e7eb" : "#374151";
 
     const options = {
         responsive: true,
@@ -111,61 +135,60 @@ export default function LineChart({ expenses, daysBack }: LineChartProps) {
                 display: false,
             },
             tooltip: {
+                backgroundColor: "rgba(0,0,0,0.9)",
+                padding: 12,
+                titleFont: {
+                    size: 13,
+                    family: "'Inter', sans-serif",
+                },
+                bodyFont: {
+                    size: 14,
+                    family: "'Inter', sans-serif",
+                    weight: 700,
+                },
+                cornerRadius: 8,
+                displayColors: false,
                 callbacks: {
-                    label: function (context: any) {
-                        let label = "Day " + context.label || "";
-                        if (label) {
-                            label += ": ";
-                        }
-                        if (context.parsed.y !== null) {
-                            label += new Intl.NumberFormat("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                            }).format(context.parsed.y);
-                        }
-                        return label;
-                    },
-                },
-            },
-            zoom: {
-                pan: {
-                    enabled: true,
-                    mode: "x" as const,
-                },
-                zoom: {
-                    wheel: {
-                        enabled: true,
-                    },
-                    pinch: {
-                        enabled: true,
-                    },
-                    mode: "x" as const,
+                    label: (context: any) => `$${context.parsed.y.toFixed(2)}`,
                 },
             },
         },
         scales: {
+            x: {
+                grid: {
+                    display: false,
+                },
+                ticks: {
+                    maxTicksLimit: 7,
+                    font: {
+                        size: 10,
+                    },
+                    color: theme === "dark" ? "#525252" : "#9ca3af",
+                },
+                border: {
+                    display: false,
+                },
+            },
             y: {
                 beginAtZero: true,
-                ticks: {
-                    color: textColor,
-                },
                 grid: {
-                    color: gridColor,
-                },
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: "Day of the Month",
-                    color: textColor,
+                    color: theme === "dark" ? "#262626" : "#f3f4f6",
                 },
                 ticks: {
-                    color: textColor,
+                    font: {
+                        size: 10,
+                    },
+                    color: theme === "dark" ? "#525252" : "#9ca3af",
+                    callback: (value: any) => `$${value}`,
                 },
-                grid: {
-                    color: gridColor,
+                border: {
+                    display: false,
                 },
             },
+        },
+        interaction: {
+            mode: "index" as const,
+            intersect: false,
         },
     };
 

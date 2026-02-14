@@ -64,64 +64,84 @@ const processPieChartData = (
                 label: "Spending by Category",
                 data,
                 backgroundColor: backgroundColors,
-                borderColor: "#ffffff",
-                borderWidth: 1,
+                borderWidth: 0,
+                hoverOffset: 15,
             },
         ],
     };
 };
 
 export default function PieChart({ expenses }: PieChartProps) {
-    const { theme } = useTheme(); // Dapatkan tema saat ini
-    const chartData = useMemo(() => processPieChartData(expenses), [expenses]);
+    const { theme } = useTheme();
+    const isDark =
+        theme === "dark" ||
+        (typeof window !== "undefined" &&
+            document.documentElement.classList.contains("dark"));
+
+    const chartData = useMemo(() => {
+        const data = processPieChartData(expenses);
+        if (data.datasets[0]) {
+            data.datasets[0].borderColor = isDark ? "#171717" : "#ffffff";
+            data.datasets[0].borderWidth = 2;
+        }
+        return data;
+    }, [expenses, isDark]);
+
     const totalSpend = useMemo(
         () => expenses.reduce((acc, exp) => acc + exp.amount, 0),
         [expenses]
     );
-
-    // Atur warna teks legenda berdasarkan tema
-    const legendColor = theme === "dark" ? "#9ca3af" : "#4b5563"; // gray-400 / gray-600
 
     const options = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: "top" as const,
+                position: "right" as const,
                 labels: {
-                    color: legendColor, // Gunakan warna dinamis
+                    usePointStyle: true,
+                    boxWidth: 8,
+                    padding: 20,
+                    font: {
+                        size: 11,
+                        family: "'Inter', sans-serif",
+                        weight: 600,
+                    },
+                    color: isDark ? "#d4d4d4" : "#4b5563",
                 },
             },
             tooltip: {
+                backgroundColor: "rgba(0,0,0,0.9)",
+                padding: 12,
+                titleFont: {
+                    size: 13,
+                },
+                bodyFont: {
+                    size: 13,
+                    weight: 700,
+                },
+                cornerRadius: 8,
                 callbacks: {
-                    label: function (context: any) {
-                        let label = context.label || "";
-                        if (label) {
-                            label += ": ";
-                        }
-                        if (context.parsed !== null) {
-                            label += new Intl.NumberFormat("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                            }).format(context.parsed);
-                        }
-                        return label;
+                    label: (context: any) => {
+                        const value = context.parsed;
+                        const percentage = ((value / totalSpend) * 100).toFixed(1);
+                        return ` $${value.toLocaleString()} (${percentage}%)`;
                     },
                 },
             },
             datalabels: {
-                formatter: (value: number, ctx: any) => {
-                    if (totalSpend === 0) return "0%";
-                    const percentage = ((value / totalSpend) * 100).toFixed(1) + "%";
-                    return (value / totalSpend) * 100 > 5 ? percentage : "";
-                },
-                color: "#fff",
-                font: {
-                    weight: "bold" as "bold",
-                },
+                display: false, // Cleaner look without dynamic labels on the chart
             },
         },
     };
+
+    if (expenses.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                <p className="text-sm">No data available</p>
+            </div>
+        );
+    }
 
     return <Pie data={chartData} options={options} />;
 }
