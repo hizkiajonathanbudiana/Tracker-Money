@@ -27,16 +27,16 @@ export default function Tracker() {
       <Heading
         eyebrow="EVERY LITTLE TRANSACTION"
         title="Money tracker."
-        description="Pemasukan dan pengeluaran, semuanya punya tempat."
+        description="Record and review income and expenses."
         actions={
           <button className="btn primary" onClick={() => setForm(true)}>
-            <Plus size={17} /> Catat transaksi
+            <Plus size={17} /> Add transaction
           </button>
         }
       />
       <div className="three-grid">
         <div className="card compact-stat">
-          <span>Pemasukan</span>
+          <span>Income</span>
           <strong className="positive">
             {money(
               tx
@@ -46,7 +46,7 @@ export default function Tracker() {
           </strong>
         </div>
         <div className="card compact-stat">
-          <span>Pengeluaran</span>
+          <span>Expenses</span>
           <strong>
             {money(
               tx
@@ -56,7 +56,7 @@ export default function Tracker() {
           </strong>
         </div>
         <div className="card compact-stat">
-          <span>Arus kas bersih</span>
+          <span>Net cash flow</span>
           <strong>
             {money(
               tx.reduce(
@@ -72,8 +72,8 @@ export default function Tracker() {
           <div className="segmented">
             {[
               ["all", "Semua"],
-              ["expense", "Pengeluaran"],
-              ["income", "Pemasukan"],
+              ["expense", "Expenses"],
+              ["income", "Income"],
             ].map(([v, l]) => (
               <button
                 key={v}
@@ -88,14 +88,14 @@ export default function Tracker() {
             <label className="search">
               <Search size={17} />
               <input
-                aria-label="Cari transaksi"
+                aria-label="Search transactions"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari transaksi…"
+                placeholder="Search transactions…"
               />
             </label>
             <input
-              aria-label="Bulan transaksi"
+              aria-label="Transaction month"
               type="month"
               value={month}
               onChange={(e) => setMonth(e.target.value)}
@@ -107,10 +107,10 @@ export default function Tracker() {
             <table>
               <thead>
                 <tr>
-                  <th>Transaksi</th>
-                  <th>Tanggal</th>
-                  <th>Kategori</th>
-                  <th className="align-right">Nominal</th>
+                  <th>Transaction</th>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th className="align-right">Amount</th>
                   <th />
                 </tr>
               </thead>
@@ -141,7 +141,7 @@ export default function Tracker() {
                     <td>
                       <span className="pill neutral">
                         {t.kind === "income"
-                          ? "Pemasukan"
+                          ? "Income"
                           : s.categories.find((c) => c.id === t.category)?.name}
                       </span>
                     </td>
@@ -151,7 +151,7 @@ export default function Tracker() {
                     <td>
                       <button
                         className="icon-button"
-                        aria-label={"Hapus " + t.title}
+                        aria-label={"Delete " + t.title}
                         disabled={s.months[month]?.closed}
                         onClick={() => setRemove(t.id)}
                       >
@@ -165,27 +165,25 @@ export default function Tracker() {
           </div>
         ) : (
           <Empty
-            title="Belum ada transaksi di sini"
-            description="Coba bulan atau pencarian lain, atau catat transaksi baru."
+            title="No transactions found"
+            description="Try a different month or search term, or add a transaction."
           />
         )}
         <div className="table-footer">
-          {list.length} transaksi · {s.settings.currency}
-          {s.months[month]?.closed
-            ? " · Riwayat terkunci setelah tutup bulan"
-            : ""}
+          {list.length} transactions · {s.settings.currency}
+          {s.months[month]?.closed ? " · Past months are locked" : ""}
         </div>
       </section>
       {form && <TransactionForm onClose={() => setForm(false)} />}{" "}
       {remove && (
-        <Modal title="Hapus transaksi ini?" onClose={() => setRemove(null)}>
+        <Modal title="Delete this transaction?" onClose={() => setRemove(null)}>
           <p>
-            Saldo dan budget dihitung ulang. Tagihan terkait kembali belum
-            dibayar.
+            Your balance and budget will be recalculated. Any linked bill will
+            be marked unpaid.
           </p>
           <div className="modal-actions">
             <button className="btn secondary" onClick={() => setRemove(null)}>
-              Batal
+              Cancel
             </button>
             <button
               className="btn danger"
@@ -193,13 +191,13 @@ export default function Tracker() {
                 if (
                   await mutate(
                     (st) => deleteTransaction(st, remove),
-                    "Transaksi dihapus.",
+                    "Transaction deleted.",
                   )
                 )
                   setRemove(null);
               }}
             >
-              Hapus transaksi
+              Delete transaction
             </button>
           </div>
         </Modal>

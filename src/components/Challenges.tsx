@@ -61,7 +61,7 @@ export default function Challenges() {
       if (modal === "edit")
         editChallenge(st, date, editId, title, time, duration, today);
       else addChallenge(st, date, title, time, duration, today);
-    }, "Jadwal challenge disimpan.");
+    }, "Challenge saved.");
     if (ok) setModal(null);
   }
   return (
@@ -69,18 +69,18 @@ export default function Challenges() {
       <Heading
         eyebrow="SHOW UP FOR YOURSELF"
         title="Small steps. Real progress."
-        description="Jadwal boleh berbeda. Kebiasaan baik tetap bertumbuh."
+        description="Plan challenges for each day and track your progress."
         actions={
           <>
             <button className="btn secondary" onClick={() => setModal("copy")}>
-              <Copy size={16} /> Salin jadwal
+              <Copy size={16} /> Copy schedule
             </button>
             <button
               className="btn primary"
               disabled={locked}
               onClick={() => setModal("add")}
             >
-              <Plus size={17} /> Challenge baru
+              <Plus size={17} /> New challenge
             </button>
           </>
         }
@@ -92,7 +92,7 @@ export default function Challenges() {
               <div className="inline-heading">
                 <CalendarDays size={18} />
                 <h2>
-                  {new Intl.DateTimeFormat("id-ID", {
+                  {new Intl.DateTimeFormat("en-US", {
                     month: "long",
                     year: "numeric",
                     timeZone: "UTC",
@@ -101,10 +101,10 @@ export default function Challenges() {
               </div>
               <div className="inline-actions">
                 <button className="text-button" onClick={() => setDate(today)}>
-                  Hari ini
+                  Today
                 </button>
                 <input
-                  aria-label="Tanggal challenge"
+                  aria-label="Challenge date"
                   type="date"
                   value={date}
                   onChange={(e) => {
@@ -115,7 +115,7 @@ export default function Challenges() {
             </div>
             <div className="week-strip">
               <button
-                aria-label="Hari sebelumnya"
+                aria-label="Previous day"
                 className="icon-button"
                 onClick={() => setDate(addDays(date, -1))}
               >
@@ -128,7 +128,7 @@ export default function Challenges() {
                   key={d}
                 >
                   <small>
-                    {new Intl.DateTimeFormat("id-ID", {
+                    {new Intl.DateTimeFormat("en-US", {
                       weekday: "short",
                       timeZone: "UTC",
                     }).format(new Date(d + "T12:00:00Z"))}
@@ -138,7 +138,7 @@ export default function Challenges() {
                 </button>
               ))}
               <button
-                aria-label="Hari berikutnya"
+                aria-label="Next day"
                 className="icon-button"
                 onClick={() => setDate(addDays(date, 1))}
               >
@@ -150,18 +150,18 @@ export default function Challenges() {
             <div className="section-head">
               <div>
                 <h2>
-                  {date === today ? "Rencanamu hari ini" : "Rencana " + date}
+                  {date === today ? "Today's plan" : "Schedule for " + date}
                 </h2>
                 <p>
-                  {done} dari {items.length} selesai
-                  {locked ? " · Riwayat terkunci" : ""}
+                  {done} of {items.length} completed
+                  {locked ? " · Past schedule locked" : ""}
                 </p>
               </div>
               {items.length > 0 && (
                 <span className="pill green">
                   {done === items.length
-                    ? `Bonus +${day.bonus} didapat!`
-                    : `Bonus komplet +${day.bonus}`}
+                    ? `Bonus +${day.bonus} earned!`
+                    : `Completion bonus +${day.bonus}`}
                 </span>
               )}
             </div>
@@ -174,7 +174,7 @@ export default function Challenges() {
                       <button
                         className={"check-button " + c.status}
                         aria-label={
-                          (c.status === "done" ? "Batalkan " : "Selesaikan ") +
+                          (c.status === "done" ? "Undo " : "Complete ") +
                           c.title
                         }
                         disabled={date !== today || day.closed}
@@ -189,8 +189,8 @@ export default function Challenges() {
                                 today,
                               ),
                             c.status === "done"
-                              ? "Status dibatalkan."
-                              : "Nice! Poin bertambah.",
+                              ? "Status cleared."
+                              : "Challenge completed. Points added.",
                           )
                         }
                       >
@@ -205,14 +205,14 @@ export default function Challenges() {
                         <div className="challenge-detail">
                           <span>
                             <Clock size={13} />
-                            {c.time} · {c.duration} menit
+                            {c.time} · {c.duration} min
                           </span>
                           <span>
                             {c.status === "done"
-                              ? `+${c.reward} poin`
+                              ? `+${c.reward} points`
                               : c.status === "missed"
-                                ? `−${c.penalty} poin`
-                                : `+${c.reward} selesai / −${c.penalty} terlewat`}
+                                ? `−${c.penalty} points`
+                                : `+${c.reward} completed / −${c.penalty} missed`}
                           </span>
                         </div>
                         <div className="challenge-actions">
@@ -234,7 +234,7 @@ export default function Challenges() {
                                     (i) => i.id === c.id,
                                   );
                                   if (target) target.calendarId = id;
-                                }, "Event & reminder tersimpan di Google Calendar.");
+                                }, "Event and reminder saved to Google Calendar.");
                               } catch (e) {
                                 notify((e as Error).message);
                               } finally {
@@ -244,10 +244,10 @@ export default function Challenges() {
                           >
                             <CalendarPlus size={12} />
                             {syncing === c.id
-                              ? "Menyimpan…"
+                              ? "Saving…"
                               : c.calendarId
                                 ? "Update event"
-                                : "Sinkronkan"}
+                                : "Sync"}
                           </button>
                           {date === today && (
                             <button
@@ -265,21 +265,21 @@ export default function Challenges() {
                                       today,
                                     ),
                                   c.status === "missed"
-                                    ? "Status dibatalkan."
-                                    : "Challenge ditandai terlewat.",
+                                    ? "Status cleared."
+                                    : "Challenge marked as missed.",
                                 )
                               }
                             >
                               {c.status === "missed"
-                                ? "Batalkan terlewat"
-                                : "Tandai terlewat"}
+                                ? "Clear missed status"
+                                : "Mark as missed"}
                             </button>
                           )}
                         </div>
                       </div>
                       <div>
                         <button
-                          aria-label={"Ubah " + c.title}
+                          aria-label={"Edit " + c.title}
                           className="icon-button"
                           disabled={locked || c.status !== "pending"}
                           onClick={() => {
@@ -290,13 +290,13 @@ export default function Challenges() {
                           <Pencil size={14} />
                         </button>
                         <button
-                          aria-label={"Hapus " + c.title}
+                          aria-label={"Delete " + c.title}
                           className="icon-button"
                           disabled={locked || c.status !== "pending"}
                           onClick={() =>
                             void mutate(
                               (st) => removeChallenge(st, date, c.id, today),
-                              "Challenge dihapus.",
+                              "Challenge deleted.",
                             )
                           }
                         >
@@ -308,8 +308,8 @@ export default function Challenges() {
               </div>
             ) : (
               <Empty
-                title="Hari baru, rencana baru"
-                description="Susun challenge sendiri atau gunakan template. Hari tanpa challenge tidak dikenai penalti."
+                title="No challenges scheduled"
+                description="Create your own challenges or use a template. Days without challenges have no penalty."
               >
                 <button
                   className="btn primary"
@@ -319,7 +319,7 @@ export default function Challenges() {
                     setModal("copy");
                   }}
                 >
-                  Gunakan template
+                  Use template
                 </button>
               </Empty>
             )}
@@ -328,43 +328,43 @@ export default function Challenges() {
         <aside className="challenge-aside">
           <section className="card soft-card">
             <Sparkles size={25} />
-            <h2>Usaha kecil tetap berarti.</h2>
+            <h2>How points work</h2>
             <p>
-              Selesaikan 10 challenge untuk mendapat{" "}
-              {10 * s.settings.reward + s.settings.bonus} poin, termasuk bonus +
+              Complete 10 challenges to earn{" "}
+              {10 * s.settings.reward + s.settings.bonus} points, including a +
               {s.settings.bonus}.
             </p>
             <div className="rules-list">
               <div>
-                <span>Selesai</span>
-                <b className="positive">+{s.settings.reward} poin</b>
+                <span>Completed</span>
+                <b className="positive">+{s.settings.reward} points</b>
               </div>
               <div>
-                <span>Terlewat</span>
-                <b className="negative">−{s.settings.penalty} poin</b>
+                <span>Missed</span>
+                <b className="negative">−{s.settings.penalty} points</b>
               </div>
               <div>
-                <span>Semua selesai</span>
+                <span>All completed</span>
                 <b>+{s.settings.bonus} bonus</b>
               </div>
             </div>
             <p className="fine-print">
-              Challenge pending dipotong setelah harinya berakhir, saat app
-              dibuka atau aktif kembali. Saldo dapat negatif. Jadwal tidak
-              berulang otomatis.
+              Pending challenges are marked missed after their scheduled day
+              ends and you open or return to the app. Your balance can go
+              negative. Schedules do not repeat automatically.
             </p>
           </section>
           <section className="card">
-            <h2>Jadikan rutinitasmu lebih mudah</h2>
+            <h2>Reuse your schedule</h2>
             <p className="muted">
-              Simpan susunan hari ini sebagai template atau bawa ke kalender.
+              Save this day&apos;s plan as a template or export it to your calendar.
             </p>
             <button
               className="btn secondary full"
               disabled={!items.length}
               onClick={() => setModal("template")}
             >
-              <Bookmark size={15} /> Simpan template
+              <Bookmark size={15} /> Save template
             </button>
             <button
               className="btn secondary full"
@@ -376,39 +376,39 @@ export default function Challenges() {
                   "text/calendar",
                 );
                 notify(
-                  "File kalender diunduh. Impor ke Google/Apple Calendar untuk reminder.",
+                  "Calendar file downloaded. Import it into Google Calendar or Apple Calendar for reminders.",
                 );
               }}
             >
-              <Download size={15} /> Export kalender (.ics)
+              <Download size={15} /> Export calendar (.ics)
             </button>
             <p className="fine-print">
-              Sinkronkan memerlukan koneksi Google di Pengaturan. Tautan Google
-              Calendar dan .ics dapat digunakan tanpa koneksi app.
+              Connect Google Calendar in Settings to sync events. You can also
+              open calendar links or export an .ics file.
             </p>
           </section>
         </aside>
       </div>
       {(modal === "add" || modal === "edit") && (
         <Modal
-          title={modal === "edit" ? "Ubah challenge" : "Challenge baru"}
+          title={modal === "edit" ? "Edit challenge" : "New challenge"}
           onClose={() => setModal(null)}
         >
           <form className="form-stack" onSubmit={submit}>
             <label>
-              Apa yang ingin kamu lakukan?
+              What do you want to do?
               <input
                 name="title"
                 required
                 maxLength={150}
                 defaultValue={modal === "edit" ? editing?.title : ""}
-                placeholder="Contoh: Siapkan bekal untuk besok"
+                placeholder="Example: Pack lunch for tomorrow"
                 autoFocus
               />
             </label>
             <div className="form-row">
               <label>
-                Jam mulai
+                Start time
                 <input
                   name="time"
                   type="time"
@@ -417,7 +417,7 @@ export default function Challenges() {
                 />
               </label>
               <label>
-                Durasi (menit)
+                Duration (minutes)
                 <input
                   name="duration"
                   type="number"
@@ -433,32 +433,31 @@ export default function Challenges() {
             </div>
             {editing?.calendarId && modal === "edit" && (
               <p className="fine-print">
-                Klik Update event setelah menyimpan agar Google Calendar ikut
-                diperbarui.
+                After saving, select Update event to update Google Calendar.
               </p>
             )}
-            <button className="btn primary">Simpan challenge</button>
+            <button className="btn primary">Save challenge</button>
           </form>
         </Modal>
       )}
       {modal === "copy" && (
-        <Modal title="Salin jadwal challenge" onClose={() => setModal(null)}>
+        <Modal title="Copy challenge schedule" onClose={() => setModal(null)}>
           <p>
-            Tujuan: <b>{date}</b>. Status dan poin tidak ikut disalin. Tanggal
-            tujuan harus kosong.
+            Destination: <b>{date}</b>. Only the schedule is copied. Choose a
+            date with no existing challenges.
           </p>
           <div className="segmented">
             <button
               className={tab === "date" ? "active" : ""}
               onClick={() => setTab("date")}
             >
-              Dari tanggal
+              From a date
             </button>
             <button
               className={tab === "template" ? "active" : ""}
               onClick={() => setTab("template")}
             >
-              Dari template
+              From a template
             </button>
           </div>
           <form
@@ -477,7 +476,7 @@ export default function Challenges() {
                       date,
                       today,
                     ),
-                  "Jadwal berhasil disalin.",
+                  "Schedule copied.",
                 )
               )
                 setModal(null);
@@ -485,7 +484,7 @@ export default function Challenges() {
           >
             {tab === "date" ? (
               <label>
-                Tanggal sumber
+                Source date
                 <input
                   type="date"
                   value={source}
@@ -508,12 +507,12 @@ export default function Challenges() {
                 </select>
               </label>
             )}
-            <button className="btn primary">Salin ke {date}</button>
+            <button className="btn primary">Copy to {date}</button>
           </form>
         </Modal>
       )}
       {modal === "template" && (
-        <Modal title="Simpan sebagai template" onClose={() => setModal(null)}>
+        <Modal title="Save as template" onClose={() => setModal(null)}>
           <form
             className="form-stack"
             onSubmit={async (e) => {
@@ -530,22 +529,22 @@ export default function Challenges() {
                       calendarId: undefined,
                     })),
                   });
-                }, "Template tersimpan.")
+                }, "Template saved.")
               )
                 setModal(null);
             }}
           >
             <label>
-              Nama template
+              Template name
               <input
                 name="name"
                 required
                 maxLength={100}
-                placeholder="Rutinitas hari kerja"
+                placeholder="Weekday routine"
               />
             </label>
             <button className="btn primary">
-              Simpan {items.length} challenge
+              Save {items.length} challenges
             </button>
           </form>
         </Modal>

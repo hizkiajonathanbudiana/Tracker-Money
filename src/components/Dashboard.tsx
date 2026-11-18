@@ -23,7 +23,7 @@ export default function Dashboard() {
   const money = useMoney(),
     [form, setForm] = useState<"income" | "expense" | null>(null);
   const month = today.slice(0, 7),
-    monthLabel = new Intl.DateTimeFormat("id-ID", {
+    monthLabel = new Intl.DateTimeFormat("en-US", {
       month: "long",
       year: "numeric",
       timeZone: "UTC",
@@ -58,8 +58,8 @@ export default function Dashboard() {
     <>
       <Heading
         eyebrow="A LITTLE PROGRESS, EVERY DAY"
-        title={`Halo, ${s.settings.name}.`}
-        description="Keuangan lebih terarah. Kebiasaan baik makin berarti."
+        title={`Hi, ${s.settings.name}.`}
+        description="See your balance, monthly budgets, and daily challenges at a glance."
         actions={
           <>
             <span className="date-chip">
@@ -67,7 +67,7 @@ export default function Dashboard() {
               {monthLabel}
             </span>
             <button className="btn primary" onClick={() => setForm("expense")}>
-              <Plus size={17} /> Catat transaksi
+              <Plus size={17} /> Add transaction
             </button>
           </>
         }
@@ -75,48 +75,49 @@ export default function Dashboard() {
       <div className="stats-grid">
         <div className="stat-card wallet-card">
           <div className="stat-label">
-            Saldo tercatat <Wallet size={18} />
+            Recorded balance <Wallet size={18} />
           </div>
           <strong>{money(wallet(s))}</strong>
           <div className="stat-foot">
-            <span className="dot" /> Pemasukan dikurangi pengeluaran
+            <span className="dot" /> Income minus expenses
           </div>
           <span className="wallet-orbit" />
         </div>
         <div className="stat-card">
           <div className="stat-label">
-            Pemasukan bulan ini{" "}
+            Income this month{" "}
             <span className="stat-icon green">
               <ArrowDownLeft size={17} />
             </span>
           </div>
           <strong>{money(income)}</strong>
           <button className="text-button" onClick={() => setForm("income")}>
-            Tambah pemasukan <Plus size={13} />
+            Add income <Plus size={13} />
           </button>
         </div>
         <div className="stat-card">
           <div className="stat-label">
-            Pengeluaran bulan ini{" "}
+            Expenses this month{" "}
             <span className="stat-icon sand">
               <ArrowUpRight size={17} />
             </span>
           </div>
           <strong>{money(spent)}</strong>
           <div className="stat-foot">
-            {tx.filter((t) => t.kind === "expense").length} transaksi tercatat
+            {tx.filter((t) => t.kind === "expense").length} recorded
+            transactions
           </div>
         </div>
         <Link className="stat-card points-card" href="/budget/">
           <div className="stat-label">
-            Poin kamu <Sparkles size={18} />
+            Your points <Sparkles size={18} />
           </div>
           <strong>
             {num(points(s))}
             <small> pts</small>
           </strong>
           <div className="stat-foot">
-            Terus terkumpul, tanpa kedaluwarsa <ArrowUpRight size={14} />
+            Points carry over without expiring <ArrowUpRight size={14} />
           </div>
         </Link>
       </div>
@@ -125,16 +126,16 @@ export default function Dashboard() {
           <section className="card budget-overview">
             <div className="section-head">
               <div>
-                <h2>Ruang untuk bulan ini</h2>
-                <p>Budget bulanan, tanpa batas harian.</p>
+                <h2>Monthly budget</h2>
+                <p>Monthly spending limits by category.</p>
               </div>
               <Link className="text-button" href="/budget/">
-                Atur budget <ArrowUpRight size={15} />
+                Manage budgets <ArrowUpRight size={15} />
               </Link>
             </div>
             <div className="budget-total">
               <strong>{money(remaining)}</strong>
-              <span>total budget tersisa</span>
+              <span>total budget remaining</span>
             </div>
             <div className="budget-breakdown">
               {s.categories.slice(0, 4).map((c) => {
@@ -173,18 +174,18 @@ export default function Dashboard() {
             <div className="subtle-note">
               <Sparkles size={15} />
               <span>
-                Sisa budget akhir bulan otomatis menjadi poin. 1{" "}
-                {s.settings.currency} = 1 poin.
+                Unused budget converts to points at month-end. 1{" "}
+                {s.settings.currency} = 1 point.
               </span>
             </div>
           </section>
           <section className="card">
             <div className="section-head">
               <div>
-                <h2>Ritme pengeluaran</h2>
-                <p>Langkah kecil untuk lebih sadar belanja.</p>
+                <h2>Spending trend</h2>
+                <p>Daily spending over the past week.</p>
               </div>
-              <span className="pill neutral">7 hari terakhir</span>
+              <span className="pill neutral">Last 7 days</span>
             </div>
             <div className="chart">
               <div className="chart-axis">
@@ -206,7 +207,7 @@ export default function Dashboard() {
                       title={money(d.amount)}
                     />
                     <span className={i === 6 ? "current-label" : ""}>
-                      {new Intl.DateTimeFormat("id-ID", {
+                      {new Intl.DateTimeFormat("en-US", {
                         weekday: "short",
                         timeZone: "UTC",
                       }).format(new Date(d.date + "T12:00:00Z"))}
@@ -219,17 +220,17 @@ export default function Dashboard() {
           <section className="card">
             <div className="section-head">
               <div>
-                <h2>Transaksi terbaru</h2>
-                <p>Setiap catatan membantu melihat gambaran besarnya.</p>
+                <h2>Recent transactions</h2>
+                <p>Your latest income and expenses.</p>
               </div>
               <Link href="/tracker/" className="text-button">
-                Lihat semua <ArrowRight size={15} />
+                View all <ArrowRight size={15} />
               </Link>
             </div>
             {s.transactions.length === 0 ? (
               <Empty
-                title="Mulai dari satu catatan"
-                description="Tambahkan pemasukan atau pengeluaran pertamamu."
+                title="No transactions yet"
+                description="Record your first income or expense."
               />
             ) : (
               <div className="transaction-list">
@@ -255,12 +256,12 @@ export default function Dashboard() {
                         <b>{t.title}</b>
                         <small>
                           {t.kind === "income"
-                            ? "Pemasukan"
+                            ? "Income"
                             : s.categories.find((c) => c.id === t.category)
                                 ?.name}{" "}
                           ·{" "}
                           {t.date === today
-                            ? "Hari ini"
+                            ? "Today"
                             : t.date.slice(8) + "/" + t.date.slice(5, 7)}
                         </small>
                       </div>
@@ -278,7 +279,7 @@ export default function Dashboard() {
                 <span className="tiny-icon">
                   <Target size={17} />
                 </span>
-                <h2>Challenge hari ini</h2>
+                <h2>Today&apos;s challenges</h2>
               </div>
               <span className="pill green">
                 {done}/{total}
@@ -299,19 +300,19 @@ export default function Dashboard() {
               <div>
                 <h3>
                   {done === total && total
-                    ? "Kamu menuntaskannya!"
-                    : "Sedikit lagi, lebih baik."}
+                    ? "You finished every challenge!"
+                    : "Keep going"}
                 </h3>
                 <p>
                   {total
                     ? done === total
-                      ? "Bonus komplet sudah didapat."
-                      : "Selesaikan semuanya untuk bonus"
-                    : "Susun rutinitas versimu sendiri."}
+                      ? "You earned the completion bonus."
+                      : "Complete all challenges to earn a bonus."
+                    : "Build a routine that works for you."}
                 </p>
                 {total > 0 && (
                   <span className="bonus-tag">
-                    <Sparkles size={13} /> +{day.bonus} poin bonus
+                    <Sparkles size={13} /> +{day.bonus} bonus points
                   </span>
                 )}
               </div>
@@ -326,8 +327,7 @@ export default function Dashboard() {
                 >
                   <button
                     aria-label={
-                      (c.status === "done" ? "Batalkan " : "Selesaikan ") +
-                      c.title
+                      (c.status === "done" ? "Undo " : "Complete ") + c.title
                     }
                     className={"check-button " + c.status}
                     onClick={() =>
@@ -353,7 +353,7 @@ export default function Dashboard() {
               ))}
             </div>
             <Link className="btn full secondary" href="/challenges/">
-              {total ? "Lihat semua challenge" : "Susun challenge hari ini"}{" "}
+              {total ? "View all challenges" : "Plan today's challenges"}{" "}
               <ArrowRight size={15} />
             </Link>
           </section>
@@ -363,22 +363,22 @@ export default function Dashboard() {
             </div>
             <h2>
               {fnb.remaining > 0
-                ? "Masih ada ruang untuk pilihan yang baik."
-                : "Saatnya cek kembali budget makan."}
+                ? "You still have room in your food budget."
+                : "Your food budget is used up."}
             </h2>
             <p>
               {fnb.remaining > 0
-                ? `Budget makan tersisa ${money(fnb.remaining)}. Coba jadwalkan masak di rumah untuk membantu menjaga pengeluaran.`
-                : "Budget makan sudah habis. Tukar poin terlebih dahulu sebelum mencatat pengeluaran berikutnya."}
+                ? `Food budget remaining: ${money(fnb.remaining)}. Try planning a meal at home to stay within budget.`
+                : "Your food budget is used up. Redeem points to increase it before recording another expense."}
             </p>
             <Link href="/insights/">
-              Temukan insight lainnya <ArrowUpRight size={16} />
+              View more insights <ArrowUpRight size={16} />
             </Link>
             <span className="insight-flower">✳</span>
           </section>
           <section className="card pending-card">
             <div className="section-head">
-              <h2>Jangan sampai terlewat</h2>
+              <h2>Upcoming bills</h2>
               <span className="notification-dot" />
             </div>
             {unpaid.length ? (
@@ -394,20 +394,18 @@ export default function Dashboard() {
                       <b>{b.title}</b>
                       <small>
                         {b.due < today
-                          ? "Sudah jatuh tempo"
-                          : `Jatuh tempo ${b.due.slice(8)}/${b.due.slice(5, 7)}`}
+                          ? "Overdue"
+                          : `Due ${b.due.slice(8)}/${b.due.slice(5, 7)}`}
                       </small>
                     </div>
                     <strong>{money(b.amount)}</strong>
                   </div>
                 ))
             ) : (
-              <p className="muted">
-                Tidak ada tagihan menunggu. Satu hal lebih ringan hari ini.
-              </p>
+              <p className="muted">No unpaid bills.</p>
             )}
             <Link href="/bills/" className="text-button">
-              Kelola tagihan <ChevronRight size={15} />
+              Manage bills <ChevronRight size={15} />
             </Link>
           </section>
         </div>

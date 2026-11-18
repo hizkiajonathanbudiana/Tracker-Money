@@ -144,7 +144,7 @@ function scoreDay(s: State, key: string) {
     });
   entry(s, {
     id: "bonus-" + key,
-    title: "Semua challenge selesai",
+    title: "All challenges completed",
     points:
       d.items.length > 0 && d.items.every((c) => c.status === "done")
         ? d.bonus
@@ -162,11 +162,9 @@ export function setChallenge(
 ) {
   const d = s.days[key];
   if (!d || d.closed || key !== today)
-    throw Error(
-      "Challenge hanya dapat diselesaikan pada hari yang dijadwalkan.",
-    );
+    throw Error("Challenges can only be completed on their scheduled date.");
   const c = d.items.find((c) => c.id === id);
-  if (!c) throw Error("Challenge tidak ditemukan.");
+  if (!c) throw Error("Challenge not found.");
   c.status = status;
   scoreDay(s, key);
 }
@@ -179,15 +177,15 @@ export function addChallenge(
   today: string,
 ) {
   if (key < today || s.days[key]?.closed)
-    throw Error("Jadwal yang sudah lewat terkunci.");
-  if (!title.trim()) throw Error("Isi nama challenge.");
+    throw Error("Past schedules are locked.");
+  if (!title.trim()) throw Error("Enter a challenge name.");
   if (
     !/^([01]\d|2[0-3]):[0-5]\d$/.test(time) ||
     !Number.isFinite(duration) ||
     duration < 1 ||
     duration > 1440
   )
-    throw Error("Jam atau durasi tidak valid.");
+    throw Error("Enter a valid start time and duration.");
   s.days[key] ??= { items: [], bonus: s.settings.bonus, closed: false };
   s.days[key].items.push({
     id: uid(),
@@ -207,11 +205,10 @@ export function removeChallenge(
   today: string,
 ) {
   const d = s.days[key];
-  if (key < today || d.closed)
-    throw Error("Riwayat hari yang sudah lewat terkunci.");
+  if (key < today || d.closed) throw Error("Past schedules are locked.");
   const c = d.items.find((c) => c.id === id);
   if (c?.status !== "pending")
-    throw Error("Batalkan status challenge sebelum menghapus.");
+    throw Error("Clear the challenge status before deleting it.");
   d.items = d.items.filter((c) => c.id !== id);
   scoreDay(s, key);
 }
@@ -227,14 +224,14 @@ export function editChallenge(
   const d = s.days[key],
     c = d?.items.find((c) => c.id === id);
   if (key < today || d?.closed || !c || c.status !== "pending")
-    throw Error("Hanya challenge pending yang bisa diubah.");
+    throw Error("Only pending challenges can be edited.");
   if (
     !title.trim() ||
     !/^([01]\d|2[0-3]):[0-5]\d$/.test(time) ||
     duration < 1 ||
     duration > 1440
   )
-    throw Error("Detail challenge tidak valid.");
+    throw Error("Enter valid challenge details.");
   Object.assign(c, { title: title.trim(), time, duration });
 }
 export function copyDay(
@@ -244,11 +241,12 @@ export function copyDay(
   today: string,
 ) {
   if (target < today || s.days[target]?.closed)
-    throw Error("Pilih hari ini atau tanggal mendatang.");
-  if (!source.length) throw Error("Tidak ada challenge di sumber.");
+    throw Error("Select today or a future date.");
+  if (!source.length)
+    throw Error("No challenges found in the source schedule.");
   if (s.days[target]?.items.length)
     throw Error(
-      "Tanggal tujuan sudah memiliki challenge. Pilih tanggal kosong agar tidak terduplikasi.",
+      "The destination already has challenges. Choose an empty date.",
     );
   s.days[target] = {
     bonus: s.settings.bonus,
@@ -265,25 +263,25 @@ export function copyDay(
 }
 export function addTransaction(s: State, t: Transaction, today: string) {
   if (!Number.isFinite(t.amount) || round(t.amount) <= 0)
-    throw Error("Nominal harus lebih dari 0.");
-  if (!t.title.trim()) throw Error("Isi keterangan transaksi.");
+    throw Error("Enter an amount greater than zero.");
+  if (!t.title.trim()) throw Error("Enter a transaction description.");
   if (t.date > today)
-    throw Error("Untuk pembayaran mendatang, gunakan halaman Tagihan.");
+    throw Error("Use the Bills page to record a future payment.");
   const month = t.date.slice(0, 7);
   if (month < today.slice(0, 7) && !s.months[month])
     throw Error(
-      "Periode lama belum memiliki budget. Gunakan migrasi riwayat agar tidak menciptakan bonus retroaktif.",
+      "This past period has no budget. Import historical records from the previous version to avoid retroactive bonuses.",
     );
   if (s.transactions.some((x) => x.id === t.id)) return;
   ensureMonth(s, month);
   if (s.months[month].closed)
-    throw Error("Bulan ini sudah ditutup. Riwayat tidak dapat diubah.");
+    throw Error("This month is closed. Its records are locked.");
   if (t.kind === "expense") {
     if (!s.categories.some((c) => c.id === t.category))
-      throw Error("Pilih kategori.");
+      throw Error("Select a category.");
     if (round(t.amount) > budget(s, month, t.category).remaining)
       throw Error(
-        "Budget kategori tidak cukup. Tukar poin untuk menambah budget terlebih dahulu.",
+        "The category budget is too low. Redeem points to increase it first.",
       );
   }
   s.transactions.push({ ...t, amount: round(t.amount) });
@@ -292,7 +290,7 @@ export function deleteTransaction(s: State, id: string) {
   const t = s.transactions.find((t) => t.id === id);
   if (!t) return;
   if (s.months[t.date.slice(0, 7)]?.closed)
-    throw Error("Bulan yang sudah ditutup tidak dapat diubah.");
+    throw Error("Closed months cannot be changed.");
   s.transactions = s.transactions.filter((t) => t.id !== id);
   if (t.billId) {
     const b = s.bills.find((b) => b.id === t.billId);
@@ -307,17 +305,17 @@ export function transfer(
   today: string,
 ) {
   if (month !== today.slice(0, 7))
-    throw Error("Top up hanya untuk bulan berjalan.");
+    throw Error("You can add to the budget for the current month only.");
   ensureMonth(s, month);
-  if (s.months[month].closed) throw Error("Bulan sudah ditutup.");
+  if (s.months[month].closed) throw Error("This month is closed.");
   if (!s.categories.some((c) => c.id === category))
-    throw Error("Kategori tidak ditemukan.");
+    throw Error("Category not found.");
   if (
     !Number.isFinite(amount) ||
     round(amount) <= 0 ||
     round(amount) > points(s)
   )
-    throw Error("Poin tidak cukup atau nominal tidak valid.");
+    throw Error("Enter a valid amount within your point balance.");
   amount = round(amount);
   s.months[month].topups[category] = round(
     (s.months[month].topups[category] ?? 0) + amount,
@@ -332,14 +330,14 @@ export function transfer(
 }
 export function closeMonth(s: State, key: string, today: string) {
   if (key >= today.slice(0, 7))
-    throw Error("Tutup bulan tersedia setelah bulan berakhir.");
+    throw Error("A month can be closed after it ends.");
   const m = ensureMonth(s, key);
   if (m.closed) return;
   for (const c of s.categories) {
     const b = budget(s, key, c.id);
     entry(s, {
       id: "saving-" + key + "-" + c.id,
-      title: "Sisa " + c.name + " · " + key,
+      title: "Unused budget: " + c.name + " · " + key,
       points: Math.max(0, b.remaining),
       date: today,
       kind: "saving",
@@ -363,7 +361,7 @@ export function settle(s: State, today: string) {
 }
 export function payBill(s: State, id: string, today: string) {
   const b = s.bills.find((b) => b.id === id);
-  if (!b) throw Error("Tagihan tidak ditemukan.");
+  if (!b) throw Error("Bill not found.");
   if (b.paid) return;
   addTransaction(
     s,
@@ -385,7 +383,7 @@ export function newState(today: string, demo = false): State {
     version: 2,
     demo,
     settings: {
-      name: "Kamu",
+      name: "You",
       currency: "TWD",
       timeZone: "Asia/Taipei",
       reward: 2,
@@ -399,19 +397,19 @@ export function newState(today: string, demo = false): State {
       { id: "fnb", name: "Food & beverages", limit: 6000, color: "#86a394" },
       {
         id: "transport",
-        name: "Transportasi",
+        name: "Transportation",
         limit: demo ? 1500 : 0,
         color: "#c3a47a",
       },
       {
         id: "shopping",
-        name: "Belanja & lifestyle",
+        name: "Shopping & lifestyle",
         limit: demo ? 2500 : 0,
         color: "#a4a0c0",
       },
       {
         id: "bills",
-        name: "Tagihan & lainnya",
+        name: "Bills & other",
         limit: demo ? 5000 : 0,
         color: "#7fa7bd",
       },
@@ -429,18 +427,18 @@ export function newState(today: string, demo = false): State {
   s.templates = [
     {
       id: "starter",
-      name: "Rutinitas seimbang · 10 challenge",
+      name: "Balanced routine · 10 challenges",
       items: [
-        "Minum air setelah bangun",
-        "Gerak 15 menit",
-        "Sarapan di rumah",
-        "Catat pengeluaran",
-        "Bawa botol minum",
-        "Fokus belajar 30 menit",
-        "Siapkan makan sendiri",
-        "Rapikan meja",
-        "Review budget hari ini",
-        "Baca sebelum tidur",
+        "Drink water after waking up",
+        "Move for 15 minutes",
+        "Eat breakfast at home",
+        "Log an expense",
+        "Bring a water bottle",
+        "Study for 30 minutes",
+        "Cook a meal at home",
+        "Tidy your desk",
+        "Review today's budget",
+        "Read before bed",
       ].map((title, i) => ({
         id: "starter" + i,
         title,
@@ -469,23 +467,23 @@ export function newState(today: string, demo = false): State {
     s.transactions = [
       {
         id: "demo-income",
-        title: "Gaji bulanan",
+        title: "Monthly salary",
         amount: 18000,
         kind: "income",
         category: "income",
         date: m + "-01",
       },
       ...[
-        [420, "Belanja bahan masakan", "fnb"],
-        [85, "Makan siang", "fnb"],
+        [420, "Groceries", "fnb"],
+        [85, "Lunch", "fnb"],
         [60, "MRT & bus", "transport"],
-        [290, "Buku baru", "shopping"],
-        [180, "Kopi & brunch", "fnb"],
-        [999, "Internet rumah", "bills"],
-        [1260, "Belanja mingguan", "fnb"],
-        [520, "Kebutuhan harian", "shopping"],
-        [760, "Makan & belanja dapur", "fnb"],
-        [350, "Transport bulan ini", "transport"],
+        [290, "New book", "shopping"],
+        [180, "Coffee & brunch", "fnb"],
+        [999, "Home internet", "bills"],
+        [1260, "Weekly groceries", "fnb"],
+        [520, "Household essentials", "shopping"],
+        [760, "Meals & groceries", "fnb"],
+        [350, "Monthly transport", "transport"],
       ].map((x, i) => ({
         id: "demo-" + i,
         amount: x[0] as number,
@@ -504,7 +502,7 @@ export function newState(today: string, demo = false): State {
     s.ledger = [
       {
         id: "demo-points",
-        title: "Poin sebelumnya (contoh)",
+        title: "Previous points (sample)",
         points: 320,
         date: today,
         kind: "opening",
@@ -518,7 +516,7 @@ export function newState(today: string, demo = false): State {
     s.bills = [
       {
         id: "demo-bill1",
-        title: "Langganan musik",
+        title: "Music subscription",
         amount: 149,
         category: "bills",
         due: addDays(today, 2),
@@ -526,7 +524,7 @@ export function newState(today: string, demo = false): State {
       },
       {
         id: "demo-bill2",
-        title: "Tagihan listrik",
+        title: "Electricity bill",
         amount: 680,
         category: "bills",
         due: addDays(today, 5),
@@ -565,12 +563,12 @@ export function validateState(v: unknown): State {
     !s.days ||
     !s.months
   )
-    throw Error("File backup Money Tracker v2 tidak valid.");
+    throw Error("Invalid Money Tracker v2 backup file.");
   if (
     typeof s.settings.name !== "string" ||
     !["TWD", "USD", "IDR"].includes(s.settings.currency)
   )
-    throw Error("Profil backup tidak valid.");
+    throw Error("Invalid profile in backup.");
   new Intl.DateTimeFormat("en", { timeZone: s.settings.timeZone });
   for (const n of [
     s.settings.reward,
@@ -578,7 +576,7 @@ export function validateState(v: unknown): State {
     s.settings.bonus,
     s.settings.reminder,
   ])
-    if (!finite(n) || n < 0) throw Error("Aturan poin tidak valid.");
+    if (!finite(n) || n < 0) throw Error("Invalid point rules.");
   for (const list of [
     s.categories,
     s.transactions,
@@ -586,11 +584,11 @@ export function validateState(v: unknown): State {
     s.bills,
     s.templates,
   ])
-    if (!unique(list)) throw Error("ID backup duplikat atau tidak valid.");
+    if (!unique(list)) throw Error("Duplicate or invalid backup IDs.");
   const ids = new Set(s.categories.map((c) => c.id));
   for (const c of s.categories)
     if (!finite(c.limit) || c.limit < 0 || typeof c.name !== "string")
-      throw Error("Kategori tidak valid.");
+      throw Error("Invalid category.");
   for (const t of s.transactions)
     if (
       !finite(t.amount) ||
@@ -600,13 +598,13 @@ export function validateState(v: unknown): State {
       !date(t.date) ||
       (t.kind === "expense" && !ids.has(t.category))
     )
-      throw Error("Transaksi tidak valid.");
+      throw Error("Invalid transaction.");
   for (const e of s.ledger)
     if (!finite(e.points) || typeof e.title !== "string" || !date(e.date))
-      throw Error("Ledger tidak valid.");
+      throw Error("Invalid points ledger.");
   const checkItems = (items: Challenge[]) => {
     if (!Array.isArray(items) || !unique(items))
-      throw Error("Jadwal tidak valid.");
+      throw Error("Invalid schedule.");
     for (const c of items)
       if (
         !["pending", "done", "missed"].includes(c.status) ||
@@ -620,15 +618,15 @@ export function validateState(v: unknown): State {
         c.duration < 1 ||
         c.duration > 1440
       )
-        throw Error("Challenge tidak valid.");
+        throw Error("Invalid challenge.");
   };
   for (const [key, d] of Object.entries(s.days)) {
     if (!date(key) || !finite(d.bonus) || typeof d.closed !== "boolean")
-      throw Error("Jadwal tidak valid.");
+      throw Error("Invalid schedule.");
     checkItems(d.items);
   }
   for (const t of s.templates) {
-    if (typeof t.name !== "string") throw Error("Template tidak valid.");
+    if (typeof t.name !== "string") throw Error("Invalid template.");
     checkItems(t.items);
   }
   for (const [key, m] of Object.entries(s.months)) {
@@ -638,9 +636,9 @@ export function validateState(v: unknown): State {
       !m.topups ||
       typeof m.closed !== "boolean"
     )
-      throw Error("Bulan tidak valid.");
+      throw Error("Invalid month.");
     for (const n of [...Object.values(m.limits), ...Object.values(m.topups)])
-      if (!finite(n) || n < 0) throw Error("Budget tidak valid.");
+      if (!finite(n) || n < 0) throw Error("Invalid budget.");
   }
   for (const b of s.bills)
     if (
@@ -651,6 +649,6 @@ export function validateState(v: unknown): State {
       !date(b.due) ||
       typeof b.paid !== "boolean"
     )
-      throw Error("Tagihan tidak valid.");
+      throw Error("Invalid bill.");
   return s;
 }

@@ -75,7 +75,7 @@ export function Modal({
     >
       <div className="modal-head">
         <h2>{title}</h2>
-        <button className="icon-button" onClick={onClose} aria-label="Tutup">
+        <button className="icon-button" onClick={onClose} aria-label="Close">
           <X size={20} />
         </button>
       </div>

@@ -58,7 +58,7 @@ export default function Settings() {
       const cloud = await import("@/lib/cloud");
       if (action === "save") {
         await cloud.saveCloud(s);
-        notify("Backup cloud berhasil disimpan.");
+        notify("Cloud backup saved.");
       } else if (action === "restore") {
         setRestoreMode("backup");
         setCloudData(await cloud.restoreCloud());
@@ -67,7 +67,7 @@ export default function Settings() {
         setCloudData(await cloud.migrateLegacy(today));
       } else if (action === "google") {
         setEmail((await cloud.loginCloudGoogle()) ?? "");
-        notify("Akun Firebase terhubung.");
+        notify("Connected to Firebase.");
       } else if (action === "logout") {
         await cloud.logoutCloud();
         setEmail("");
@@ -83,14 +83,14 @@ export default function Settings() {
       <Heading
         eyebrow="MAKE YOURSELF AT HOME"
         title="Your space. Your rules."
-        description="Sesuaikan tampilan, aturan poin, dan koneksi sesuai kebutuhanmu."
+        description="Manage appearance, point rules, and integrations."
       />
       <div className="settings-grid">
         <div>
           <section className="card">
-            <h2>Profil & preferensi</h2>
+            <h2>Profile & preferences</h2>
             <p className="muted">
-              Pengaturan pribadi untuk catatan yang terasa milikmu.
+              Set your display name, currency, and time zone.
             </p>
             <form
               className="form-stack"
@@ -105,23 +105,23 @@ export default function Settings() {
                     (st.transactions.length || st.ledger.length)
                   )
                     throw Error(
-                      "Mata uang terkunci setelah ada catatan agar nominal tidak berganti arti.",
+                      "Currency is locked after you record transactions or points.",
                     );
                   if (
                     tz !== st.settings.timeZone &&
                     Object.keys(st.days).length
                   )
                     throw Error(
-                      "Zona waktu terkunci setelah ada jadwal agar hari dan penalti tidak bergeser.",
+                      "Time zone is locked after you schedule challenges.",
                     );
-                  st.settings.name = String(f.get("name")).trim() || "Kamu";
+                  st.settings.name = String(f.get("name")).trim() || "You";
                   st.settings.currency = currency;
                   st.settings.timeZone = tz;
-                }, "Preferensi disimpan.");
+                }, "Preferences saved.");
               }}
             >
               <label>
-                Nama panggilan
+                Display name
                 <input
                   name="name"
                   defaultValue={s.settings.name}
@@ -131,7 +131,7 @@ export default function Settings() {
               </label>
               <div className="form-row">
                 <label>
-                  Mata uang
+                  Currency
                   <select name="currency" defaultValue={s.settings.currency}>
                     <option value="TWD">TWD · NT$</option>
                     <option value="USD">USD · $</option>
@@ -139,7 +139,7 @@ export default function Settings() {
                   </select>
                 </label>
                 <label>
-                  Zona waktu
+                  Time zone
                   <select name="timezone" defaultValue={s.settings.timeZone}>
                     <option value="Asia/Taipei">Taipei (UTC+8)</option>
                     <option value="Asia/Jakarta">Jakarta (WIB)</option>
@@ -150,19 +150,19 @@ export default function Settings() {
                   </select>
                 </label>
               </div>
-              <button className="btn primary">Simpan preferensi</button>
+              <button className="btn primary">Save preferences</button>
             </form>
           </section>
           <section className="card">
-            <h2>Tampilan yang nyaman</h2>
+            <h2>Appearance</h2>
             <p className="muted">
-              Warna teks, form, dialog, dan grafik mengikuti tema.
+              Choose a light or dark theme, or follow your device settings.
             </p>
             <div className="theme-options">
               {[
-                ["light", "Terang", Sun],
-                ["dark", "Gelap", Moon],
-                ["system", "Ikuti sistem", Monitor],
+                ["light", "Light", Sun],
+                ["dark", "Dark", Moon],
+                ["system", "System", Monitor],
               ].map(([value, label, Icon]) => {
                 const I = Icon as typeof Sun;
                 return (
@@ -182,11 +182,11 @@ export default function Settings() {
           <section className="card">
             <div className="inline-heading">
               <Sparkles size={19} />
-              <h2>Aturan challenge</h2>
+              <h2>Challenge rules</h2>
             </div>
             <p className="muted">
-              Berlaku untuk challenge baru. Jadwal yang sudah dibuat tetap
-              memakai aturan saat dibuat.
+              New challenge use these rules. Existing schedules keep the rules
+              they were created with.
             </p>
             <form
               className="form-stack"
@@ -197,12 +197,12 @@ export default function Settings() {
                   st.settings.reward = Number(f.get("reward"));
                   st.settings.penalty = Number(f.get("penalty"));
                   st.settings.bonus = Number(f.get("bonus"));
-                }, "Aturan challenge baru disimpan.");
+                }, "Challenge rules saved.");
               }}
             >
               <div className="form-row triple">
                 <label>
-                  Poin selesai
+                  Completion points
                   <input
                     name="reward"
                     type="number"
@@ -214,7 +214,7 @@ export default function Settings() {
                   />
                 </label>
                 <label>
-                  Penalti terlewat
+                  Missed penalty
                   <input
                     name="penalty"
                     type="number"
@@ -226,7 +226,7 @@ export default function Settings() {
                   />
                 </label>
                 <label>
-                  Bonus komplet
+                  Completion bonus
                   <input
                     name="bonus"
                     type="number"
@@ -239,15 +239,15 @@ export default function Settings() {
                 </label>
               </div>
               <div className="info-line">
-                Tanpa daily limit. Saldo poin tidak di-reset dan boleh negatif.
+                Points have no daily cap, carry over, and can go negative.
               </div>
-              <button className="btn primary">Simpan aturan</button>
+              <button className="btn primary">Save rules</button>
             </form>
           </section>
           <section className="card">
-            <h2>Kategori budget</h2>
+            <h2>Budget categories</h2>
             <p className="muted">
-              Atur nominal di Budget & poin atau tambahkan kategori baru.
+              Edit amounts in Budgets & points or add a category here.
             </p>
             <div className="category-settings">
               {s.categories.map((c) => (
@@ -272,28 +272,30 @@ export default function Settings() {
                         (c) => c.name.toLowerCase() === name.toLowerCase(),
                       )
                     )
-                      throw Error("Nama kategori kosong atau sudah ada.");
+                      throw Error(
+                        "Enter a category name that is not already in use.",
+                      );
                     const id = uid(),
                       limit = Number(f.get("limit"));
                     st.categories.push({ id, name, limit, color: "#a4a0c0" });
                     ensureMonth(st, today.slice(0, 7)).limits[id] = limit;
-                  }, "Kategori ditambahkan.")
+                  }, "Category added.")
                 )
                   form.reset();
               }}
             >
               <div className="form-row">
                 <label>
-                  Nama kategori
+                  Category name
                   <input
                     name="name"
                     required
                     maxLength={60}
-                    placeholder="Hobi, tabungan…"
+                    placeholder="Hobbies, savings…"
                   />
                 </label>
                 <label>
-                  Budget bulanan
+                  Monthly budget
                   <input
                     name="limit"
                     type="number"
@@ -304,7 +306,7 @@ export default function Settings() {
                   />
                 </label>
               </div>
-              <button className="btn secondary">Tambah kategori</button>
+              <button className="btn secondary">Add category</button>
             </form>
           </section>
         </div>
@@ -313,10 +315,10 @@ export default function Settings() {
             <span className="export-icon">
               <Download size={25} />
             </span>
-            <h2>Jadikan seperti app.</h2>
+            <h2>Install Money Tracker</h2>
             <p>
-              Pasang ke home screen untuk layar penuh dan navigasi bawah yang
-              mudah dijangkau.
+              Add Money Tracker to your home screen and open it in its own
+              window.
             </p>
             <button
               className="btn primary full"
@@ -328,16 +330,15 @@ export default function Settings() {
                   delete window.moneyInstallPrompt;
                 } else
                   notify(
-                    "Android/desktop: menu browser → Install app. iPhone: Safari → Share → Add to Home Screen.",
+                    "Android or desktop: browser menu → Install app. iPhone: Safari → Share → Add to Home Screen.",
                   );
               }}
             >
               <Download size={16} /> Install app
             </button>
             <p className="fine-print">
-              Android/desktop: menu browser → Install app. iPhone: Safari →
-              Share → Add to Home Screen. Tersedia pada browser yang mendukung
-              PWA.
+              Android or desktop: browser menu → Install app. iPhone: Safari →
+              Share → Add to Home Screen.
             </p>
           </section>
           <section className="card">
@@ -347,12 +348,12 @@ export default function Settings() {
                 <h2>Google Calendar</h2>
               </div>
               <span className={"pill " + (google ? "green" : "neutral")}>
-                {google ? "Terhubung sesi ini" : "Belum terhubung"}
+                {google ? "Connected for this session" : "Disconnected"}
               </span>
             </div>
             <p className="muted">
-              Simpan challenge dan reminder di kalender utama. Tiap event
-              dikirim saat tombol Sinkronkan ditekan.
+              Add challenges and reminders to your primary calendar by selecting
+              Sync on each challenge.
             </p>
             <form
               className="form-stack"
@@ -362,7 +363,7 @@ export default function Settings() {
                 await mutate((st) => {
                   st.settings.googleClientId = String(f.get("clientid")).trim();
                   st.settings.reminder = Number(f.get("reminder"));
-                }, "Pengaturan kalender disimpan.");
+                }, "Calendar settings saved.");
               }}
             >
               <label>
@@ -374,16 +375,16 @@ export default function Settings() {
                 />
               </label>
               <label>
-                Reminder sebelum mulai
+                Remind me before the start
                 <select name="reminder" defaultValue={s.settings.reminder}>
                   {[0, 5, 10, 15, 30].map((n) => (
                     <option key={n} value={n}>
-                      {n ? n + " menit" : "Saat mulai"}
+                      {n ? n + " min" : "At start time"}
                     </option>
                   ))}
                 </select>
               </label>
-              <button className="btn secondary">Simpan konfigurasi</button>
+              <button className="btn secondary">Save configuration</button>
             </form>
             <button
               className="btn primary full"
@@ -399,7 +400,7 @@ export default function Settings() {
                   await connectGoogle(s.settings.googleClientId);
                   setGoogle(true);
                   notify(
-                    "Google Calendar terhubung. Buka Challenges untuk menyimpan event.",
+                    "Connected to Google Calendar. Open Challenges to sync events.",
                   );
                 } catch (e) {
                   notify((e as Error).message);
@@ -410,30 +411,30 @@ export default function Settings() {
             >
               <LinkIcon size={15} />
               {busy === "calendar"
-                ? "Menghubungkan…"
+                ? "Connecting…"
                 : google
-                  ? "Putuskan koneksi"
-                  : "Hubungkan Google Calendar"}
+                  ? "Disconnect"
+                  : "Connect Google Calendar"}
             </button>
             <details>
-              <summary>Panduan konfigurasi</summary>
+              <summary>Setup guide</summary>
               <p>
-                Aktifkan Google Calendar API di Google Cloud, buat OAuth Client
-                bertipe Web, daftarkan origin website di Authorized JavaScript
-                origins, lalu tambahkan test user bila mode testing. Client ID
-                bukan client secret.
+                Enable the Google Calendar API in Google Cloud and create a Web
+                OAuth client. Add this site&apos;s origin to Authorized JavaScript
+                origins. If the app is in testing mode, add your Google account
+                as a test user.
               </p>
               <p className="fine-print">
-                Tanpa konfigurasi, gunakan tautan Google Calendar atau .ics pada
-                Challenges. Sinkronisasi satu arah; menghapus challenge tidak
-                menghapus event Google.
+                You can also use the Google Calendar link or export an .ics file
+                from Challenges. Sync sends changes to Google Calendar. If you
+                delete a challenge, remove its calendar event separately.
               </p>
             </details>
           </section>
           <section className="card">
             <div className="inline-heading">
               <Sparkles size={19} />
-              <h2>Model AI</h2>
+              <h2>AI model</h2>
             </div>
             <form
               className="form-stack"
@@ -444,13 +445,13 @@ export default function Settings() {
                 ).trim();
                 await mutate((st) => {
                   if (!/^[a-zA-Z0-9.\-]+$/.test(model))
-                    throw Error("Nama model tidak valid.");
+                    throw Error("Invalid model name.");
                   st.settings.aiModel = model;
-                }, "Model AI disimpan.");
+                }, "AI model saved.");
               }}
             >
               <label>
-                Nama model Gemini
+                Gemini model name
                 <input
                   name="model"
                   defaultValue={s.settings.aiModel}
@@ -458,20 +459,20 @@ export default function Settings() {
                 />
               </label>
               <p className="fine-print">
-                Masukkan API key di AI companion. Key tidak disimpan. Penggunaan
-                API mengikuti kuota dan biaya penyedia.
+                Enter your API key on the AI companion page. API quotas and
+                charges depend on your provider account.
               </p>
-              <button className="btn secondary">Simpan model</button>
+              <button className="btn secondary">Save model</button>
             </form>
           </section>
           <section className="card">
             <div className="inline-heading">
               <Cloud size={20} />
-              <h2>Akun & backup Firebase</h2>
+              <h2>Firebase account & backup</h2>
             </div>
             <p className="muted">
-              Gunakan akun proyek lama untuk backup manual atau mengambil data
-              versi sebelumnya. Data utama tetap di perangkat ini.
+              Sign in to create a manual cloud backup or import data from the
+              previous version. Your primary records are saved on this device.
             </p>
             {email ? (
               <>
@@ -482,28 +483,28 @@ export default function Settings() {
                     disabled={!!busy}
                     onClick={() => void cloudAction("save")}
                   >
-                    Simpan backup cloud
+                    Save cloud backup
                   </button>
                   <button
                     className="btn secondary"
                     disabled={!!busy}
                     onClick={() => void cloudAction("restore")}
                   >
-                    Ambil backup cloud
+                    Restore cloud backup
                   </button>
                   <button
                     className="btn secondary"
                     disabled={!!busy}
                     onClick={() => void cloudAction("migrate")}
                   >
-                    Baca data versi sebelumnya
+                    Load data from previous version
                   </button>
                   <button
                     className="text-button"
                     disabled={!!busy}
                     onClick={() => void cloudAction("logout")}
                   >
-                    Keluar akun
+                    Sign out
                   </button>
                 </div>
               </>
@@ -523,10 +524,10 @@ export default function Settings() {
                           String(f.get("password")),
                         )) ?? "",
                       );
-                      notify("Akun terhubung.");
+                      notify("Signed in.");
                     } catch (err) {
                       notify(
-                        "Login gagal. Periksa akun dan konfigurasi Firebase. " +
+                        "Sign-in failed. Check your account and Firebase configuration. " +
                           (err as Error).message,
                       );
                     } finally {
@@ -535,7 +536,7 @@ export default function Settings() {
                   }}
                 >
                   <label>
-                    Email akun lama
+                    Previous account email
                     <input
                       type="email"
                       name="email"
@@ -554,7 +555,7 @@ export default function Settings() {
                   </label>
                   <button className="btn secondary" disabled={!!busy}>
                     <LogIn size={15} />
-                    {busy === "login" ? "Masuk…" : "Masuk ke Firebase"}
+                    {busy === "login" ? "Signing in…" : "Sign in to Firebase"}
                   </button>
                 </form>
                 <button
@@ -562,14 +563,14 @@ export default function Settings() {
                   disabled={!!busy}
                   onClick={() => void cloudAction("google")}
                 >
-                  Masuk dengan Google
+                  Sign in with Google
                 </button>
               </>
             )}
             <p className="fine-print">
-              Memerlukan konfigurasi Firebase asli dan domain ini di Authorized
-              domains. Backup cloud manual; belum ada sinkronisasi otomatis
-              antarperangkat.
+              This requires the original Firebase configuration and this
+              hostname in Authorized domains. To move data between devices, save
+              a backup on one device and restore it on the other.
             </p>
           </section>
         </div>
@@ -578,34 +579,34 @@ export default function Settings() {
         <Modal
           title={
             restoreMode === "legacy"
-              ? "Tinjau migrasi data lama"
-              : "Pulihkan backup cloud"
+              ? "Review previous version data"
+              : "Restore cloud backup"
           }
           onClose={() => setCloudData(null)}
         >
           <p>
-            {cloudData.transactions.length} transaksi ·{" "}
-            {cloudData.ledger.length} entri poin · {cloudData.settings.currency}
-            .
+            {cloudData.transactions.length} transactions ·{" "}
+            {cloudData.ledger.length} point entries ·{" "}
+            {cloudData.settings.currency}.
           </p>
           {restoreMode === "legacy" && (
             <p>
-              Migrasi mengambil pengeluaran, pemasukan, dan saldo poin. Bulan
-              lama dikunci tanpa bonus retroaktif. Data Firebase lama tidak
-              diubah. Wallet manual, denominasi, proyek, dan riwayat challenge
-              lama belum dipindahkan.
+              The import includes expenses, income, and the point balance. Older
+              months are locked with no retroactive bonuses. Previous Firebase
+              records are preserved. Wallet adjustments, denominations,
+              projects, and challenge history stay in the previous version.
             </p>
           )}
           <p>
-            Data perangkat akan diganti. Simpan backup melalui Export sebelum
-            melanjutkan.
+            Restoring replaces data on this device. Download a backup from
+            Export before continuing.
           </p>
           <div className="modal-actions">
             <button
               className="btn secondary"
               onClick={() => setCloudData(null)}
             >
-              Batal
+              Cancel
             </button>
             <button
               className="btn primary"
@@ -613,7 +614,7 @@ export default function Settings() {
                 if (await replace(cloudData)) window.location.reload();
               }}
             >
-              Gunakan data ini
+              Use this data
             </button>
           </div>
         </Modal>

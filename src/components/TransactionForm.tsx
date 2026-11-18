@@ -35,37 +35,37 @@ export default function TransactionForm({
           },
           today,
         ),
-      "Transaksi tersimpan.",
+      "Transaction saved.",
     );
     setBusy(false);
     if (ok) onClose();
   }
   return (
-    <Modal title="Catat transaksi" onClose={onClose}>
+    <Modal title="Add transaction" onClose={onClose}>
       <div className="segmented">
         <button
           className={kind === "expense" ? "active" : ""}
           onClick={() => setKind("expense")}
         >
-          Pengeluaran
+          Expense
         </button>
         <button
           className={kind === "income" ? "active" : ""}
           onClick={() => setKind("income")}
         >
-          Pemasukan
+          Income
         </button>
       </div>
       <form onSubmit={submit} className="form-stack">
         <label>
-          Keterangan
+          Description
           <input
             autoFocus
             name="title"
             placeholder={
               kind === "income"
-                ? "Gaji, freelance, hadiah…"
-                : "Makan siang, belanja mingguan…"
+                ? "Salary, freelance work, gift…"
+                : "Lunch, weekly groceries…"
             }
             required
             maxLength={120}
@@ -73,7 +73,7 @@ export default function TransactionForm({
         </label>
         <div className="form-row">
           <label>
-            Nominal ({s.settings.currency})
+            Amount ({s.settings.currency})
             <input
               name="amount"
               type="number"
@@ -84,7 +84,7 @@ export default function TransactionForm({
             />
           </label>
           <label>
-            Tanggal
+            Date
             <input
               type="date"
               value={date}
@@ -97,7 +97,7 @@ export default function TransactionForm({
         {kind === "expense" && (
           <>
             <label>
-              Kategori
+              Category
               <select value={cat} onChange={(e) => setCat(e.target.value)}>
                 {s.categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -107,19 +107,19 @@ export default function TransactionForm({
               </select>
             </label>
             <div className="info-line">
-              Budget tersedia:{" "}
+              Available budget:{" "}
               <b>{money(budget(s, date.slice(0, 7), cat).remaining)}</b>
             </div>
           </>
         )}
         <label>
-          Catatan <span className="muted">(opsional)</span>
-          <input name="note" placeholder="Tambahkan detail" maxLength={300} />
+          Note <span className="muted">(optional)</span>
+          <input name="note" placeholder="Add details" maxLength={300} />
         </label>
         <button className="btn primary" disabled={busy}>
           {busy
-            ? "Menyimpan…"
-            : "Simpan " + (kind === "income" ? "pemasukan" : "pengeluaran")}
+            ? "Saving…"
+            : "Save " + (kind === "income" ? "income" : "expense")}
         </button>
       </form>
     </Modal>

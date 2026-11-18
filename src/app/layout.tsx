@@ -5,8 +5,7 @@ import StoreProvider from "@/components/Store";
 import Shell from "@/components/Shell";
 export const metadata: Metadata = {
   title: "Money Tracker — Small habits, better days",
-  description:
-    "Budget bulanan, daily challenges, dan poin yang terus bertumbuh.",
+  description: "Monthly budgets, daily challenges, and points that carry over.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -26,7 +25,7 @@ export const viewport: Viewport = {
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider
           attribute="class"

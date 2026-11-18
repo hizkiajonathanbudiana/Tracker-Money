@@ -8,6 +8,8 @@ import {
   ReactNode,
 } from "react";
 import { State, newState, dateKey, settle, validateState } from "@/lib/model";
+import { localizeSavedLabels } from "@/lib/english-labels";
+
 const KEY = "money-tracker-v2";
 type Store = {
   s: State;
@@ -25,26 +27,28 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<State | null>(null),
     [toast, setToast] = useState(""),
     [error, setError] = useState(""),
-    [apiKey, setApiKey] = useState("");
+    [apiKey, setApiKey] = useState(
+      process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? "",
+    );
   const notify = useCallback((text: string) => setToast(text), []);
   useEffect(() => {
     try {
       const raw = localStorage.getItem(KEY);
       const next = raw
-        ? validateState(JSON.parse(raw))
+        ? localizeSavedLabels(validateState(JSON.parse(raw)))
         : newState(dateKey(), true);
       settle(next, dateKey(next.settings.timeZone));
       localStorage.setItem(KEY, JSON.stringify(next));
       setS(next);
     } catch (e) {
-      setError("Data tersimpan tetap dipertahankan. " + (e as Error).message);
+      setError("Your saved data was preserved. " + (e as Error).message);
     }
     const listener = (e: StorageEvent) => {
       if (e.key === KEY && e.newValue) {
         try {
-          setS(validateState(JSON.parse(e.newValue)));
+          setS(localizeSavedLabels(validateState(JSON.parse(e.newValue))));
         } catch {
-          setError("Data dari tab lain tidak valid.");
+          setError("Invalid data received from another tab.");
         }
       }
     };
@@ -62,8 +66,8 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       const update = () => {
         try {
           const raw = localStorage.getItem(KEY);
-          if (!raw) throw Error("Data tidak tersedia. Muat ulang halaman.");
-          const next = validateState(JSON.parse(raw));
+          if (!raw) throw Error("Data is unavailable. Reload the page.");
+          const next = localizeSavedLabels(validateState(JSON.parse(raw)));
           settle(next, dateKey(next.settings.timeZone));
           fn(next);
           validateState(next);
@@ -84,10 +88,10 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
   const replace = useCallback(
     async (next: State) =>
       mutate((s) => {
-        const value = validateState(next);
+        const value = localizeSavedLabels(validateState(next));
         settle(value, dateKey(value.settings.timeZone));
         Object.assign(s, value);
-      }, "Data siap digunakan."),
+      }, "Data ready."),
     [mutate],
   );
   useEffect(() => {
@@ -114,7 +118,7 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
   if (error)
     return (
       <main className="recovery">
-        <h1>Data perlu diperiksa</h1>
+        <h1>Check your saved data</h1>
         <p>{error}</p>
         <button
           onClick={() => {
@@ -128,7 +132,7 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
             a.click();
           }}
         >
-          Unduh data untuk pemulihan
+          Download recovery data
         </button>
       </main>
     );
@@ -138,7 +142,7 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
         <span className="brand-symbol">
           m<span>↗</span>
         </span>
-        <p>Membuka Money Tracker…</p>
+        <p>Opening Money Tracker…</p>
       </div>
     );
   return (
@@ -158,7 +162,10 @@ export default function StoreProvider({ children }: { children: ReactNode }) {
       {toast && (
         <div className="toast" role="status">
           {toast}
-          <button aria-label="Tutup notifikasi" onClick={() => setToast("")}>
+          <button
+            aria-label="Dismiss notification"
+            onClick={() => setToast("")}
+          >
             ×
           </button>
         </div>

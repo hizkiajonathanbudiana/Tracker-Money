@@ -30,16 +30,16 @@ declare global {
   }
 }
 const nav = [
-  ["/", "Ringkasan", LayoutDashboard],
+  ["/", "Overview", LayoutDashboard],
   ["/tracker/", "Tracker", ArrowLeftRight],
-  ["/budget/", "Budget & poin", Wallet],
+  ["/budget/", "Budgets & points", Wallet],
   ["/challenges/", "Challenges", CheckCheck],
-  ["/bills/", "Tagihan", Receipt],
+  ["/bills/", "Bills", Receipt],
   ["/insights/", "AI companion", Sparkles],
 ] as const;
 const extras = [
   ["/export/", "Export data", Download],
-  ["/settings/", "Pengaturan", Settings],
+  ["/settings/", "Settings", Settings],
 ] as const;
 export default function Shell({ children }: { children: ReactNode }) {
   const path = usePathname();
@@ -84,7 +84,7 @@ export default function Shell({ children }: { children: ReactNode }) {
         <button
           className="sidebar-close icon-button"
           onClick={() => setMenu(false)}
-          aria-label="Tutup menu"
+          aria-label="Close menu"
         >
           <X />
         </button>
@@ -109,7 +109,7 @@ export default function Shell({ children }: { children: ReactNode }) {
           <div className="sidebar-note">
             <span>Small habits.</span>
             <strong>Big possibilities.</strong>
-            <p>Satu langkah kecil, setiap hari.</p>
+            <p>Build habits one day at a time.</p>
             <span className="note-spark">✳</span>
           </div>
           {extras.map(([p, label, Icon]) => (
@@ -140,7 +140,7 @@ export default function Shell({ children }: { children: ReactNode }) {
           <div className="breadcrumb">
             <button
               className="icon-button mobile-menu"
-              aria-label="Buka menu"
+              aria-label="Open menu"
               onClick={() => setMenu(true)}
             >
               <Menu size={21} />
@@ -148,16 +148,15 @@ export default function Shell({ children }: { children: ReactNode }) {
             <span>My workspace</span>
             <span>/</span>
             <b>
-              {[...nav, ...extras].find((n) => active(n[0]))?.[1] ??
-                "Ringkasan"}
+              {[...nav, ...extras].find((n) => active(n[0]))?.[1] ?? "Overview"}
             </b>
           </div>
           <div className="top-actions">
             <span className="local-status">
-              <i /> Tersimpan di perangkat
+              <i /> Saved on this device
             </span>
             <button
-              aria-label="Ganti tema"
+              aria-label="Toggle theme"
               className="icon-button"
               onClick={() =>
                 setTheme(resolvedTheme === "dark" ? "light" : "dark")
@@ -178,14 +177,14 @@ export default function Shell({ children }: { children: ReactNode }) {
           {s.demo && (
             <div className="demo-banner">
               <span>
-                <b>Mode contoh</b> · Jelajahi fitur dengan data simulasi.
+                <b>Demo mode</b> · Explore with sample data.
               </span>
               <button
                 onClick={() =>
                   void replace(newState(dateKey(s.settings.timeZone)))
                 }
               >
-                Mulai data saya <ArrowUpRight size={14} />
+                Start with my own data <ArrowUpRight size={14} />
               </button>
             </div>
           )}
@@ -202,7 +201,7 @@ export default function Shell({ children }: { children: ReactNode }) {
         {[nav[0], nav[1], nav[3], nav[2]].map(([p, label, Icon]) => (
           <Link key={p} href={p} className={active(p) ? "selected" : ""}>
             <Icon size={21} />
-            <span>{label === "Budget & poin" ? "Budget" : label}</span>
+            <span>{label === "Budgets & points" ? "Budget" : label}</span>
           </Link>
         ))}
         <button
@@ -216,7 +215,7 @@ export default function Shell({ children }: { children: ReactNode }) {
           }
         >
           <Menu size={21} />
-          <span>Lainnya</span>
+          <span>More</span>
         </button>
       </nav>
     </div>

@@ -1,1 +1,36 @@
-{"id":"/","name":"Money Tracker","short_name":"Money","description":"Budget bulanan, challenge harian, dan poin tanpa reset.","start_url":"/","scope":"/","display":"standalone","background_color":"#f7f8f5","theme_color":"#345542","lang":"id","icons":[{"src":"/icon-192x192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"/icon-512x512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}],"shortcuts":[{"name":"Catat transaksi","url":"/tracker/"},{"name":"Challenge hari ini","url":"/challenges/"}]}
+{
+  "id": "/",
+  "name": "Money Tracker",
+  "short_name": "Money",
+  "description": "Monthly budgets, daily challenges, and points that carry over.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f8f5",
+  "theme_color": "#345542",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add transaction",
+      "url": "/tracker/"
+    },
+    {
+      "name": "Today's challenges",
+      "url": "/challenges/"
+    }
+  ]
+}

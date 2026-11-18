@@ -22,19 +22,17 @@ export default function Export() {
       <Heading
         eyebrow="YOUR DATA, ALWAYS YOURS"
         title="Take it with you."
-        description="Export laporan, simpan backup, atau pindahkan data ke perangkat lain."
+        description="Download reports, make a backup, or move your data to another device."
       />
       <div className="two-grid">
         <section className="card export-card">
           <span className="export-icon">
             <FileSpreadsheet size={27} />
           </span>
-          <h2>Laporan transaksi</h2>
-          <p>
-            Pemasukan dan pengeluaran dalam CSV untuk Excel atau Google Sheets.
-          </p>
+          <h2>Transaction report</h2>
+          <p>Export income and expenses as a CSV for Excel or Google Sheets.</p>
           <label>
-            Periode
+            Period
             <input
               type="month"
               value={month}
@@ -52,13 +50,13 @@ export default function Export() {
                   "money-tracker-" + (month || "all") + ".csv",
                   csv([
                     [
-                      "Tanggal",
-                      "Jenis",
-                      "Keterangan",
-                      "Kategori",
-                      "Nominal",
-                      "Mata uang",
-                      "Catatan",
+                      "Date",
+                      "Type",
+                      "Description",
+                      "Category",
+                      "Amount",
+                      "Currency",
+                      "Note",
                     ],
                     ...tx.map((t) => [
                       t.date,
@@ -73,13 +71,13 @@ export default function Export() {
                   ]),
                   "text/csv;charset=utf-8",
                 );
-                notify(tx.length + " transaksi diexport.");
+                notify(tx.length + " transactions exported.");
               }}
             >
               <Download size={16} /> Export CSV
             </button>
             <button className="text-button" onClick={() => setMonth("")}>
-              Semua periode
+              All periods
             </button>
           </div>
         </section>
@@ -87,15 +85,15 @@ export default function Export() {
           <span className="export-icon sand">
             <Database size={27} />
           </span>
-          <h2>Backup lengkap</h2>
+          <h2>Full backup</h2>
           <p>
-            Semua transaksi, budget, poin, tagihan, challenge, template, dan
-            pengaturan dalam satu file JSON.
+            Save transactions, budgets, points, bills, challenges, templates,
+            and settings in one JSON file.
           </p>
           <div className="backup-counts">
-            <span>{s.transactions.length} transaksi</span>
-            <span>{s.ledger.length} entri poin</span>
-            <span>{Object.keys(s.days).length} hari</span>
+            <span>{s.transactions.length} transactions</span>
+            <span>{s.ledger.length} point entries</span>
+            <span>{Object.keys(s.days).length} days</span>
           </div>
           <button
             className="btn primary"
@@ -105,7 +103,7 @@ export default function Export() {
                 JSON.stringify(s, null, 2),
                 "application/json",
               );
-              notify("Backup lengkap diunduh.");
+              notify("Backup downloaded.");
             }}
           >
             <Download size={16} /> Download backup
@@ -115,13 +113,13 @@ export default function Export() {
           <span className="export-icon purple">
             <Upload size={27} />
           </span>
-          <h2>Pulihkan data</h2>
+          <h2>Restore data</h2>
           <p>
-            Impor backup Money Tracker v2. Tinjau ringkasan sebelum mengganti
-            data perangkat.
+            Import a Money Tracker v2 backup. Review the summary before
+            replacing data on this device.
           </p>
           <div className="notice small-notice">
-            Download backup data saat ini sebelum memulihkan.
+            Download a backup of your current data before restoring.
           </div>
           <input
             ref={ref}
@@ -134,7 +132,7 @@ export default function Export() {
               if (!f) return;
               try {
                 if (f.size > 10 * 1024 * 1024)
-                  throw Error("Backup maksimal 10 MB.");
+                  throw Error("Backup files must be 10 MB or smaller.");
                 setBackup(validateState(JSON.parse(await f.text())));
               } catch (err) {
                 notify((err as Error).message);
@@ -145,20 +143,20 @@ export default function Export() {
             className="btn secondary"
             onClick={() => ref.current?.click()}
           >
-            <Upload size={16} /> Pilih file backup
+            <Upload size={16} /> Choose backup file
           </button>
         </section>
         <section className="card export-card">
           <span className="export-icon">
             <CalendarDays size={27} />
           </span>
-          <h2>Jadwal & riwayat poin</h2>
+          <h2>Calendar & points history</h2>
           <p>
-            Bawa challenge ke Google Calendar/Apple Calendar atau export
-            perjalanan poin.
+            Export challenges to Google Calendar or Apple Calendar, or download
+            your points history.
           </p>
           <label>
-            Tanggal challenge
+            Challenge date
             <input
               type="date"
               value={date}
@@ -171,7 +169,7 @@ export default function Export() {
               onClick={() => {
                 const items = s.days[date]?.items ?? [];
                 if (!items.length)
-                  return notify("Tidak ada challenge pada tanggal ini.");
+                  return notify("No challenges scheduled for this date.");
                 download(
                   "challenges-" + date + ".ics",
                   calendarICS(date, items, s),
@@ -179,7 +177,7 @@ export default function Export() {
                 );
               }}
             >
-              <Download size={15} /> Kalender .ics
+              <Download size={15} /> Calendar (.ics)
             </button>
             <button
               className="btn secondary"
@@ -187,36 +185,36 @@ export default function Export() {
                 download(
                   "points-" + today + ".csv",
                   csv([
-                    ["Tanggal", "Keterangan", "Jenis", "Poin"],
+                    ["Date", "Description", "Type", "Points"],
                     ...s.ledger.map((e) => [e.date, e.title, e.kind, e.points]),
                   ]),
                   "text/csv;charset=utf-8",
                 )
               }
             >
-              Poin CSV
+              Points CSV
             </button>
           </div>
         </section>
       </div>
       <div className="subtle-note">
-        Data tersimpan di browser/perangkat ini. Backup JSON untuk pemindahan
-        data; CSV untuk pelaporan.
+        Data is saved in this browser. Use JSON backups to move data between
+        devices and CSV files for reports.
       </div>
       {backup && (
-        <Modal title="Pulihkan backup ini?" onClose={() => setBackup(null)}>
+        <Modal title="Restore this backup?" onClose={() => setBackup(null)}>
           <p>
             <b>{backup.settings.name}</b> · {backup.transactions.length}{" "}
-            transaksi · {backup.ledger.length} entri poin ·{" "}
-            {Object.keys(backup.days).length} hari challenge.
+            transactions · {backup.ledger.length} point entries ·{" "}
+            {Object.keys(backup.days).length} challenge days.
           </p>
           <p>
-            Data saat ini akan diganti. Challenge lewat dan sisa budget bulan
-            sebelumnya diproses sesuai aturan saat dipulihkan.
+            This replaces your current data. Missed challenges and unused
+            budgets are processed when you restore.
           </p>
           <div className="modal-actions">
             <button className="btn secondary" onClick={() => setBackup(null)}>
-              Batal
+              Cancel
             </button>
             <button
               className="btn primary"
@@ -227,7 +225,7 @@ export default function Export() {
                 }
               }}
             >
-              Pulihkan data
+              Restore data
             </button>
           </div>
         </Modal>

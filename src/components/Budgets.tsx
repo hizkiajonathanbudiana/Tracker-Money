@@ -20,10 +20,10 @@ export default function Budgets() {
       <Heading
         eyebrow="MAKE ROOM FOR WHAT MATTERS"
         title="Budget & points."
-        description="Batas yang jelas, pilihan yang tetap milikmu."
+        description="Set monthly budgets and redeem points for extra spending room."
         actions={
           <input
-            aria-label="Bulan budget"
+            aria-label="Budget month"
             type="month"
             max={today.slice(0, 7)}
             value={month}
@@ -33,37 +33,34 @@ export default function Budgets() {
       />
       <div className="budget-hero">
         <div>
-          <div className="eyebrow">POIN YANG TERUS BERTUMBUH</div>
+          <div className="eyebrow">POINT BALANCE</div>
           <strong>
             {num(points(s))}
             <span> points</span>
           </strong>
           <p>
-            Tidak di-reset. Tidak kedaluwarsa. Bisa dipakai untuk kategori apa
-            saja.
+            Points carry over without expiring and can be redeemed in any
+            category.
           </p>
         </div>
         <div className="rate-box">
           <Sparkles size={22} />
-          <b>1 poin = 1 {s.settings.currency}</b>
-          <span>Tukar poin → tambah budget</span>
+          <b>1 point = 1 {s.settings.currency}</b>
+          <span>Redeem points to increase your budget</span>
         </div>
       </div>
       {points(s) < 0 && (
         <div className="notice">
-          Saldo poin sedang negatif karena penalti challenge. Poin baru akan
-          menutup kekurangan sebelum bisa ditukar.
+          Your point balance is negative. New points will cover the shortfall
+          before you can redeem them.
         </div>
       )}
       <div className="section-head standalone">
         <div>
-          <h2>Budget kategori</h2>
-          <p>
-            Makan di luar dan bahan makanan mingguan sama-sama masuk Food &
-            beverages.
-          </p>
+          <h2>Category budgets</h2>
+          <p>Dining out and groceries both count toward Food & beverages.</p>
         </div>
-        <span className="pill neutral">{money(total)} tersisa</span>
+        <span className="pill neutral">{money(total)} remaining</span>
       </div>
       <div className="two-grid">
         {s.categories.map((c) => {
@@ -85,12 +82,12 @@ export default function Budgets() {
                   disabled={!current || b.closed}
                   onClick={() => setEdit(c.id)}
                 >
-                  Atur
+                  Edit
                 </button>
               </div>
               <div className="category-balance">
                 <strong>{money(b.remaining)}</strong>
-                <span>tersisa dari {money(b.total)}</span>
+                <span>remaining of {money(b.total)}</span>
               </div>
               <div className="progress big">
                 <span
@@ -102,10 +99,10 @@ export default function Budgets() {
               </div>
               <div className="category-meta">
                 <span>
-                  Terpakai <b>{money(b.spent)}</b>
+                  Spent <b>{money(b.spent)}</b>
                 </span>
                 <span>
-                  Top up poin <b>+{money(b.topup)}</b>
+                  Added with points <b>+{money(b.topup)}</b>
                 </span>
               </div>
               <div className="category-bottom">
@@ -117,12 +114,12 @@ export default function Budgets() {
                 >
                   {b.closed ? (
                     <>
-                      <LockKeyhole size={12} /> Sudah dikonversi
+                      <LockKeyhole size={12} /> Converted to points
                     </>
                   ) : b.remaining <= 0 ? (
-                    "Budget habis"
+                    "Budget exhausted"
                   ) : (
-                    "Budget tersedia"
+                    "Budget available"
                   )}
                 </span>
                 <button
@@ -130,7 +127,7 @@ export default function Budgets() {
                   disabled={!current || b.closed || points(s) <= 0}
                   onClick={() => setTopup(c.id)}
                 >
-                  <Plus size={14} /> Tukar poin
+                  <Plus size={14} /> Redeem points
                 </button>
               </div>
             </section>
@@ -139,10 +136,19 @@ export default function Budgets() {
       </div>
       <section className="card rules-strip">
         {[
-          [`Selesai +${s.settings.reward}`, "Untuk setiap challenge harian."],
-          [`Terlewat −${s.settings.penalty}`, "Diproses saat hari berganti."],
-          [`Komplet +${s.settings.bonus}`, "Bonus semua challenge selesai."],
-          ["Sisa budget → poin", "Otomatis saat bulan berganti."],
+          [
+            `Completed +${s.settings.reward}`,
+            "For each completed daily challenge.",
+          ],
+          [
+            `Missed −${s.settings.penalty}`,
+            "Applied after the scheduled day ends.",
+          ],
+          [
+            `All completed +${s.settings.bonus}`,
+            "Bonus for completing every scheduled challenge that day.",
+          ],
+          ["Unused budget → points", "Applied when a new month starts."],
         ].map(([t, d], i) => (
           <div key={t}>
             <span className="rule-number">0{i + 1}</span>
@@ -154,8 +160,8 @@ export default function Budgets() {
       <section className="card">
         <div className="section-head">
           <div>
-            <h2>Perjalanan poinmu</h2>
-            <p>Setiap penambahan dan pemakaian tercatat.</p>
+            <h2>Points history</h2>
+            <p>See where your points came from and how you used them.</p>
           </div>
           <Sparkles size={19} />
         </div>
@@ -175,12 +181,12 @@ export default function Budgets() {
                       {e.date} ·{" "}
                       {(
                         {
-                          challenge: "Challenge selesai",
-                          penalty: "Challenge terlewat",
-                          bonus: "Bonus harian",
-                          saving: "Sisa budget",
-                          topup: "Penukaran poin",
-                          opening: "Saldo awal",
+                          challenge: "Challenge completed",
+                          penalty: "Challenge missed",
+                          bonus: "Daily bonus",
+                          saving: "Unused budget",
+                          topup: "Points redeemed",
+                          opening: "Opening balance",
                         } as Record<string, string>
                       )[e.kind] ?? e.kind}
                     </small>
@@ -194,21 +200,22 @@ export default function Budgets() {
           </div>
         ) : (
           <Empty
-            title="Cerita poinmu dimulai di sini"
-            description="Selesaikan challenge pertama untuk mendapat poin."
+            title="No points yet"
+            description="Complete your first challenge to earn points."
           />
         )}
       </section>
       <div className="subtle-note">
         <Wallet size={16} />
-        Poin menambah izin belanja dalam budget, bukan uang masuk ke rekening.
-        Saldo uang hanya berubah lewat transaksi.
+        Points increase your category budget. Your cash balance changes only
+        when you record a transaction.
       </div>
       {topup && (
-        <Modal title="Tukar poin ke budget" onClose={() => setTopup(null)}>
+        <Modal title="Redeem points for budget" onClose={() => setTopup(null)}>
           <p>
-            Tambahkan budget {s.categories.find((c) => c.id === topup)?.name}.
-            Tersedia <b>{num(points(s))} poin</b>.
+            Increase your budget for{" "}
+            {s.categories.find((c) => c.id === topup)?.name}. Available balance:{" "}
+            <b>{num(points(s))} points</b>.
           </p>
           <form
             className="form-stack"
@@ -218,14 +225,14 @@ export default function Budgets() {
               if (
                 await mutate(
                   (st) => transfer(st, month, topup, n, today),
-                  "Poin ditukar menjadi budget.",
+                  "Points redeemed.",
                 )
               )
                 setTopup(null);
             }}
           >
             <label>
-              Jumlah poin
+              Points to redeem
               <input
                 name="amount"
                 type="number"
@@ -237,16 +244,17 @@ export default function Budgets() {
               />
             </label>
             <div className="info-line">
-              1 poin = 1 {s.settings.currency}. Saldo uang tidak berubah.
+              1 point = 1 {s.settings.currency}. Your cash balance stays the
+              same.
             </div>
             <button className="btn primary">
-              Tukar sekarang <ArrowRight size={16} />
+              Redeem points <ArrowRight size={16} />
             </button>
           </form>
         </Modal>
       )}
       {edit && (
-        <Modal title="Atur budget bulanan" onClose={() => setEdit(null)}>
+        <Modal title="Edit monthly budget" onClose={() => setEdit(null)}>
           <form
             className="form-stack"
             onSubmit={async (e) => {
@@ -259,17 +267,17 @@ export default function Budgets() {
                   const b = budget(st, month, edit);
                   if (amount < 0 || amount + b.topup < b.spent)
                     throw Error(
-                      "Budget tidak boleh lebih rendah dari pengeluaran yang sudah tercatat.",
+                      "The budget must cover expenses already recorded.",
                     );
                   st.categories.find((c) => c.id === edit)!.limit = amount;
                   ensureMonth(st, month).limits[edit] = amount;
-                }, "Budget bulan ini dan default bulan berikutnya diperbarui.")
+                }, "Budget updated for this month and set as the default for future months.")
               )
                 setEdit(null);
             }}
           >
             <label>
-              Budget dasar ({s.settings.currency})
+              Base budget ({s.settings.currency})
               <input
                 name="amount"
                 type="number"
@@ -280,10 +288,10 @@ export default function Budgets() {
               />
             </label>
             <p className="muted">
-              Mengubah alokasi bulan ini dan default bulan berikutnya. Riwayat
-              bulan tertutup tetap sama.
+              This updates the current allocation and the default for future
+              months. Closed months keep their existing budgets.
             </p>
-            <button className="btn primary">Simpan budget</button>
+            <button className="btn primary">Save budget</button>
           </form>
         </Modal>
       )}

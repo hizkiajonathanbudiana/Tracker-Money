@@ -29,12 +29,13 @@ export async function restoredCloudEmail() {
 }
 export async function saveCloud(s: State) {
   const user = auth.currentUser;
-  if (!user) throw Error("Masuk ke akun Firebase terlebih dahulu.");
-  if (s.demo) throw Error("Mulai data sendiri sebelum membuat backup cloud.");
+  if (!user) throw Error("Sign in to Firebase first.");
+  if (s.demo)
+    throw Error("Start with your own data before creating a cloud backup.");
   const payload = JSON.stringify(s);
   if (new TextEncoder().encode(payload).length > 900000)
     throw Error(
-      "Data terlalu besar untuk backup satu dokumen. Gunakan download JSON.",
+      "This backup is too large for cloud storage. Download a JSON backup instead.",
     );
   await setDoc(doc(db, "users", user.uid, "trackerV2", "backup"), {
     payload,
@@ -44,16 +45,16 @@ export async function saveCloud(s: State) {
 }
 export async function restoreCloud() {
   const user = auth.currentUser;
-  if (!user) throw Error("Masuk ke akun Firebase terlebih dahulu.");
+  if (!user) throw Error("Sign in to Firebase first.");
   const snap = await getDoc(doc(db, "users", user.uid, "trackerV2", "backup"));
-  if (!snap.exists()) throw Error("Belum ada backup v2 di akun ini.");
+  if (!snap.exists()) throw Error("No v2 backup found for this account.");
   return validateState(JSON.parse(snap.data().payload));
 }
 export async function migrateLegacy(today: string): Promise<State> {
   const user = auth.currentUser;
-  if (!user) throw Error("Masuk ke akun Firebase lama terlebih dahulu.");
+  if (!user) throw Error("Sign in to your previous Firebase account first.");
   const s = newState(today);
-  s.settings.name = user.displayName ?? user.email?.split("@")[0] ?? "Kamu";
+  s.settings.name = user.displayName ?? user.email?.split("@")[0] ?? "You";
   const [expenses, incomes, summary, settings] = await Promise.all([
       getDocs(collection(db, "users", user.uid, "expenses")),
       getDocs(collection(db, "users", user.uid, "incomes")),
@@ -75,7 +76,7 @@ export async function migrateLegacy(today: string): Promise<State> {
     if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}/.test(v))
       return v.slice(0, 10);
     throw Error(
-      "Tanggal legacy tidak dikenali. Migrasi dibatalkan agar tidak salah mencatat.",
+      "A date in the previous records could not be read. Import canceled to protect your records.",
     );
   };
   const regular = (cfg?.regularCategories ?? [
@@ -88,7 +89,7 @@ export async function migrateLegacy(today: string): Promise<State> {
   ]) as string[];
   expenses.forEach((doc) => {
     const e = doc.data(),
-      name = String(e.category ?? "Lainnya");
+      name = String(e.category ?? "Other");
     let category = regular.some((c) => c.toLowerCase() === name.toLowerCase())
       ? "fnb"
       : s.categories.find((c) => c.name.toLowerCase() === name.toLowerCase())
@@ -110,7 +111,7 @@ export async function migrateLegacy(today: string): Promise<State> {
     const e = doc.data();
     s.transactions.push({
       id: "legacy-income-" + doc.id,
-      title: String(e.notes || e.source || e.title || "Pemasukan lama"),
+      title: String(e.notes || e.source || e.title || "Previous income"),
       amount: Number(e.amount),
       category: "income",
       kind: "income",
@@ -121,7 +122,7 @@ export async function migrateLegacy(today: string): Promise<State> {
   if (typeof p === "number" && p !== 0)
     s.ledger.push({
       id: "legacy-opening",
-      title: "Saldo poin awal dari versi sebelumnya",
+      title: "Opening point balance from previous version",
       points: p,
       date: today,
       kind: "opening",
@@ -144,6 +145,6 @@ export async function migrateLegacy(today: string): Promise<State> {
     s.months[today.slice(0, 7)].limits[c.id] = Math.max(c.limit, spent);
   }
   if (!expenses.size && !incomes.size && !summary.exists())
-    throw Error("Tidak ditemukan data legacy untuk dimigrasikan.");
+    throw Error("No records found to import from the previous version.");
   return validateState(s);
 }

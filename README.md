@@ -1,6 +1,6 @@
 # Money Tracker v2
 
-Responsive personal finance and daily challenge tracker, rebuilt from the supplied Next.js project. Indonesian interface, desktop sidebar, mobile bottom tabs, installable PWA, consistent light/dark/system themes. Routes: dashboard, tracker, budget/points, challenges, pending bills, AI companion, export, settings.
+Responsive personal finance and daily challenge tracker, rebuilt from the supplied Next.js project. English interface, desktop sidebar, mobile bottom tabs, installable PWA, consistent light/dark/system themes. Routes: dashboard, tracker, budget/points, challenges, pending bills, AI companion, export, settings.
 
 ## Run
 
@@ -15,7 +15,7 @@ Node.js 22+; `npm ci`, `npm run dev`. Production: `npm run build` creates the st
 - At month rollover, remaining balances in opened months convert once to points. Example: 6000 − 4680 = 1320 points. Unused top-ups are included, recovering their value, not creating duplicate points. Skipped inactive months never mint allocations or points. Closed financial periods cannot be edited. New categories do not retroactively receive budgets.
 - Points are spending authorization inside this tracker, not real cash or income. Income is separately recorded; wallet = income − expense. No bank connection or real payment blocking.
 - Pending bills affect neither cash nor budget until explicitly paid. Paying posts one expense, respects category budget, and is idempotent. Removing that expense reopens its bill.
-- Demo data are clearly labelled. “Mulai data saya” starts a clean account. TWD/Asia-Taipei defaults, currency and timezone editable before records/schedules exist. No real records included.
+- Demo data are clearly labelled. “Start with my own data” starts a clean account. TWD/Asia-Taipei defaults, currency and timezone editable before records/schedules exist. No real records included.
 
 ## Persistence and backup
 

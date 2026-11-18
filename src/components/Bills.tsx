@@ -20,28 +20,28 @@ export default function Bills() {
       <Heading
         eyebrow="ONE LESS THING ON YOUR MIND"
         title="Bills, under control."
-        description="Simpan yang belum dibayar. Tandai lunas saat uang benar-benar keluar."
+        description="Track unpaid bills and record payments when you make them."
         actions={
           <button className="btn primary" onClick={() => setAdd(true)}>
-            <Plus size={17} /> Tambah tagihan
+            <Plus size={17} /> Add bill
           </button>
         }
       />
       <div className="three-grid">
         <div className="card compact-stat">
-          <span>Total belum dibayar</span>
+          <span>Total unpaid</span>
           <strong>{money(pending.reduce((a, b) => a + b.amount, 0))}</strong>
         </div>
         <div className="card compact-stat">
-          <span>Lewat jatuh tempo</span>
+          <span>Overdue</span>
           <strong className="negative">
-            {pending.filter((b) => b.due < today).length} tagihan
+            {pending.filter((b) => b.due < today).length} bills
           </strong>
         </div>
         <div className="card compact-stat">
-          <span>Sudah lunas</span>
+          <span>Paid</span>
           <strong className="positive">
-            {s.bills.filter((b) => b.paid).length} tagihan
+            {s.bills.filter((b) => b.paid).length} bills
           </strong>
         </div>
       </div>
@@ -52,13 +52,13 @@ export default function Bills() {
               className={filter === "pending" ? "active" : ""}
               onClick={() => setFilter("pending")}
             >
-              Belum dibayar
+              Unpaid
             </button>
             <button
               className={filter === "paid" ? "active" : ""}
               onClick={() => setFilter("paid")}
             >
-              Sudah lunas
+              Paid
             </button>
           </div>
         </div>
@@ -82,10 +82,10 @@ export default function Bills() {
                     }
                   >
                     {b.paid
-                      ? "Lunas"
+                      ? "Paid"
                       : b.due < today
-                        ? "Lewat jatuh tempo"
-                        : "Menunggu pembayaran"}
+                        ? "Overdue"
+                        : "Awaiting payment"}
                   </span>
                 </div>
                 <strong>{money(b.amount)}</strong>
@@ -95,11 +95,11 @@ export default function Bills() {
                       className="btn secondary"
                       onClick={() => setPay(b.id)}
                     >
-                      <Check size={15} /> Bayar
+                      <Check size={15} /> Record payment
                     </button>
                     <button
                       className="icon-button"
-                      aria-label={"Hapus tagihan " + b.title}
+                      aria-label={"Delete bill " + b.title}
                       onClick={() => setDel(b.id)}
                     >
                       <Trash2 size={16} />
@@ -111,25 +111,21 @@ export default function Bills() {
           </div>
         ) : (
           <Empty
-            title={
-              filter === "paid"
-                ? "Belum ada tagihan lunas"
-                : "Semua terasa lebih ringan"
-            }
+            title={filter === "paid" ? "No paid bills yet" : "No unpaid bills"}
             description={
               filter === "paid"
-                ? "Tagihan yang dibayar akan tampil di sini."
-                : "Tidak ada tagihan menunggu. Tambahkan pembayaran mendatang agar tidak terlupa."
+                ? "Paid bills will appear here."
+                : "Add upcoming bills to keep track of their due dates."
             }
           />
         )}
       </section>
       <div className="subtle-note">
-        Tagihan pending belum mengurangi saldo atau budget. Saat dibayar, satu
-        pengeluaran otomatis dicatat dengan tanggal hari ini.
+        Unpaid bills do not affect your balance or budget. Recording a payment
+        adds an expense dated today.
       </div>
       {add && (
-        <Modal title="Tambah tagihan" onClose={() => setAdd(false)}>
+        <Modal title="Add bill" onClose={() => setAdd(false)}>
           <form
             className="form-stack"
             onSubmit={async (e) => {
@@ -145,23 +141,23 @@ export default function Bills() {
                     due: String(f.get("due")),
                     paid: false,
                   });
-                }, "Tagihan ditambahkan.")
+                }, "Bill added.")
               )
                 setAdd(false);
             }}
           >
             <label>
-              Nama tagihan
+              Bill name
               <input
                 name="title"
-                placeholder="Internet, listrik, cicilan…"
+                placeholder="Internet, electricity, installments…"
                 required
                 maxLength={120}
               />
             </label>
             <div className="form-row">
               <label>
-                Nominal ({s.settings.currency})
+                Amount ({s.settings.currency})
                 <input
                   name="amount"
                   type="number"
@@ -171,12 +167,12 @@ export default function Bills() {
                 />
               </label>
               <label>
-                Jatuh tempo
+                Due date
                 <input name="due" type="date" defaultValue={today} required />
               </label>
             </div>
             <label>
-              Kategori
+              Category
               <select name="category">
                 {s.categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -185,20 +181,20 @@ export default function Bills() {
                 ))}
               </select>
             </label>
-            <button className="btn primary">Simpan tagihan</button>
+            <button className="btn primary">Save bill</button>
           </form>
         </Modal>
       )}
       {pay && (
-        <Modal title="Catat pembayaran?" onClose={() => setPay(null)}>
+        <Modal title="Record this payment?" onClose={() => setPay(null)}>
           <p>
-            <b>{s.bills.find((b) => b.id === pay)?.title}</b> ditandai lunas dan
-            mengurangi budget kategori. Jika budget tidak cukup, tukar poin
-            terlebih dahulu.
+            <b>{s.bills.find((b) => b.id === pay)?.title}</b> will be marked as
+            paid and deducted from its category budget. If the budget is too
+            low, redeem points first.
           </p>
           <div className="modal-actions">
             <button className="btn secondary" onClick={() => setPay(null)}>
-              Batal
+              Cancel
             </button>
             <button
               className="btn primary"
@@ -206,23 +202,25 @@ export default function Bills() {
                 if (
                   await mutate(
                     (st) => payBill(st, pay, today),
-                    "Tagihan lunas. Pengeluaran otomatis tercatat.",
+                    "Bill paid. Expense recorded.",
                   )
                 )
                   setPay(null);
               }}
             >
-              Sudah saya bayar
+              Mark as paid
             </button>
           </div>
         </Modal>
       )}
       {del && (
-        <Modal title="Hapus tagihan pending?" onClose={() => setDel(null)}>
-          <p>Menghapus tagihan pending tidak mengubah saldo atau budget.</p>
+        <Modal title="Delete unpaid bill?" onClose={() => setDel(null)}>
+          <p>
+            Deleting this unpaid bill leaves your balance and budget unchanged.
+          </p>
           <div className="modal-actions">
             <button className="btn secondary" onClick={() => setDel(null)}>
-              Batal
+              Cancel
             </button>
             <button
               className="btn danger"
@@ -230,12 +228,12 @@ export default function Bills() {
                 if (
                   await mutate((st) => {
                     st.bills = st.bills.filter((b) => b.id !== del);
-                  }, "Tagihan dihapus.")
+                  }, "Bill deleted.")
                 )
                   setDel(null);
               }}
             >
-              Hapus
+              Delete
             </button>
           </div>
         </Modal>

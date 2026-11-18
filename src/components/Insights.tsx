@@ -17,7 +17,7 @@ import { askAI } from "@/lib/integrations";
 export default function Insights() {
   const { s, today, mutate, notify, apiKey, setApiKey } = useStore(),
     [question, setQuestion] = useState(
-      "Analisis keuangan dan konsistensi challenge saya. Sarankan 3 challenge realistis untuk hari ini.",
+      "Review my spending and how consistently I complete challenges. Suggest three realistic challenges for today.",
     ),
     [busy, setBusy] = useState(false),
     [result, setResult] = useState<{
@@ -44,19 +44,19 @@ export default function Insights() {
     unpaid = s.bills.filter((b) => !b.paid);
   const suggestions = [
     {
-      title: "Review pengeluaran selama 5 menit",
+      title: "Review expenses for 5 minutes",
       time: "20:00",
-      reason: "Bantu menjaga catatan keuangan tetap lengkap.",
+      reason: "Keep your spending records up to date.",
     },
     {
-      title: "Siapkan satu porsi makan di rumah",
+      title: "Make one meal at home",
       time: "18:00",
-      reason: "Pilihan sederhana untuk menjaga budget makan.",
+      reason: "Stay within your food budget.",
     },
     {
-      title: "Cek tagihan dan tanggal jatuh tempo",
+      title: "Check bills and due dates",
       time: "09:00",
-      reason: `Ada ${unpaid.length} tagihan yang belum dibayar.`,
+      reason: `Unpaid bills: ${unpaid.length}.`,
     },
   ];
   return (
@@ -64,7 +64,7 @@ export default function Insights() {
       <Heading
         eyebrow="A THOUGHTFUL LITTLE COMPANION"
         title="A clearer picture."
-        description="Kenali pola keuanganmu. Temukan langkah kecil berikutnya."
+        description="Review your spending and challenge habits, and find your next step."
         actions={
           <span className="pill green">
             <Sparkles size={14} /> Your everyday companion
@@ -73,16 +73,13 @@ export default function Insights() {
       />
       <section className="insight-intro">
         <div>
-          <span className="eyebrow">INSIGHT DARI CATATANMU</span>
+          <span className="eyebrow">INSIGHTS FROM YOUR RECORDS</span>
           <h2>
-            Lebih sadar hari ini.
+            See your spending.
             <br />
-            <em>Lebih siap untuk besok.</em>
+            <em>Plan your next step.</em>
           </h2>
-          <p>
-            Ringkasan otomatis tersedia langsung. Gunakan AI untuk melihat
-            kebiasaan dari sudut pandang baru.
-          </p>
+          <p>Review summaries from your records or ask AI for suggestions.</p>
         </div>
         <div className="insight-art">
           <div className="art-circle">
@@ -97,10 +94,10 @@ export default function Insights() {
           <span className="stat-icon green">
             <Lightbulb size={19} />
           </span>
-          <h3>Perhatikan {highest.name}</h3>
+          <h3>Budget to watch: {highest.name}</h3>
           <p>
-            {money(highest.spent)} dari {money(highest.total)} telah dipakai.
-            Tersisa {money(highest.remaining)} untuk bulan ini.
+            {money(highest.spent)} of {money(highest.total)} spent.{" "}
+            {money(highest.remaining)} remaining this month.
           </p>
         </section>
         <section className="card">
@@ -108,42 +105,41 @@ export default function Insights() {
             <Target size={19} />
           </span>
           <h3>
-            {count ? Math.round((done / count) * 100) : 0}% challenge selesai
+            {count ? Math.round((done / count) * 100) : 0}% of challenges
+            completed
           </h3>
           <p>
-            {done} dari {count} challenge pada {recent.length} hari tercatat
-            terakhir. Mulai dari rencana yang realistis dan konsisten.
+            {done} of {count} challenges over the last {recent.length} days with
+            recorded challenges.
           </p>
         </section>
         <section className="card">
           <span className="stat-icon purple">
             <Receipt size={19} />
           </span>
-          <h3>
-            {money(unpaid.reduce((a, b) => a + b.amount, 0))} belum dibayar
-          </h3>
+          <h3>{money(unpaid.reduce((a, b) => a + b.amount, 0))} unpaid</h3>
           <p>
-            {unpaid.length} tagihan pending. Sisihkan dana sebelum melakukan
-            pembelian tambahan.
+            {unpaid.length} unpaid bills. Set aside enough for upcoming
+            payments.
           </p>
         </section>
       </div>
       <p className="fine-print section-note">
-        Ringkasan di atas dihitung dari data lokal; bukan jawaban model AI.
+        These summaries are calculated from the records on this device.
       </p>
       <div className="two-grid align-start">
         <section className="card ai-panel">
           <div className="section-head">
             <div className="inline-heading">
               <Sparkles size={20} />
-              <h2>Tanya AI companion</h2>
+              <h2>Ask the AI companion</h2>
             </div>
             <span className="pill neutral">Gemini</span>
           </div>
           <p className="muted">
-            Saat menekan Analisis, ringkasan budget, saldo, tagihan, dan
-            nama/status challenge dikirim ke Google Gemini. AI memberi saran;
-            perubahan data tetap melalui klikmu.
+            Selecting Analyze with AI sends your budget summary, balances,
+            bills, and challenge names and statuses to Google Gemini. You choose
+            whether to add any suggestions.
           </p>
           <form
             className="form-stack"
@@ -169,17 +165,16 @@ export default function Insights() {
                 autoComplete="off"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Masukkan key pribadi untuk sesi ini"
+                placeholder="Enter your API key for this session"
                 required
               />
             </label>
             <span className="fine-print">
-              Key hanya di memori sesi, tidak masuk backup atau penyimpanan
-              browser. Model: {s.settings.aiModel} ·{" "}
-              <Link href="/settings/">Atur model</Link>
+              Your key stays in memory for this session. Model:{" "}
+              {s.settings.aiModel} · <Link href="/settings/">Change model</Link>
             </span>
             <label>
-              Apa yang ingin kamu pahami?
+              What would you like to understand?
               <textarea
                 rows={4}
                 value={question}
@@ -190,15 +185,15 @@ export default function Insights() {
             </label>
             <button className="btn primary" disabled={busy}>
               <Sparkles size={16} />
-              {busy ? "Sedang menganalisis…" : "Analisis dengan AI"}
+              {busy ? "Analyzing…" : "Analyze with AI"}
             </button>
           </form>
           {result && (
             <div className="ai-result">
-              <span className="eyebrow">JAWABAN AI</span>
+              <span className="eyebrow">AI RESPONSE</span>
               <p>{result.summary}</p>
               <span className="fine-print">
-                Tinjau saran AI; hasilnya dapat keliru.
+                Review AI suggestions before using them.
               </span>
             </div>
           )}
@@ -207,14 +202,12 @@ export default function Insights() {
           <div className="section-head">
             <div>
               <h2>
-                {result
-                  ? "Saran challenge dari AI"
-                  : "Ide untuk langkah berikutnya"}
+                {result ? "AI challenge suggestions" : "Suggested challenges"}
               </h2>
               <p>
                 {result
-                  ? "Tambahkan yang cocok untuk harimu."
-                  : "Saran awal berbasis aturan, tanpa koneksi AI."}
+                  ? "Add suggestions that fit your day."
+                  : "These suggestions are available without connecting to Gemini."}
               </p>
             </div>
           </div>
@@ -225,20 +218,18 @@ export default function Insights() {
                 <div>
                   <h3>{x.title}</h3>
                   <p>{x.reason}</p>
-                  <span className="fine-print">
-                    Hari ini · {x.time} · 15 menit
-                  </span>
+                  <span className="fine-print">Today · {x.time} · 15 min</span>
                 </div>
                 <button
                   className="icon-button"
                   disabled={added.includes(x.title)}
-                  aria-label={"Tambah " + x.title}
+                  aria-label={"Add " + x.title}
                   onClick={async () => {
                     if (
                       await mutate(
                         (st) =>
                           addChallenge(st, today, x.title, x.time, 15, today),
-                        "Saran ditambahkan ke challenge hari ini.",
+                        "Suggestion added to today's challenges.",
                       )
                     )
                       setAdded((a) => [...a, x.title]);
@@ -254,7 +245,7 @@ export default function Insights() {
             ))}
           </div>
           <div className="subtle-note">
-            <Target size={16} /> Pilih langkah yang realistis untuk harimu.
+            <Target size={16} /> Choose a challenge that fits your schedule.
           </div>
         </section>
       </div>
