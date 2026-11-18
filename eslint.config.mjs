@@ -22,6 +22,7 @@ const eslintConfig = defineConfig([
     "public/workbox-*.js",
     "example.jsx",
     "generate-icons.js",
+    "scripts/icons.cjs",
   ]),
 ]);
 

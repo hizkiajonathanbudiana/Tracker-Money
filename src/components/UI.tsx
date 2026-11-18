@@ -64,7 +64,7 @@ export function Modal({
     const d = ref.current;
     d?.showModal();
     return () => d?.close();
-  }, []);
+  }, [notify]);
   return (
     <dialog
       ref={ref}

@@ -1,1 +1,9 @@
-export default { output: 'export', trailingSlash: true, images: { unoptimized: true }, reactStrictMode: true, devIndicators:false };
+const nextConfig = {
+  output: "export",
+  trailingSlash: true,
+  images: { unoptimized: true },
+  reactStrictMode: true,
+  devIndicators: false,
+};
+
+export default nextConfig;
