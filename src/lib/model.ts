@@ -390,7 +390,7 @@ export function newState(today: string, demo = false): State {
       penalty: 2,
       bonus: 5,
       googleClientId: "",
-      aiModel: "gemini-2.5-flash",
+      aiModel: "gemini-3.5-flash-lite",
       reminder: 10,
     },
     categories: [

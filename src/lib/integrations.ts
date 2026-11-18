@@ -262,9 +262,22 @@ export async function askAI(
         items: d.items.map((c) => ({ title: c.title, status: c.status })),
       })),
   };
-  const r = await fetch(
+  const models = [
+    s.settings.aiModel,
+    "gemini-3.5-flash-lite",
+  ].filter((model, index, list) => !!model && list.indexOf(model) === index);
+  let r: Response | null = null;
+  let data: {
+    error?: { message?: string; status?: string };
+    candidates?: {
+      content?: { parts?: { text?: string }[] };
+    }[];
+  } | null = null;
+  let lastError = "";
+  for (const model of models) {
+    r = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/" +
-        encodeURIComponent(s.settings.aiModel) +
+        encodeURIComponent(model) +
         ":generateContent",
       {
         method: "POST",
@@ -290,17 +303,27 @@ export async function askAI(
         }),
         signal: AbortSignal.timeout(45000),
       },
-    ),
+    );
     data = await r.json();
-  if (!r.ok)
+    if (r.ok) break;
+    lastError =
+      data?.error?.message ||
+      data?.error?.status ||
+      (r.status === 503 ? "The model is temporarily unavailable." : "");
+    if (![404, 429, 503].includes(r.status)) break;
+  }
+  if (!r || !r.ok || !data)
     throw Error(
       "AI request failed (" +
-        r.status +
-        "). Check your API key, quota, and model name.",
+        r?.status +
+        ")" +
+        (lastError ? ": " + lastError : "") +
+        ". Check your API key, quota, and model name.",
     );
+  const responseData = data;
   const output = JSON.parse(
-    data.candidates?.[0]?.content?.parts
-      ?.map((p: { text: string }) => p.text ?? "")
+    responseData.candidates?.[0]?.content?.parts
+      ?.map((p: { text?: string }) => p.text ?? "")
       .join("") || "{}",
   );
   if (typeof output.summary !== "string" || !Array.isArray(output.suggestions))
