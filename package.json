@@ -1,0 +1,38 @@
+{
+  "name": "money-tracker",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "next build --webpack && node scripts/generate-sw.mjs",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "chart.js": "^4.5.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "chartjs-plugin-zoom": "^2.2.0",
+    "firebase": "^12.4.0",
+    "lucide-react": "^0.546.0",
+    "next": "16.0.10",
+    "next-pwa": "^5.6.0",
+    "next-themes": "^0.4.6",
+    "nookies": "^2.5.2",
+    "react": "19.2.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "canvas": "^3.2.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

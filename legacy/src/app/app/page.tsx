@@ -1,0 +1,401 @@
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/AuthContext";
+import ExpenseForm from "@/components/ExpenseForm";
+import ExpenseList from "@/components/ExpenseList";
+import ChartPanel from "@/components/ChartPanel";
+import MonthSelector from "@/components/MonthSelector";
+import StatCard from "@/components/StatCard";
+import WalletPanel from "@/components/WalletPanel";
+import CategoryManager from "@/components/CategoryManager";
+import ChangePasswordPanel from "@/components/ChangePasswordPanel";
+import PointsSummaryCard from "@/components/economy/PointsSummaryCard";
+import MonthlyAllowanceCard from "@/components/economy/MonthlyAllowanceCard";
+import SpendTrendCard from "@/components/economy/SpendTrendCard";
+import PageHeader from "@/components/ui/PageHeader";
+import { useExpenses } from "@/hooks/useExpenses";
+import { useCategories } from "@/hooks/useCategories";
+import { useWallet } from "@/hooks/useWallet";
+import { useEconomySettings } from "@/hooks/useEconomy";
+import { useAllowance } from "@/hooks/useAllowance";
+import { formatMoney } from "@/lib/money";
+import {
+    Loader2,
+    BarChart2,
+    Eye,
+    EyeOff,
+    ArrowRight,
+    DollarSign,
+    TrendingUp,
+    ArrowUpCircle,
+    Tag,
+} from "lucide-react";
+import { EXPENSE_CATEGORIES, Expense } from "@/types/expense";
+
+const getYearMonth = (date: Date) => {
+    return date.toISOString().slice(0, 7);
+};
+
+const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month, 0).getDate();
+};
+
+export default function AppPage() {
+    const { user } = useAuth();
+    const router = useRouter();
+    const userId = user?.uid ?? "";
+    const isEmailVerified = user?.emailVerified ?? false;
+
+    const [selectedMonth, setSelectedMonth] = useState(getYearMonth(new Date()));
+    const [chartsVisible, setChartsVisible] = useState(true);
+    const [showMonthlySummary, setShowMonthlySummary] = useState(true);
+    const [showWalletSummary, setShowWalletSummary] = useState(true);
+    const [showCategories, setShowCategories] = useState(true);
+    const [showChangePassword, setShowChangePassword] = useState(false);
+
+    const {
+        expenses,
+        loading: expensesLoading,
+        error: expensesError,
+    } = useExpenses(userId);
+
+    const {
+        categories,
+        addCategory,
+        updateCategory,
+        removeCategory,
+    } = useCategories(userId);
+
+    const {
+        wallet,
+        updateBalance,
+        adjustBalance,
+        updateDenominations,
+        addIncome,
+    } = useWallet(userId);
+
+    const { settings: economySettings } = useEconomySettings(userId);
+    const money = (amount: number) => formatMoney(amount, economySettings);
+    const { today, records, spend, pace } = useAllowance(expenses, economySettings);
+
+    useEffect(() => {
+        // This useEffect should not be needed since we already check emailVerified above
+        // but keeping it as backup in case user state changes after component mounts
+        if (user && !isEmailVerified) {
+            router.push("/verify-email");
+        }
+    }, [user, isEmailVerified, router]);
+
+    useEffect(() => {
+        const storedMonthly = localStorage.getItem("showMonthlySummary");
+        const storedWallet = localStorage.getItem("showWalletSummary");
+        const storedCategories = localStorage.getItem("showCategories");
+        const storedPassword = localStorage.getItem("showChangePassword");
+        if (storedMonthly !== null) setShowMonthlySummary(storedMonthly === "true");
+        if (storedWallet !== null) setShowWalletSummary(storedWallet === "true");
+        if (storedCategories !== null) setShowCategories(storedCategories === "true");
+        if (storedPassword !== null) setShowChangePassword(storedPassword === "true");
+    }, []);
+
+    const excludedCategories = useMemo(() => {
+        const regular = new Set(
+            (economySettings.regularCategories ?? []).map((item) => item.trim().toLowerCase())
+        );
+        const pool = categories.length > 0 ? categories : [...EXPENSE_CATEGORIES];
+        return pool.filter((category) => !regular.has(category.trim().toLowerCase()));
+    }, [categories, economySettings.regularCategories]);
+
+    // Early return BEFORE any other hooks to prevent hooks order mismatch
+    if (!user) {
+        return (
+            <div className="flex h-[80vh] w-full items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+            </div>
+        );
+    }
+
+    if (!isEmailVerified) {
+        return (
+            <div className="flex h-[80vh] w-full items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+            </div>
+        );
+    }
+
+    const monthlyExpenses = expenses.filter(
+        (expense) => getYearMonth(expense.date.toDate()) === selectedMonth
+    );
+
+    const stats = (() => {
+        const totalSpend = monthlyExpenses.reduce(
+            (acc, exp) => acc + exp.amount,
+            0
+        );
+
+        const [year, month] = selectedMonth.split("-").map(Number);
+        const daysInMonth = getDaysInMonth(year, month);
+        const avgSpendPerDay = totalSpend === 0 ? 0 : totalSpend / daysInMonth;
+
+        const biggestExpense = monthlyExpenses.reduce(
+            (max, exp) => (exp.amount > max.amount ? exp : max),
+            { amount: 0, notes: "N/A" } as Expense
+        );
+
+        const categoryTotals: Record<string, number> = {};
+        monthlyExpenses.forEach((exp) => {
+            categoryTotals[exp.category] =
+                (categoryTotals[exp.category] || 0) + exp.amount;
+        });
+
+        const topCategory = Object.entries(categoryTotals).reduce(
+            (max, [cat, amount]) => (amount > max.amount ? { cat, amount } : max),
+            { cat: "N/A", amount: 0 }
+        );
+
+        return {
+            totalSpend,
+            avgSpendPerDay,
+            biggestExpense,
+            topCategory,
+        };
+    })();
+
+    const recentExpenses = monthlyExpenses.slice(0, 5);
+
+    return (
+        <div className="flex flex-col gap-4 sm:gap-6">
+            <PageHeader
+                eyebrow="Money tracker"
+                title="Dashboard"
+                description="Daily and monthly view of your allowance, spending and points."
+                meta={
+                    <>
+                        <span className="chip chip-accent">{pace.monthKey}</span>
+                        <span className="chip">Day {pace.dayOfMonth} of {pace.days}</span>
+                        <span className="chip">{pace.daysLeft} day{pace.daysLeft === 1 ? "" : "s"} left</span>
+                    </>
+                }
+            />
+
+            <MonthlyAllowanceCard
+                settings={economySettings}
+                pace={pace}
+                spend={spend}
+                excludedCategories={excludedCategories}
+            />
+
+            <div className="grid gap-4 sm:gap-6 xl:grid-cols-2">
+                <SpendTrendCard
+                    records={records}
+                    settings={economySettings}
+                    today={today}
+                    pace={pace}
+                    spend={spend}
+                />
+                <PointsSummaryCard userId={user.uid} />
+            </div>
+
+            <div className="card-glass">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Monthly Summary
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !showMonthlySummary;
+                            setShowMonthlySummary(next);
+                            localStorage.setItem("showMonthlySummary", next.toString());
+                        }}
+                        className="glass-button flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
+                    >
+                        {showMonthlySummary ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showMonthlySummary ? "Hide" : "Show"}
+                    </button>
+                </div>
+                {showMonthlySummary && (
+                    <>
+                        <MonthSelector
+                            expenses={expenses}
+                            selectedMonth={selectedMonth}
+                            setSelectedMonth={setSelectedMonth}
+                        />
+                        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                            <StatCard
+                                title="Total Spending"
+                                value={money(stats.totalSpend)}
+                                icon={<DollarSign size={20} />}
+                            />
+                            <StatCard
+                                title="Avg. Spend / Day"
+                                value={money(stats.avgSpendPerDay)}
+                                icon={<TrendingUp size={20} />}
+                            />
+                            <StatCard
+                                title="Biggest Expense"
+                                value={money(stats.biggestExpense.amount)}
+                                icon={<ArrowUpCircle size={20} />}
+                                description={stats.biggestExpense.notes || "N/A"}
+                            />
+                            <StatCard
+                                title="Top Category"
+                                value={stats.topCategory.cat}
+                                icon={<Tag size={20} />}
+                                description={money(stats.topCategory.amount)}
+                            />
+                        </div>
+                    </>
+                )}
+            </div>
+
+            <div className="card-glass">
+                <button
+                    onClick={() => setChartsVisible(!chartsVisible)}
+                    className="glass-button flex w-full items-center justify-between rounded-xl px-4 py-3 text-lg font-semibold text-slate-800 transition-all duration-200 hover:scale-[1.01] dark:text-slate-100"
+                >
+                    <div className="flex items-center gap-3">
+                        <BarChart2 className="h-5 w-5" />
+                        <span>Spending Charts</span>
+                    </div>
+                    {chartsVisible ? (
+                        <EyeOff className="h-5 w-5 text-slate-500" />
+                    ) : (
+                        <BarChart2 className="h-5 w-5 text-slate-500" />
+                    )}
+                </button>
+
+                {chartsVisible && (
+                    <div className="mt-4 space-y-4">
+                        {expensesLoading && (
+                            <div className="flex justify-center p-8">
+                                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                                <span className="ml-2 text-gray-500 dark:text-gray-400">
+                                    Loading charts...
+                                </span>
+                            </div>
+                        )}
+                        {!expensesLoading && !expensesError && (
+                            <ChartPanel expenses={expenses} />
+                        )}
+                        {expensesError && (
+                            <p className="text-center text-red-500">{expensesError}</p>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Wallet Summary
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !showWalletSummary;
+                            setShowWalletSummary(next);
+                            localStorage.setItem("showWalletSummary", next.toString());
+                        }}
+                        className="glass-button flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
+                    >
+                        {showWalletSummary ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showWalletSummary ? "Hide" : "Show"}
+                    </button>
+                </div>
+                {showWalletSummary && (
+                    <WalletPanel
+                        balance={wallet.balance}
+                        denominations={wallet.denominations}
+                        onUpdateBalance={updateBalance}
+                        onUpdateDenominations={updateDenominations}
+                        onAddIncome={addIncome}
+                        currencySymbol={economySettings.currencySymbol}
+                        money={money}
+                        showHeader={false}
+                    />
+                )}
+            </div>
+
+            <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Categories
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !showCategories;
+                            setShowCategories(next);
+                            localStorage.setItem("showCategories", next.toString());
+                        }}
+                        className="glass-button flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
+                    >
+                        {showCategories ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showCategories ? "Hide" : "Show"}
+                    </button>
+                </div>
+                {showCategories && (
+                    <CategoryManager
+                        categories={categories}
+                        onAdd={addCategory}
+                        onUpdate={updateCategory}
+                        onRemove={removeCategory}
+                        showHeader={false}
+                    />
+                )}
+            </div>
+
+            <ExpenseForm
+                userId={user.uid}
+                categories={categories}
+                denominations={wallet.denominations}
+                onAdjustBalance={adjustBalance}
+                onUpdateDenominations={updateDenominations}
+            />
+
+            <div className="flex flex-col gap-4">
+                <ExpenseList
+                    userId={user.uid}
+                    expenses={recentExpenses}
+                    loading={expensesLoading}
+                    categories={categories}
+                />
+                {monthlyExpenses.length > 5 && (
+                    <button
+                        onClick={() => router.push(`/app/all-expenses?month=${selectedMonth}`)}
+                        className="glass-button group flex items-center justify-center gap-3 rounded-xl p-4 text-center font-medium text-blue-600 transition-all duration-200 hover:scale-[1.02] hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    >
+                        View All Transactions for this Month
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                )}
+            </div>
+            <div className="card-glass">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Security
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !showChangePassword;
+                            setShowChangePassword(next);
+                            localStorage.setItem("showChangePassword", next.toString());
+                        }}
+                        className="glass-button flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
+                    >
+                        {showChangePassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showChangePassword ? "Hide" : "Show"}
+                    </button>
+                </div>
+                {showChangePassword && (
+                    <div className="mt-4">
+                        <ChangePasswordPanel />
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

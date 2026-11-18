@@ -1,0 +1,19 @@
+rules_version = '2';
+
+// Money Tracker — every document lives under the signed-in user's own subtree:
+//   users/{uid}/expenses, incomes, wallet, settings, points, ledger, days (+completions),
+//   challenges, rewards, redemptions, projects (+items)
+// The client SDK does all math (no Cloud Functions), so these rules enforce
+// per-user isolation only — they do not validate point or limit values.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
