@@ -29,15 +29,24 @@ export interface WalletSummary {
 }
 
 const DEFAULT_DENOMINATIONS: CashDenomination[] = [
-  { id: "twd-1000", label: "NT$1000", value: 1000, type: "bill", count: 0 },
-  { id: "twd-500", label: "NT$500", value: 500, type: "bill", count: 0 },
-  { id: "twd-200", label: "NT$200", value: 200, type: "bill", count: 0 },
-  { id: "twd-100", label: "NT$100", value: 100, type: "bill", count: 0 },
-  { id: "twd-50", label: "NT$50", value: 50, type: "coin", count: 0 },
-  { id: "twd-10", label: "NT$10", value: 10, type: "coin", count: 0 },
-  { id: "twd-5", label: "NT$5", value: 5, type: "coin", count: 0 },
-  { id: "twd-1", label: "NT$1", value: 1, type: "coin", count: 0 },
+  { id: "usd-100", label: "$100", value: 100, type: "bill", count: 0 },
+  { id: "usd-50", label: "$50", value: 50, type: "bill", count: 0 },
+  { id: "usd-20", label: "$20", value: 20, type: "bill", count: 0 },
+  { id: "usd-10", label: "$10", value: 10, type: "bill", count: 0 },
+  { id: "usd-5", label: "$5", value: 5, type: "bill", count: 0 },
+  { id: "usd-1", label: "$1", value: 1, type: "bill", count: 0 },
+  { id: "usd-0.25", label: "25¢", value: 0.25, type: "coin", count: 0 },
+  { id: "usd-0.1", label: "10¢", value: 0.1, type: "coin", count: 0 },
 ];
+
+/**
+ * Wallets created before the switch to dollars still hold NT$/Rp notes.
+ * Those labels would show the wrong currency, so they are replaced with the
+ * dollar set the moment the wallet is read.
+ */
+const isLegacyDenomination = (denominations: CashDenomination[]) =>
+  denominations.length > 0 &&
+  denominations.every((denom) => /^(NT\$|Rp|IDR)/i.test(denom.label.trim()));
 
 export const useWallet = (userId: string) => {
   const [wallet, setWallet] = useState<WalletSummary>({
@@ -68,11 +77,15 @@ export const useWallet = (userId: string) => {
       }
 
       const data = snapshot.data() as WalletSummary;
+      const storedDenoms = data.denominations ?? [];
+      const legacy = isLegacyDenomination(storedDenoms);
       setWallet({
         balance: data.balance ?? 0,
-        denominations: data.denominations?.length
-          ? data.denominations
-          : DEFAULT_DENOMINATIONS,
+        denominations: legacy
+          ? DEFAULT_DENOMINATIONS
+          : storedDenoms.length
+            ? storedDenoms
+            : DEFAULT_DENOMINATIONS,
       });
       setLoading(false);
     });

@@ -1,42 +1,85 @@
 @import "tailwindcss";
 
-@layer theme {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-  }
- 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-  }
-}
-
 @layer base {
+  :root {
+    --app-bg: #f4f6fb;
+    --app-bg-glow: rgba(99, 102, 241, 0.12);
+    --app-fg: #0f172a;
+    --app-muted: #64748b;
+    --app-card: rgba(255, 255, 255, 0.94);
+    --app-card-strong: #ffffff;
+    --app-border: rgba(15, 23, 42, 0.08);
+    --app-border-strong: rgba(15, 23, 42, 0.14);
+    --app-track: rgba(15, 23, 42, 0.08);
+    --app-shadow: 0 18px 40px -32px rgba(15, 23, 42, 0.45);
+    --accent: #6366f1;
+    --accent-soft: rgba(99, 102, 241, 0.14);
+    --success: #10b981;
+    --warn: #f59e0b;
+    --danger: #f43f5e;
+  }
+
+  html.dark {
+    --app-bg: #07080b;
+    --app-bg-glow: rgba(99, 102, 241, 0.16);
+    --app-fg: #e8ecf2;
+    --app-muted: #94a3b8;
+    --app-card: rgba(20, 22, 28, 0.92);
+    --app-card-strong: #14161c;
+    --app-border: rgba(255, 255, 255, 0.08);
+    --app-border-strong: rgba(255, 255, 255, 0.14);
+    --app-track: rgba(255, 255, 255, 0.1);
+    --app-shadow: 0 24px 48px -34px rgba(0, 0, 0, 0.9);
+    --accent: #818cf8;
+    --accent-soft: rgba(129, 140, 248, 0.16);
+    --success: #34d399;
+    --warn: #fbbf24;
+    --danger: #fb7185;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+  }
+
   html {
     scroll-behavior: smooth;
-    background-color: #f5f7fb;
+    background-color: var(--app-bg);
+    color-scheme: light;
   }
-  .dark html {
-    background-color: #000000;
+
+  html.dark {
+    color-scheme: dark;
   }
+
   body {
-    background-color: #f5f7fb;
-    color: #0f172a;
-    transition: background-color 0.2s, color 0.2s;
+    min-height: 100vh;
+    background-color: var(--app-bg);
+    background-image:
+      radial-gradient(60rem 40rem at 20% -10%, var(--app-bg-glow), transparent 70%),
+      radial-gradient(50rem 35rem at 110% 10%, rgba(16, 185, 129, 0.1), transparent 70%);
+    background-attachment: fixed;
+    color: var(--app-fg);
+    transition: background-color 0.2s ease, color 0.2s ease;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  
-  .dark body {
-    background-color: #000000;
-    color: #e5e7eb;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
   }
 }
 
-/* Custom scrollbar for better aesthetic */
+/* One consistent scrollbar (the previous file declared it twice, with conflicts). */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -44,211 +87,206 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: theme('colors.gray.300');
+  background: rgba(148, 163, 184, 0.45);
   border-radius: 9999px;
-  cursor: pointer;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background-color: theme('colors.neutral.800');
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: theme('colors.gray.400');
+  background: rgba(100, 116, 139, 0.7);
+  background-clip: content-box;
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background-color: theme('colors.neutral.700');
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  background-clip: content-box;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.38);
+  background-clip: content-box;
 }
 
-.animate-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-/* Fix placeholder text */
-input::placeholder, textarea::placeholder {
-  color: rgba(107, 114, 128, 0.7) !important;
-}
-
-.dark input::placeholder, .dark textarea::placeholder {
-  color: rgba(156, 163, 175, 0.7) !important;
-}
-
-@layer base {
-  /* Reset styles */
-  * {
-    box-sizing: border-box;
-  }
-
-  /* Ensure no conflicts with inherited body styles */
-  html, body {
-    margin: 0;
-    padding: 0;
-    font-family: inherit;
-  }
-
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: rgba(148 163 184 / 0.1);
-  }
-  
-  .dark ::-webkit-scrollbar-track {
-    background: rgba(0 0 0 / 0.5);
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: rgba(148 163 184 / 0.7);
-    border-radius: 9999px;
-  }
-  
-  .dark ::-webkit-scrollbar-thumb {
-    background: rgba(255 255 255 / 0.3);
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(100 116 139 / 0.8);
-  }
-  
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255 255 255 / 0.5);
-  }
+input::placeholder,
+textarea::placeholder {
+  color: var(--app-muted);
+  opacity: 0.75;
 }
 
 @layer components {
-  /* Glass card component utility classes */
-  .glass-card {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    box-shadow: 0 12px 24px -18px rgba(15, 23, 42, 0.35);
-    border-radius: 0.75rem;
-  }
-
-  .dark .glass-card {
-    background: rgba(5, 5, 5, 0.9);
-    border-color: rgba(148, 163, 184, 0.2);
-    box-shadow: 0 20px 40px -28px rgba(0, 0, 0, 0.8);
-  }
-
-  .glass-card-strong {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    box-shadow: 0 18px 30px -20px rgba(15, 23, 42, 0.35);
-    border-radius: 0.75rem;
-  }
-
-  .dark .glass-card-strong {
-    background: rgba(5, 5, 5, 0.92);
-    border-color: rgba(148, 163, 184, 0.2);
-    box-shadow: 0 24px 44px -30px rgba(0, 0, 0, 0.85);
-  }
-
-  /* Input glass styling */
-  .glass-input {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    color: #0f172a;
-  }
-
-  .dark .glass-input {
-    background: rgba(5, 5, 5, 0.9);
-    border-color: rgba(148, 163, 184, 0.3);
-    color: #ffffff;
-  }
-
-  .glass-input:focus {
-    background: #ffffff;
-    border-color: rgba(59, 130, 246, 0.6);
-  }
-
-  .dark .glass-input:focus {
-    background: rgba(0, 0, 0, 0.95);
-    border-color: rgba(96, 165, 250, 0.6);
-  }
-
-  /* Button glass styling */
-  .glass-button {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    box-shadow: 0 8px 16px -12px rgba(15, 23, 42, 0.4);
-  }
-
-  .dark .glass-button {
-    background: rgba(5, 5, 5, 0.9);
-    border-color: rgba(148, 163, 184, 0.3);
-    box-shadow: 0 12px 22px -18px rgba(0, 0, 0, 0.85);
-  }
-
-  .glass-button:hover {
-    background: rgba(255, 255, 255, 1);
-  }
-
-  .dark .glass-button:hover {
-    background: rgba(15, 15, 15, 0.95);
-  }
-
-  .glass-button-primary {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    border: 1px solid rgba(37, 99, 235, 0.6);
-    box-shadow: 0 16px 28px -18px rgba(37, 99, 235, 0.7);
-    color: #ffffff;
-  }
-
-  .dark .glass-button-primary {
-    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
-    border-color: rgba(96, 165, 250, 0.4);
-    box-shadow: 0 18px 32px -20px rgba(30, 58, 138, 0.9);
-  }
-
-  .glass-button-primary:hover {
-    background: linear-gradient(135deg, #1d4ed8, #1e40af);
-  }
-
-  .dark .glass-button-primary:hover {
-    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
-  }
-
-  /* Additional glass variants */
+  /* ---- Cards ------------------------------------------------------- */
   .card-glass {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    box-shadow: 0 20px 35px -28px rgba(15, 23, 42, 0.4);
-    border-radius: 0.75rem;
-  padding: 0.75rem;
-    transition: all 0.2s ease;
-  }
-
-  .dark .card-glass {
-    background: rgba(5, 5, 5, 0.92);
-    border-color: rgba(148, 163, 184, 0.2);
-    box-shadow: 0 24px 44px -32px rgba(0, 0, 0, 0.85);
-  }
-  
-  .card-glass:hover {
-    transform: translateY(-2px);
-  }
-  
-  .dark .card-glass:hover {
-    transform: translateY(-2px);
+    background: var(--app-card);
+    border: 1px solid var(--app-border);
+    border-radius: 1rem;
+    box-shadow: var(--app-shadow);
+    padding: 0.875rem;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
   }
 
   @media (min-width: 640px) {
     .card-glass {
+      padding: 1.25rem;
+    }
+  }
+
+  .card-glass-hover:hover {
+    transform: translateY(-2px);
+    border-color: var(--app-border-strong);
+  }
+
+  /* Hero card used by the monthly allowance summary. */
+  .card-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    border: 1px solid var(--app-border-strong);
+    background:
+      linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(16, 185, 129, 0.1) 60%, transparent),
+      var(--app-card-strong);
+    box-shadow: var(--app-shadow);
+    padding: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .card-hero {
       padding: 1.5rem;
     }
   }
+
+  html.dark .card-hero {
+    background:
+      linear-gradient(135deg, rgba(129, 140, 248, 0.2), rgba(16, 185, 129, 0.12) 60%, transparent),
+      var(--app-card-strong);
+  }
+
+  /* Kept for older screens that still use these names. */
+  .glass-card,
+  .glass-card-strong {
+    background: var(--app-card);
+    border: 1px solid var(--app-border);
+    border-radius: 1rem;
+    box-shadow: var(--app-shadow);
+  }
+
+  /* ---- Pills / chips ---------------------------------------------- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 9999px;
+    border: 1px solid var(--app-border);
+    padding: 0.15rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+  }
+
+  .chip-accent {
+    background: var(--accent-soft);
+    border-color: transparent;
+    color: var(--accent);
+  }
+
+  .chip-success {
+    background: rgba(16, 185, 129, 0.14);
+    border-color: transparent;
+    color: var(--success);
+  }
+
+  .chip-warn {
+    background: rgba(245, 158, 11, 0.16);
+    border-color: transparent;
+    color: var(--warn);
+  }
+
+  .chip-danger {
+    background: rgba(244, 63, 94, 0.16);
+    border-color: transparent;
+    color: var(--danger);
+  }
+
+  /* ---- Progress ---------------------------------------------------- */
+  .progress-track {
+    height: 0.5rem;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: var(--app-track);
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.35s ease;
+  }
+
+  /* ---- Inputs / buttons -------------------------------------------- */
+  .glass-input {
+    background: var(--app-card-strong);
+    border: 1px solid var(--app-border-strong);
+    border-radius: 0.6rem;
+    color: var(--app-fg);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .glass-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .glass-button {
+    background: var(--app-card-strong);
+    border: 1px solid var(--app-border-strong);
+    border-radius: 0.6rem;
+    color: var(--app-fg);
+    transition: transform 0.12s ease, background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .glass-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .glass-button-primary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border: 1px solid transparent;
+    border-radius: 0.6rem;
+    color: #ffffff;
+    box-shadow: 0 12px 24px -16px rgba(79, 70, 229, 0.8);
+    transition: transform 0.12s ease, filter 0.15s ease;
+  }
+
+  .glass-button-primary:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+
+  .glass-button-primary:disabled {
+    opacity: 0.6;
+    transform: none;
+    filter: none;
+  }
 }
+
 @layer utilities {
-  /* PWA animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation: fadeIn 0.28s ease-out both;
+  }
+
   @keyframes slide-up {
     from {
       transform: translateY(100%);
@@ -264,9 +302,9 @@ input::placeholder, textarea::placeholder {
     animation: slide-up 0.3s ease-out;
   }
 
-  /* Pulse animation for offline indicator */
   @keyframes pulse-slow {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {

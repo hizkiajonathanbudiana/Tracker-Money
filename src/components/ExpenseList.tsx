@@ -5,6 +5,9 @@ import { db } from "@/lib/firebase";
 import { doc, deleteDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { Expense } from "@/types/expense";
 import { Trash2, Loader2, Calendar, FileText, Edit3, Check, X } from "lucide-react";
+import { useEconomySettings } from "@/hooks/useEconomy";
+import { deleteEconomyExpense } from "@/lib/economyOps";
+import { formatMoney } from "@/lib/money";
 
 interface ExpenseListProps {
     userId: string;
@@ -12,13 +15,6 @@ interface ExpenseListProps {
     loading: boolean;
     categories: string[];
 }
-
-const formatCurrency = (amount: number) => {
-    return amount.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-    });
-};
 
 const formatDate = (timestamp: Timestamp) => {
     return timestamp.toDate().toLocaleDateString("en-US", {
@@ -35,16 +31,21 @@ export default function ExpenseList({
     categories,
 }: ExpenseListProps) {
     const safeCategories = categories.length ? categories : ["Other"];
+    const { settings } = useEconomySettings(userId);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editAmount, setEditAmount] = useState("");
     const [editCategory, setEditCategory] = useState("");
     const [editDate, setEditDate] = useState("");
     const [editNotes, setEditNotes] = useState("");
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (expense: Expense) => {
         if (!userId) return;
         try {
-            const docRef = doc(db, "users", userId, "expenses", id);
+            if (expense.economyKind) {
+                await deleteEconomyExpense({ userId, expense });
+                return;
+            }
+            const docRef = doc(db, "users", userId, "expenses", expense.id);
             await deleteDoc(docRef);
         } catch (error) {
             console.error("Error deleting document: ", error);
@@ -164,9 +165,21 @@ export default function ExpenseList({
                                             <FileText size={18} />
                                         </div>
                                         <div>
-                                            <h3 className="font-bold text-slate-900 dark:text-white text-base">
-                                                {expense.category}
-                                            </h3>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <h3 className="font-bold text-slate-900 dark:text-white text-base">
+                                                    {expense.category}
+                                                </h3>
+                                                {expense.economyKind === "jajan" && (
+                                                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                                                        Treat
+                                                    </span>
+                                                )}
+                                                {expense.economyKind === "raw_material" && (
+                                                    <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+                                                        Raw material
+                                                    </span>
+                                                )}
+                                            </div>
                                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
                                                 <Calendar size={10} />
                                                 {formatDate(expense.date)}
@@ -181,17 +194,20 @@ export default function ExpenseList({
 
                                     <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                                         <span className="font-black text-lg text-slate-900 dark:text-white">
-                                            {formatCurrency(expense.amount)}
+                                            {formatMoney(expense.amount, settings)}
                                         </span>
                                         <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                                            {!expense.economyKind && (
+                                                <button
+                                                    onClick={() => startEdit(expense)}
+                                                    className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+                                                >
+                                                    <Edit3 size={16} />
+                                                </button>
+                                            )}
                                             <button
-                                                onClick={() => startEdit(expense)}
-                                                className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
-                                            >
-                                                <Edit3 size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(expense.id)}
+                                                onClick={() => handleDelete(expense)}
+                                                title={expense.economyKind ? "Delete & reverse totals" : "Delete"}
                                                 className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                                             >
                                                 <Trash2 size={16} />

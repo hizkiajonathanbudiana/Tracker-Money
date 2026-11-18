@@ -12,7 +12,7 @@ export default function AuthLayout({
                 <ThemeSwitcher />
             </div>
 
-            {/* Card login/signup dengan glass morphism */}
+            {/* Card login/signup with glass morphism */}
             <div className="card-glass w-full max-w-md">
                 {children}
             </div>

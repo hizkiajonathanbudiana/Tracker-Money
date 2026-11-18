@@ -11,9 +11,16 @@ import StatCard from "@/components/StatCard";
 import WalletPanel from "@/components/WalletPanel";
 import CategoryManager from "@/components/CategoryManager";
 import ChangePasswordPanel from "@/components/ChangePasswordPanel";
+import PointsSummaryCard from "@/components/economy/PointsSummaryCard";
+import MonthlyAllowanceCard from "@/components/economy/MonthlyAllowanceCard";
+import SpendTrendCard from "@/components/economy/SpendTrendCard";
+import PageHeader from "@/components/ui/PageHeader";
 import { useExpenses } from "@/hooks/useExpenses";
 import { useCategories } from "@/hooks/useCategories";
 import { useWallet } from "@/hooks/useWallet";
+import { useEconomySettings } from "@/hooks/useEconomy";
+import { useAllowance } from "@/hooks/useAllowance";
+import { formatMoney } from "@/lib/money";
 import {
     Loader2,
     BarChart2,
@@ -25,17 +32,10 @@ import {
     ArrowUpCircle,
     Tag,
 } from "lucide-react";
-import { Expense } from "@/types/expense";
+import { EXPENSE_CATEGORIES, Expense } from "@/types/expense";
 
 const getYearMonth = (date: Date) => {
     return date.toISOString().slice(0, 7);
-};
-
-const formatCurrency = (amount: number) => {
-    return amount.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-    });
 };
 
 const getDaysInMonth = (year: number, month: number) => {
@@ -76,6 +76,37 @@ export default function AppPage() {
         addIncome,
     } = useWallet(userId);
 
+    const { settings: economySettings } = useEconomySettings(userId);
+    const money = (amount: number) => formatMoney(amount, economySettings);
+    const { today, records, spend, pace } = useAllowance(expenses, economySettings);
+
+    useEffect(() => {
+        // This useEffect should not be needed since we already check emailVerified above
+        // but keeping it as backup in case user state changes after component mounts
+        if (user && !isEmailVerified) {
+            router.push("/verify-email");
+        }
+    }, [user, isEmailVerified, router]);
+
+    useEffect(() => {
+        const storedMonthly = localStorage.getItem("showMonthlySummary");
+        const storedWallet = localStorage.getItem("showWalletSummary");
+        const storedCategories = localStorage.getItem("showCategories");
+        const storedPassword = localStorage.getItem("showChangePassword");
+        if (storedMonthly !== null) setShowMonthlySummary(storedMonthly === "true");
+        if (storedWallet !== null) setShowWalletSummary(storedWallet === "true");
+        if (storedCategories !== null) setShowCategories(storedCategories === "true");
+        if (storedPassword !== null) setShowChangePassword(storedPassword === "true");
+    }, []);
+
+    const excludedCategories = useMemo(() => {
+        const regular = new Set(
+            (economySettings.regularCategories ?? []).map((item) => item.trim().toLowerCase())
+        );
+        const pool = categories.length > 0 ? categories : [...EXPENSE_CATEGORIES];
+        return pool.filter((category) => !regular.has(category.trim().toLowerCase()));
+    }, [categories, economySettings.regularCategories]);
+
     // Early return BEFORE any other hooks to prevent hooks order mismatch
     if (!user) {
         return (
@@ -93,13 +124,11 @@ export default function AppPage() {
         );
     }
 
-    const monthlyExpenses = useMemo(() => {
-        return expenses.filter(
-            (expense) => getYearMonth(expense.date.toDate()) === selectedMonth
-        );
-    }, [expenses, selectedMonth]);
+    const monthlyExpenses = expenses.filter(
+        (expense) => getYearMonth(expense.date.toDate()) === selectedMonth
+    );
 
-    const stats = useMemo(() => {
+    const stats = (() => {
         const totalSpend = monthlyExpenses.reduce(
             (acc, exp) => acc + exp.amount,
             0
@@ -131,33 +160,43 @@ export default function AppPage() {
             biggestExpense,
             topCategory,
         };
-    }, [monthlyExpenses, selectedMonth]);
+    })();
 
-    useEffect(() => {
-        // This useEffect should not be needed since we already check emailVerified above
-        // but keeping it as backup in case user state changes after component mounts
-        if (user && !isEmailVerified) {
-            router.push("/verify-email");
-        }
-    }, [user, isEmailVerified, router]);
-
-    useEffect(() => {
-        const storedMonthly = localStorage.getItem("showMonthlySummary");
-        const storedWallet = localStorage.getItem("showWalletSummary");
-        const storedCategories = localStorage.getItem("showCategories");
-        const storedPassword = localStorage.getItem("showChangePassword");
-        if (storedMonthly !== null) setShowMonthlySummary(storedMonthly === "true");
-        if (storedWallet !== null) setShowWalletSummary(storedWallet === "true");
-        if (storedCategories !== null) setShowCategories(storedCategories === "true");
-        if (storedPassword !== null) setShowChangePassword(storedPassword === "true");
-    }, []);
-
-    const recentExpenses = useMemo(() => {
-        return monthlyExpenses.slice(0, 5);
-    }, [monthlyExpenses]);
+    const recentExpenses = monthlyExpenses.slice(0, 5);
 
     return (
         <div className="flex flex-col gap-4 sm:gap-6">
+            <PageHeader
+                eyebrow="Money tracker"
+                title="Dashboard"
+                description="Daily and monthly view of your allowance, spending and points."
+                meta={
+                    <>
+                        <span className="chip chip-accent">{pace.monthKey}</span>
+                        <span className="chip">Day {pace.dayOfMonth} of {pace.days}</span>
+                        <span className="chip">{pace.daysLeft} day{pace.daysLeft === 1 ? "" : "s"} left</span>
+                    </>
+                }
+            />
+
+            <MonthlyAllowanceCard
+                settings={economySettings}
+                pace={pace}
+                spend={spend}
+                excludedCategories={excludedCategories}
+            />
+
+            <div className="grid gap-4 sm:gap-6 xl:grid-cols-2">
+                <SpendTrendCard
+                    records={records}
+                    settings={economySettings}
+                    today={today}
+                    pace={pace}
+                    spend={spend}
+                />
+                <PointsSummaryCard userId={user.uid} />
+            </div>
+
             <div className="card-glass">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
@@ -186,17 +225,17 @@ export default function AppPage() {
                         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             <StatCard
                                 title="Total Spending"
-                                value={formatCurrency(stats.totalSpend)}
+                                value={money(stats.totalSpend)}
                                 icon={<DollarSign size={20} />}
                             />
                             <StatCard
                                 title="Avg. Spend / Day"
-                                value={formatCurrency(stats.avgSpendPerDay)}
+                                value={money(stats.avgSpendPerDay)}
                                 icon={<TrendingUp size={20} />}
                             />
                             <StatCard
                                 title="Biggest Expense"
-                                value={formatCurrency(stats.biggestExpense.amount)}
+                                value={money(stats.biggestExpense.amount)}
                                 icon={<ArrowUpCircle size={20} />}
                                 description={stats.biggestExpense.notes || "N/A"}
                             />
@@ -204,7 +243,7 @@ export default function AppPage() {
                                 title="Top Category"
                                 value={stats.topCategory.cat}
                                 icon={<Tag size={20} />}
-                                description={formatCurrency(stats.topCategory.amount)}
+                                description={money(stats.topCategory.amount)}
                             />
                         </div>
                     </>
@@ -272,6 +311,8 @@ export default function AppPage() {
                         onUpdateBalance={updateBalance}
                         onUpdateDenominations={updateDenominations}
                         onAddIncome={addIncome}
+                        currencySymbol={economySettings.currencySymbol}
+                        money={money}
                         showHeader={false}
                     />
                 )}

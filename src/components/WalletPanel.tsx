@@ -11,6 +11,10 @@ interface WalletPanelProps {
     onUpdateDenominations: (denominations: CashDenomination[]) => Promise<void> | void;
     onAddIncome: (amount: number, note?: string) => Promise<void> | void;
     showHeader?: boolean;
+    /** Currency symbol from the economy settings (defaults to `$`). */
+    currencySymbol?: string;
+    /** Formatter from the economy settings; falls back to two-decimal dollars. */
+    money?: (amount: number) => string;
 }
 
 export default function WalletPanel({
@@ -20,7 +24,10 @@ export default function WalletPanel({
     onUpdateDenominations,
     onAddIncome,
     showHeader = true,
+    currencySymbol = "$",
+    money,
 }: WalletPanelProps) {
+    const fmt = money ?? ((amount: number) => `${currencySymbol}${amount.toFixed(2)}`);
     const [balanceInput, setBalanceInput] = useState(balance.toString());
     const [denomDrafts, setDenomDrafts] = useState<CashDenomination[]>(denominations);
     const [incomeAmount, setIncomeAmount] = useState("");
@@ -192,7 +199,7 @@ export default function WalletPanel({
                         <div className="relative z-10">
                             <p className="mb-1 text-xs font-bold uppercase tracking-wider text-blue-100">Current Balance</p>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-medium opacity-80">$</span>
+                                <span className="text-2xl font-medium opacity-80">{currencySymbol}</span>
                                 <input
                                     type="number"
                                     value={balanceInput}
@@ -219,7 +226,7 @@ export default function WalletPanel({
                         </label>
                         <div className="flex gap-2">
                             <div className="relative w-1/3">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">{currencySymbol}</span>
                                 <input
                                     type="number"
                                     placeholder="0"
@@ -259,7 +266,7 @@ export default function WalletPanel({
                             <div className="text-right">
                                 <p className="text-[10px] text-gray-400 uppercase font-bold">Total Physical</p>
                                 <p className="text-sm font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                                    ${cashTotal.toLocaleString()}
+                                    {fmt(cashTotal)}
                                 </p>
                             </div>
                         </div>
